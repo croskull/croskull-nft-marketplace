@@ -1,7 +1,7 @@
 {
   "main.css": "/cryptoboys-nft-marketplace/static/css/main.f81adc75.chunk.css",
-  "main.js": "/cryptoboys-nft-marketplace/static/js/main.53d0f321.chunk.js",
-  "main.js.map": "/cryptoboys-nft-marketplace/static/js/main.53d0f321.chunk.js.map",
+  "main.js": "/cryptoboys-nft-marketplace/static/js/main.9c1074d7.chunk.js",
+  "main.js.map": "/cryptoboys-nft-marketplace/static/js/main.9c1074d7.chunk.js.map",
   "static/js/1.0751fd99.chunk.js": "/cryptoboys-nft-marketplace/static/js/1.0751fd99.chunk.js",
   "static/js/1.0751fd99.chunk.js.map": "/cryptoboys-nft-marketplace/static/js/1.0751fd99.chunk.js.map",
   "runtime~main.js": "/cryptoboys-nft-marketplace/static/js/runtime~main.8bf4deaf.js",
@@ -12,6 +12,6 @@
   "static/media/logo-cr-skull-white.png": "/cryptoboys-nft-marketplace/static/media/logo-cr-skull-white.bcd17266.png",
   "static/css/main.f81adc75.chunk.css.map": "/cryptoboys-nft-marketplace/static/css/main.f81adc75.chunk.css.map",
   "index.html": "/cryptoboys-nft-marketplace/index.html",
-  "precache-manifest.06d320124380df472669df40ab019bec.js": "/cryptoboys-nft-marketplace/precache-manifest.06d320124380df472669df40ab019bec.js",
+  "precache-manifest.3da3c9051a598e6a98c4f402e7608e87.js": "/cryptoboys-nft-marketplace/precache-manifest.3da3c9051a598e6a98c4f402e7608e87.js",
   "service-worker.js": "/cryptoboys-nft-marketplace/service-worker.js"
 }
