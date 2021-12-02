@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "0156517360a473dd7a92",
+    "revision": "56a1a7316696ee7c4514",
     "url": "/cryptoboys-nft-marketplace/static/css/main.fb4835ec.chunk.css"
   },
   {
-    "revision": "0156517360a473dd7a92",
-    "url": "/cryptoboys-nft-marketplace/static/js/main.01565173.chunk.js"
+    "revision": "56a1a7316696ee7c4514",
+    "url": "/cryptoboys-nft-marketplace/static/js/main.56a1a731.chunk.js"
   },
   {
     "revision": "7b947a0eada5c72a62a1",
@@ -32,7 +32,7 @@ self.__precacheManifest = [
     "url": "/cryptoboys-nft-marketplace/static/media/logo-cr-skull-white.bcd17266.png"
   },
   {
-    "revision": "139d04ba5da5bae03c97b66d1c8fb6ae",
+    "revision": "007475ca23af42bacb72690688d085be",
     "url": "/cryptoboys-nft-marketplace/index.html"
   }
 ];
