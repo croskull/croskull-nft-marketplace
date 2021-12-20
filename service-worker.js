@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/croskull-nft-marketplace/precache-manifest.3ba6ccfc914d9f0fff1d807e85bf86f8.js"
+  "/cryptoboys-nft-marketplace/precache-manifest.4a428f581fcb1fe0f973736c87541988.js"
 );
 
 workbox.clientsClaim();
@@ -28,7 +28,7 @@ self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerNavigationRoute("/croskull-nft-marketplace/index.html", {
+workbox.routing.registerNavigationRoute("/cryptoboys-nft-marketplace/index.html", {
   
   blacklist: [/^\/_/,/\/[^/]+\.[^/]+$/],
 });

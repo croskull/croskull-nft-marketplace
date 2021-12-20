@@ -1,0 +1,38 @@
+self.__precacheManifest = [
+  {
+    "revision": "2f5d28892a187974b0ec",
+    "url": "/cryptoboys-nft-marketplace/static/css/main.d35a31cd.chunk.css"
+  },
+  {
+    "revision": "2f5d28892a187974b0ec",
+    "url": "/cryptoboys-nft-marketplace/static/js/main.2f5d2889.chunk.js"
+  },
+  {
+    "revision": "1cc1755cfa3c5885b708",
+    "url": "/cryptoboys-nft-marketplace/static/js/1.1cc1755c.chunk.js"
+  },
+  {
+    "revision": "8bf4deafcc65d566b658",
+    "url": "/cryptoboys-nft-marketplace/static/js/runtime~main.8bf4deaf.js"
+  },
+  {
+    "revision": "ba81d5f2c0d6645c45b6212eb2a8078b",
+    "url": "/cryptoboys-nft-marketplace/static/media/1.ba81d5f2.png"
+  },
+  {
+    "revision": "26ef8bb418031b9bb4f44e1aeea71186",
+    "url": "/cryptoboys-nft-marketplace/static/media/loading.26ef8bb4.gif"
+  },
+  {
+    "revision": "fbf33967fa244d21d61fb85f233fc331",
+    "url": "/cryptoboys-nft-marketplace/static/media/metamask.fbf33967.svg"
+  },
+  {
+    "revision": "bcd172661f5eec582912d26c3d1fb850",
+    "url": "/cryptoboys-nft-marketplace/static/media/logo-cr-skull-white.bcd17266.png"
+  },
+  {
+    "revision": "bfc3a98ee61da9d69e57268dfb946e6b",
+    "url": "/cryptoboys-nft-marketplace/index.html"
+  }
+];
