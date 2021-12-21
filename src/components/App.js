@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import { HashRouter, Route } from "react-router-dom";
+import React, { Component, useEffect } from "react";
+import { HashRouter, Route, Redirect } from "react-router-dom";
 import "./App.css";
 import Web3 from "web3";
 import CryptoBoys from "../abis/CryptoBoys.json";
-
 import FormAndPreview from "../components/FormAndPreview/FormAndPreview";
 import AllCryptoBoys from "./AllCryptoBoys/AllCryptoBoys";
+import DetailsPage from "./AllCryptoBoys/AllCryptoBoys";
 import AccountDetails from "./AccountDetails/AccountDetails";
 import ContractNotDeployed from "./ContractNotDeployed/ContractNotDeployed";
 import ConnectToMetamask from "./ConnectMetamask/ConnectToMetamask";
@@ -13,12 +13,20 @@ import Loading from "./Loading/Loading";
 import Navbar from "./Navbar/Navbar";
 import MyCryptoBoys from "./MyCryptoBoys/MyCryptoBoys";
 import Queries from "./Queries/Queries";
+import AdminDashboard from './AdminDashboard/AdminDashboard';
+import Bottleneck from "bottleneck";
+
 
 const ipfsClient = require("ipfs-http-client");
 const ipfs = ipfsClient({
   host: "ipfs.infura.io",
   port: 5001,
   protocol: "https",
+});
+
+const limiter = new Bottleneck({
+  maxConcurrent: 1,
+  minTime: 1000
 });
 
 class App extends Component {
@@ -28,18 +36,34 @@ class App extends Component {
       accountAddress: "",
       accountBalance: "",
       cryptoBoysContract: null,
+      cryptoBoysContractOwner: null,
       cryptoBoysCount: 0,
+      cryptoBoysMaxSupply: 0,
+      cryptoBoysCost: 1,
+      nftPerAddressLimit: 0,
       cryptoBoys: [],
-      loading: true,
+      loading: false,
       metamaskConnected: false,
       contractDetected: false,
       totalTokensMinted: 0,
       totalTokensOwnedByAccount: 0,
-      nameIsUsed: false,
-      colorIsUsed: false,
-      colorsUsed: [],
       lastMintTime: null,
+      floorPrice: 0,
+      highPrice: 0,
+      traits: [],
+      traitsTypes: [],
+      order: 'ASC',
+      marketplaceView: [],
+      activeFilters: [],
+      baseURI: '',
     };
+    this.handleWeb3AccountChange();
+  }
+
+  handleWeb3AccountChange = () => {
+    window.ethereum.on('accountsChanged', function (accounts) {
+      window.location.reload()
+    })
   }
 
   componentWillMount = async () => {
@@ -47,7 +71,12 @@ class App extends Component {
     await this.loadBlockchainData();
     await this.setMetaData();
     await this.setMintBtnTimer();
+    await this.handleOrderChange();
   };
+
+  numToEth = (num) => {
+    return parseFloat( window.web3.utils.fromWei( num.toString(), "ether" ), 6 )
+  }
 
   setMintBtnTimer = () => {
     const mintBtn = document.getElementById("mintBtn");
@@ -56,7 +85,7 @@ class App extends Component {
         lastMintTime: localStorage.getItem(this.state.accountAddress),
       });
       this.state.lastMintTime === undefined || this.state.lastMintTime === null
-        ? (mintBtn.innerHTML = "Mint My Crypto Boy")
+        ? (mintBtn.innerHTML = "Mint My CRSkull")
         : this.checkIfCanMint(parseInt(this.state.lastMintTime));
     }
   };
@@ -103,6 +132,8 @@ class App extends Component {
       this.setState({ metamaskConnected: true });
       this.setState({ loading: true });
       this.setState({ accountAddress: accounts[0] });
+
+      //get and set accountBalance
       let accountBalance = await web3.eth.getBalance(accounts[0]);
       accountBalance = web3.utils.fromWei(accountBalance, "Ether");
       this.setState({ accountBalance });
@@ -110,6 +141,7 @@ class App extends Component {
       const networkId = await web3.eth.net.getId();
       const networkData = CryptoBoys.networks[networkId];
       if (networkData) {
+        //load contract data
         this.setState({ loading: true });
         const cryptoBoysContract = web3.eth.Contract(
           CryptoBoys.abi,
@@ -117,10 +149,24 @@ class App extends Component {
         );
         this.setState({ cryptoBoysContract });
         this.setState({ contractDetected: true });
+        //get max total supply
+        const cryptoBoysMaxSupply = await cryptoBoysContract.methods
+          .getMaxSupply()
+          .call();
+        
+        this.setState( { cryptoBoysMaxSupply } )
+        //count actual circulating supply
         const cryptoBoysCount = await cryptoBoysContract.methods
           .cryptoBoyCounter()
           .call();
         this.setState({ cryptoBoysCount });
+
+        const cryptoBoysCost = await cryptoBoysContract.methods
+          .getCost()
+          .call();
+        //this.setState({ cryptoBoysCost });
+
+        //load all cryptoBoys
         for (var i = 1; i <= cryptoBoysCount; i++) {
           const cryptoBoy = await cryptoBoysContract.methods
             .allCryptoBoys(i)
@@ -129,16 +175,48 @@ class App extends Component {
             cryptoBoys: [...this.state.cryptoBoys, cryptoBoy],
           });
         }
+
+        let floorPrice = 9999999999;
+        let highPrice = 0;
+         this.state.cryptoBoys.map( cryptoboy => {
+          let price = this.numToEth(cryptoboy.price)
+          console.log(price)
+          if( price < floorPrice )
+            floorPrice = price
+          
+          if( price > highPrice)
+            highPrice = price
+        })
+        this.setState({ floorPrice })
+        this.setState({ highPrice })
+        //get contract owner
+        const contractOwner = await cryptoBoysContract.methods
+          .getOwner()
+          .call();
+        this.setState( {
+          cryptoBoysContractOwner: contractOwner
+        })
+        //get total minted tokens ( include burned (?) )
         let totalTokensMinted = await cryptoBoysContract.methods
           .getNumberOfTokensMinted()
           .call();
         totalTokensMinted = totalTokensMinted.toNumber();
         this.setState({ totalTokensMinted });
+        //get actual tokens owner by current address
         let totalTokensOwnedByAccount = await cryptoBoysContract.methods
           .getTotalNumberOfTokensOwnedByAnAddress(this.state.accountAddress)
           .call();
         totalTokensOwnedByAccount = totalTokensOwnedByAccount.toNumber();
         this.setState({ totalTokensOwnedByAccount });
+
+        //get current token baseURI
+        let baseURI = await cryptoBoysContract.methods
+          .baseURI()
+          .call();
+
+          baseURI = 'https://gateway.pinata.cloud/ipfs/' + baseURI;
+          this.setState({ baseURI }); 
+
         this.setState({ loading: false });
       } else {
         this.setState({ contractDetected: false });
@@ -154,112 +232,184 @@ class App extends Component {
 
   setMetaData = async () => {
     if (this.state.cryptoBoys.length !== 0) {
-      this.state.cryptoBoys.map(async (cryptoboy) => {
-        const result = await fetch(cryptoboy.tokenURI);
-        const metaData = await result.json();
-        this.setState({
-          cryptoBoys: this.state.cryptoBoys.map((cryptoboy) =>
-            cryptoboy.tokenId.toNumber() === Number(metaData.tokenId)
-              ? {
-                  ...cryptoboy,
-                  metaData,
-                }
+      const result = await fetch(this.state.baseURI + '/_metadata.json' )
+      const metaDatas = await result.json();
+      metaDatas.map(async (metaData) => {
+      let cryptoBoys = this.state.cryptoBoys
+      cryptoBoys = cryptoBoys.map( (cryptoboy) =>
+            cryptoboy.tokenId.toNumber() === metaData.edition ? 
+            {
+              ...cryptoboy,
+              metaData,
+            }
               : cryptoboy
-          ),
-        });
-      });
+          )
+
+            this.setState({ cryptoBoys });
+            this.setState({ marketplaceView: cryptoBoys });
+            let traits = []
+            let traitsTypes = []
+            if( cryptoBoys.length.length !== 0 ){
+              let boyLength = cryptoBoys.length
+              cryptoBoys.map( (cryptoboy, iBoy) => { //loop cryptoboy
+                if( cryptoboy.metaData ){
+                  let traitsLength = cryptoboy.metaData.attributes.length
+                  cryptoboy.metaData.attributes.forEach( (trait, iTraits) => { // loop tratti
+                    
+                    let { trait_type, value } = trait
+                    let type = trait_type.replace(' ', '-')
+                    let uniqueType = true
+
+                    traitsTypes.forEach( ( existType, i) => {
+                      if( existType === type )
+                        uniqueType = false
+                    } )
+
+                    if( uniqueType )
+                      traitsTypes.push( type )
+
+                    if( traits[type] === undefined )
+                      traits[type] = []
+
+                    let unique = true
+                    traits[type].forEach( existValue => {
+                      if (existValue === value )
+                        unique = false
+                    })
+
+                    if( unique )
+                      traits[type].push( value )
+                      
+                    if( boyLength === ( iBoy + 1 ) && traitsLength === ( iTraits + 1 ) ){
+                      this.setState({ traits });
+                      this.setState( { traitsTypes });
+                    }
+                  })
+                }
+              })
+            }
+      }) 
     }
   };
 
-  mintMyNFT = async (colors, name, tokenPrice) => {
-    this.setState({ loading: true });
-    const colorsArray = Object.values(colors);
-    let colorsUsed = [];
-    for (let i = 0; i < colorsArray.length; i++) {
-      if (colorsArray[i] !== "") {
-        let colorIsUsed = await this.state.cryptoBoysContract.methods
-          .colorExists(colorsArray[i])
-          .call();
-        if (colorIsUsed) {
-          colorsUsed = [...colorsUsed, colorsArray[i]];
-        } else {
-          continue;
+  handleFilterBar = (ev) => {
+    const { cryptoBoys, marketplaceView, activeFilters } = this.state;
+    let value = ev.value.split('_')
+    let trait = value[0].replace('-', ' ')
+    value = value[1]
+
+    let newFilters = activeFilters
+    if( ! newFilters.length > 0){
+      newFilters.push({ trait_type: trait , value: value })
+    }else{
+      let exist = false
+      newFilters.forEach( ( filter, i )=> { //controllo i filtri attivi
+        if( exist ) return; //se esiste già esco
+        if( filter.trait_type === trait  ){ // tipo tratto uguale 
+          if( filter.value != value){ // valore tratto diverso 
+            newFilters[i] = { trait_type: trait , value: value }
+            exist = true
+          }
+          if( filter.value === value ){ // valoe tratto uguale
+            exist = true
+          }
         }
-      }
+      })
+        if( ! exist ) 
+          newFilters.push( { trait_type: trait , value: value } )
     }
-    const nameIsUsed = await this.state.cryptoBoysContract.methods
-      .tokenNameExists(name)
-      .call();
-    if (colorsUsed.length === 0 && !nameIsUsed) {
-      const {
-        cardBorderColor,
-        cardBackgroundColor,
-        headBorderColor,
-        headBackgroundColor,
-        leftEyeBorderColor,
-        rightEyeBorderColor,
-        leftEyeBackgroundColor,
-        rightEyeBackgroundColor,
-        leftPupilBackgroundColor,
-        rightPupilBackgroundColor,
-        mouthColor,
-        neckBackgroundColor,
-        neckBorderColor,
-        bodyBackgroundColor,
-        bodyBorderColor,
-      } = colors;
+    let newView = [];
+    cryptoBoys.map( ( cryptoBoy, i ) => { //crypto boy 1
+      if( cryptoBoy.metaData ){
+        let filterValid = true
+        newFilters.forEach( filter => { //filtro 1
+          if( ! filterValid ) return
+          let traitValid = false
+          cryptoBoy.metaData.attributes.forEach(forTrait => { // tratto 1
+            if( traitValid ) return
+            if( forTrait.trait_type === filter.trait_type && forTrait.value === filter.value ){ //tratto valido
+              traitValid = true
+              return
+            }
+          })
+          filterValid = traitValid
+        })
+        if(filterValid)
+          newView.push(cryptoBoy) // aggiungo il tratto
+      }
+    })
+
+    console.log( newView )
+    this.setState( { marketplaceView: newView } )
+    this.setState( { activeFilters: newFilters } )
+  }
+
+  handleOrderChange = (ev = null) => {
+    console.log( ev )
+    const { numToEth } = this
+    let order = ev != null ? ev.value : this.state.order
+    const { cryptoBoys, marketplaceView } = this.state;
+    if( order === 'ASC' ){
+      marketplaceView.sort( (a, b) => {
+        a = parseInt( numToEth(a.price) )
+        b = parseInt( numToEth(b.price) )
+        return (  a - b  ) 
+      })
+    }else{
+      marketplaceView.sort( (a, b) => {
+        a = parseInt( numToEth(a.price) )
+        b = parseInt( numToEth(b.price) )
+        return (  a - b  ) 
+      }).reverse()
+    }
+    this.setState({ order })
+  }
+
+  setBaseURI = async ( _baseURI ) => {
+    this.setState({ loading: true });
+    this.state.cryptoBoysContract.methods
+      .setBaseURI(_baseURI)
+      .send({ from: this.state.accountAddress })
+      .on("confirmation", () => {
+        this.setState({ loading: false });
+        window.location.reload();
+      });
+  }
+
+  setNftPerAddressLimit = (_limit) => {
+    this.state.cryptoBoysContract.methods
+      .setNftPerAddressLimit(_limit)
+      .send({ from: this.state.accountAddress })
+      .on("confirmation", () => {
+        this.setState({ loading: false });
+        this.setState({ nftPerAddressLimit: _limit });
+      });
+  }
+
+  mintMyNFT = async (_mintAmount) => {
+    this.setState({ loading: true });
+    //sicuramente trovare la supply attuale
+    _mintAmount = _mintAmount;
+    if ( 1 ) {
       let previousTokenId;
       previousTokenId = await this.state.cryptoBoysContract.methods
         .cryptoBoyCounter()
         .call();
       previousTokenId = previousTokenId.toNumber();
-      const tokenId = previousTokenId + 1;
-      const tokenObject = {
-        tokenName: "Crypto Boy",
-        tokenSymbol: "CB",
-        tokenId: `${tokenId}`,
-        name: name,
-        metaData: {
-          type: "color",
-          colors: {
-            cardBorderColor,
-            cardBackgroundColor,
-            headBorderColor,
-            headBackgroundColor,
-            leftEyeBorderColor,
-            rightEyeBorderColor,
-            leftEyeBackgroundColor,
-            rightEyeBackgroundColor,
-            leftPupilBackgroundColor,
-            rightPupilBackgroundColor,
-            mouthColor,
-            neckBackgroundColor,
-            neckBorderColor,
-            bodyBackgroundColor,
-            bodyBorderColor,
-          },
-        },
-      };
-      const cid = await ipfs.add(JSON.stringify(tokenObject));
-      let tokenURI = `https://ipfs.infura.io/ipfs/${cid.path}`;
-      const price = window.web3.utils.toWei(tokenPrice.toString(), "Ether");
+      const tokenId = previousTokenId + _mintAmount;
+      const cost = this.state.cryptoBoysCost;
+      const totalCost = window.web3.utils.toWei( ( cost * _mintAmount ).toString(), "Ether");
       this.state.cryptoBoysContract.methods
-        .mintCryptoBoy(name, tokenURI, price, colorsArray)
-        .send({ from: this.state.accountAddress })
+        .mintCryptoBoy(_mintAmount)
+        .send({ from: this.state.accountAddress, value: totalCost })
         .on("confirmation", () => {
           localStorage.setItem(this.state.accountAddress, new Date().getTime());
           this.setState({ loading: false });
+          return <Redirect to="/my-tokens" push={true} />   
+        })
+        .on("error", (error) => {
           window.location.reload();
         });
-    } else {
-      if (nameIsUsed) {
-        this.setState({ nameIsUsed: true });
-        this.setState({ loading: false });
-      } else if (colorsUsed.length !== 0) {
-        this.setState({ colorIsUsed: true });
-        this.setState({ colorsUsed });
-        this.setState({ loading: false });
-      }
     }
   };
 
@@ -270,6 +420,9 @@ class App extends Component {
       .send({ from: this.state.accountAddress })
       .on("confirmation", () => {
         this.setState({ loading: false });
+        window.location.reload();
+      })
+      .on("error", (error) => {
         window.location.reload();
       });
   };
@@ -283,8 +436,16 @@ class App extends Component {
       .on("confirmation", () => {
         this.setState({ loading: false });
         window.location.reload();
+      })
+      .on("error", (error) => {
+        window.location.reload();
       });
   };
+
+  resetFilter = () => {
+    const { cryptoBoys } = this.state;
+    this.setState( { marketplaceView: cryptoBoys } )
+  }
 
   buyCryptoBoy = (tokenId, price) => {
     this.setState({ loading: true });
@@ -294,22 +455,25 @@ class App extends Component {
       .on("confirmation", () => {
         this.setState({ loading: false });
         window.location.reload();
+      })
+      .on("error", (error) => {
+        window.location.reload();
       });
   };
 
   render() {
     return (
-      <div className="container">
+      <div>
         {!this.state.metamaskConnected ? (
-          <ConnectToMetamask connectToMetamask={this.connectToMetamask} />
+          <ConnectToMetamask connectToMetamask={this.connectToMetamask} state={this.state}/>
         ) : !this.state.contractDetected ? (
           <ContractNotDeployed />
         ) : this.state.loading ? (
           <Loading />
         ) : (
           <>
-            <HashRouter basename="/">
-              <Navbar />
+            <HashRouter basename="/" >
+              <Navbar isAdmin={this.state.cryptoBoysContractOwner === this.state.accountAddress}/>
               <Route
                 path="/"
                 exact
@@ -325,26 +489,37 @@ class App extends Component {
                 render={() => (
                   <FormAndPreview
                     mintMyNFT={this.mintMyNFT}
-                    nameIsUsed={this.state.nameIsUsed}
-                    colorIsUsed={this.state.colorIsUsed}
-                    colorsUsed={this.state.colorsUsed}
                     setMintBtnTimer={this.setMintBtnTimer}
+                    cryptoBoysMaxSupply={this.state.cryptoBoysMaxSupply}
+                    cryptoBoysCount={this.state.cryptoBoysCount}
+                    cryptoBoysCost={this.state.cryptoBoysCost}
                   />
                 )}
               />
-              <Route
+                <Route
                 path="/marketplace"
                 render={() => (
                   <AllCryptoBoys
                     accountAddress={this.state.accountAddress}
-                    cryptoBoys={this.state.cryptoBoys}
+                    marketplaceView={this.state.marketplaceView}
                     totalTokensMinted={this.state.totalTokensMinted}
                     changeTokenPrice={this.changeTokenPrice}
                     toggleForSale={this.toggleForSale}
                     buyCryptoBoy={this.buyCryptoBoy}
-                  />
-                )}
-              />
+                    loading={this.state.loading}
+                    floorPrice={this.state.floorPrice}
+                    highPrice={this.state.highPrice}
+                    handleOrderChange={this.handleOrderChange}
+                    handleFilterBar={this.handleFilterBar}
+                    order={this.state.order}
+                    traits={this.state.traits}
+                    traitsTypes={this.state.traitsTypes}
+                    cryptoBoysMaxSupply={this.state.cryptoBoysMaxSupply}
+                    resetFilter={this.resetFilter}
+                    />
+                  )}
+                />
+
               <Route
                 path="/my-tokens"
                 render={() => (
@@ -354,18 +529,38 @@ class App extends Component {
                     totalTokensOwnedByAccount={
                       this.state.totalTokensOwnedByAccount
                     }
+                    baseURI={this.state.baseURI}
                   />
                 )}
               />
+              { this.state.baseURI != '' ? 
               <Route
                 path="/queries"
                 render={() => (
-                  <Queries cryptoBoysContract={this.state.cryptoBoysContract} />
+                  <Queries 
+                    cryptoBoysContract={this.state.cryptoBoysContract} 
+                    baseURI={this.state.baseURI}
+                  />
                 )}
               />
+               : '' }
+              {
+                this.state.cryptoBoysContractOwner === this.state.accountAddress ?
+              <Route
+                path="/admin"
+                render={() => (
+                  <AdminDashboard 
+                  setBaseURI={this.setBaseURI} 
+                  baseURI={this.state.baseURI}
+                  setNftPerAddressLimit={this.setNftPerAddressLimit} />
+                )}
+              />
+               :
+               '' }
             </HashRouter>
           </>
         )}
+        <span>v0.1.5</span>
       </div>
     );
   }
