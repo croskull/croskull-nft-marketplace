@@ -1,19 +1,19 @@
 import React, { Component } from "react";
-import CryptoBoyList from "../CryptoBoyList/CryptoBoyList";
+import CroSkullList from "../CroSkullsList/CroSkullsList";
 import FilterBar from "../FilterBar/FilterBar";
 import Select from "react-select";
-import './AllCryptoBoys.css';
+import './AllCroSkulls.css';
 
 
-class AllCryptoBoys extends Component {
+class AllCroSkulls extends Component {
   constructor(props) {
     super(props);
     this.state = {
       accountAddress: this.props.accountAddress,
-      totalTokensMinted: this.props.totalTokensMinted,
+      croSkullsCount: this.props.croSkullsCount,
       changeTokenPrice: this.props.changeTokenPrice,
       toggleForSale: this.props.toggleForSale,
-      buyCryptoBoy: this.props.buyCryptoBoy,
+      buyCroSkull: this.props.buyCroSkull,
       loading: this.props.loading,
       traits: this.props.traits,
       traitsTypes: this.props.traitsTypes,
@@ -29,8 +29,8 @@ class AllCryptoBoys extends Component {
   }
 
   componentDidMount  ( ) {
-    /*if( this.props.cryptoBoys[0].metaData !== 0)
-    this.setState( {marketPlaceView: this.props.cryptoBoys })*/
+    /*if( this.props.croSkulls[0].metaData !== 0)
+    this.setState( {marketPlaceView: this.props.croSkulls })*/
   }
 
   render() {
@@ -38,42 +38,48 @@ class AllCryptoBoys extends Component {
       accountAddress,
       changeTokenPrice,
       toggleForSale,
-      buyCryptoBoy,
+      buyCroSkull,
       order,
     } = this.state;
 
     let {
       floorPrice,
       highPrice,
-      cryptoBoysMaxSupply,
-      totalTokensMinted,
+      croSkullsMaxSupply,
+      croSkullsCount,
       handleStatusNFTFilter
     } = this.props;
-    console.log( this.props.marketplaceView )
+
+    let customStyle = {
+      option: (provided, state) => ({
+        ...provided,
+        color: 'black',
+      })
+    }
     return (
         <div className="container">
           <div className="card mt-1">
             <div className="card-body align-items-left d-flex justify-content-center">
               { highPrice ? 
             <div className="align-items-left d-flex justify-content-left spaced">
-                <span className="contractInfo">
+                <span className="contractInfo border-shadow">
                   Floor Price
                   <b>{ ` ${floorPrice} Ξ`}</b>
                 </span>
-                <span className="contractInfo">
+                <span className="contractInfo border-shadow">
                   Higher Price
                   <b>{ ` ${highPrice} Ξ`}</b>
                 </span>
-                <span className="contractInfo">
-                  Minted CRSkull
-                  <b>{ ` #${totalTokensMinted}/${cryptoBoysMaxSupply}`}</b>
+                <span className="contractInfo border-shadow">
+                  Minted CroSkull
+                  <b>{ ` #${croSkullsCount}/${croSkullsMaxSupply}`}</b>
                 </span>
               </div>
               : '' }
             </div>
           </div>
           <div className="card mt-1">
-            <div className="card-body align-items-left d-flex justify-content-space-between">
+            <div className="border-shadow card-body align-items-left d-flex justify-content-space-between">
               <FilterBar
                 traits={this.props.traits}
                 traitsTypes={this.props.traitsTypes}
@@ -88,19 +94,20 @@ class AllCryptoBoys extends Component {
                     options={this.priceOptions}
                     onChange={this.handleOrderChange}
                     value={order}
+                    styles={customStyle}
                   />
                 </div>
               </div>
             </div>
           </div>
-          <div className="d-flex flex-wrap mb-2">
-            <CryptoBoyList
-              cryptoBoys={this.props.marketplaceView}
+          <div className="skullContainer d-flex flex-wrap mb-2">
+            <CroSkullList
+              croSkulls={this.props.marketplaceView}
               accountAddress={accountAddress}
-              totalTokensMinted={totalTokensMinted}
+              croSkullsCount={croSkullsCount}
               changeTokenPrice={changeTokenPrice}
               toggleForSale={toggleForSale}
-              buyCryptoBoy={buyCryptoBoy}
+              buyCroSkull={buyCroSkull}
             />
             </div>
       </div>
@@ -108,4 +115,4 @@ class AllCryptoBoys extends Component {
   }
 };
 
-export default AllCryptoBoys;
+export default AllCroSkulls;

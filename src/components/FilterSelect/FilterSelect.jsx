@@ -1,4 +1,4 @@
-import React, { Component, useState, setState, useEffect } from "react";
+import React from "react";
 
 const FilterSelect = ( { 
     traits,

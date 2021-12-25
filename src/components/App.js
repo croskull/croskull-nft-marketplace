@@ -1,42 +1,28 @@
-import React, { Component, useEffect } from "react";
-import { HashRouter, Route, Redirect } from "react-router-dom";
-import "./App.css";
+import React, { Component } from "react";
+import { HashRouter, Route } from "react-router-dom";
 import Web3 from "web3";
-import CryptoBoys from "../abis/CryptoBoys.json";
-import FormAndPreview from "../components/FormAndPreview/FormAndPreview";
-import AllCryptoBoys from "./AllCryptoBoys/AllCryptoBoys";
-import DetailsPage from "./AllCryptoBoys/AllCryptoBoys";
+import CroSkulls from "../abis/CroSkulls.json";
+import MintPage from "./MintPage/MintPage";
+import AllCroSkulls from "./AllCroSkulls/AllCroSkulls";
 import AccountDetails from "./AccountDetails/AccountDetails";
 import ContractNotDeployed from "./ContractNotDeployed/ContractNotDeployed";
 import ConnectToMetamask from "./ConnectMetamask/ConnectToMetamask";
 import Loading from "./Loading/Loading";
 import Navbar from "./Navbar/Navbar";
-import MyCryptoBoys from "./MyCryptoBoys/MyCryptoBoys";
+import MyCroSkulls from "./MyCroSkulls/MyCroSkulls";
 import Queries from "./Queries/Queries";
 import AdminDashboard from './AdminDashboard/AdminDashboard';
-import Bottleneck from "bottleneck";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import WalletConnectQRCodeModal from "@walletconnect/qrcode-modal";
+import ReactNotification, { store } from 'react-notifications-component';
+import "./App.css";
+import 'react-notifications-component/dist/theme.css';
 
 
-
-const ipfsClient = require("ipfs-http-client");
 const WCProvider = new WalletConnectProvider({
   rpc: {
     339: "https://cassini.crypto.org",
   },
 })
-
-const ipfs = ipfsClient({
-  host: "ipfs.infura.io",
-  port: 5001,
-  protocol: "https",
-});
-
-const limiter = new Bottleneck({
-  maxConcurrent: 1,
-  minTime: 1000
-});
 
 class App extends Component {
   constructor(props) {
@@ -44,13 +30,13 @@ class App extends Component {
     this.state = {
       accountAddress: "",
       accountBalance: "",
-      cryptoBoysContract: null,
-      cryptoBoysContractOwner: null,
-      cryptoBoysCount: 0,
-      cryptoBoysMaxSupply: 0,
-      cryptoBoysCost: 1,
+      croSkullsContract: null,
+      croSkullsContractOwner: null,
+      croSkulls: [],
+      croSkullsCount: 0,
+      croSkullsMaxSupply: 0,
+      croSkullsCost: 1,
       nftPerAddressLimit: 0,
-      cryptoBoys: [],
       loading: false,
       metamaskConnected: false,
       walletConnectConnected: false,
@@ -67,6 +53,10 @@ class App extends Component {
       activeFilters: [],
       activeNFTStatus: 'all',
       baseURI: '',
+      isMarketplace: false,
+      isWhitelist: false,
+      isAddressWhitelisted: false,
+      currentTx: []
     };
     this.handleWeb3AccountChange();
   }
@@ -88,6 +78,87 @@ class App extends Component {
     return parseFloat( window.web3.utils.fromWei( num.toString(), "ether" ), 6 )
   }
 
+  toggleSmartcontractVariables = async (toBeChanged) => { //can be marketplace || whitelist
+    let { croSkullsContract, isMarketplace, isWhitelist, accountAddress } = this.state;
+    let functionToCall, feature, currentStatus;
+
+    switch(toBeChanged){
+      case 'marketplace':
+          feature = 'Marketplace';
+          currentStatus = isMarketplace;
+        break;
+      case 'whitelist':
+          feature = 'Whitelist';
+          currentStatus = isWhitelist;
+        break;
+    }
+    if( currentStatus ){
+      functionToCall = 'disable' + feature;
+    }else{
+      functionToCall = 'enable' + feature;
+    }
+
+    await croSkullsContract.methods[functionToCall]
+        .send({ from: accountAddress })
+        .on("confirmation", async (confirmation) => {
+          if( confirmation === 1 ){
+            let newState = {};
+            if(feature === 'Marketplace'){
+              newState = { isMarketplace: !isMarketplace }
+            }else{
+              newState = { isWhitelist: !isWhitelist }
+            }
+            this.setState( newState )
+            store.addNotification(
+              {
+                title: `${feature} Status Changed: ${! currentStatus }!`,
+                message: `1 confirmation(s)`,
+                type: "success",
+                insert: "top",
+                container: "bottom-right",
+                dismiss: {
+                  duration: 4000
+                }
+              }
+            )
+            return;
+          }
+        })
+  }
+
+  addAddressToWhitelist = async (address = false) => {
+    let { croSkullsContract, isWhitelist, accountAddress } = this.state;
+    if( ! isWhitelist || ! address || ! window.web3.utils.isAddress(address) )
+      return;
+    
+    let isCurrentAddressWhitelisted = await croSkullsContract.methods
+      .whitelist(address)
+      .call();
+    
+    if( ! isCurrentAddressWhitelisted ){
+
+      let addToWhitelist = croSkullsContract.methods
+        .addToWhitelist(address)
+        .send({ from: accountAddress })
+        .on("confirmation", (c) => this.handleConfirmation(c, () => 
+          store.addNotification({
+            title: `Added to Whitelist!`,
+            message: `${address} succesful added to the whitelist!`,
+            type: "success",
+            insert: "top",
+            container: "bottom-right",
+            dismiss: {
+              duration: 4000
+            }
+          }) 
+        ))
+        .on("error", () => window.location.reload );
+
+      this.setState( { currentTx: addToWhitelist } );
+      await this.state.currentTx;
+    }
+  }
+
   setMintBtnTimer = () => {
     const mintBtn = document.getElementById("mintBtn");
     if (mintBtn !== undefined && mintBtn !== null) {
@@ -95,7 +166,7 @@ class App extends Component {
         lastMintTime: localStorage.getItem(this.state.accountAddress),
       });
       this.state.lastMintTime === undefined || this.state.lastMintTime === null
-        ? (mintBtn.innerHTML = "Mint My CRSkull")
+        ? (mintBtn.innerHTML = "Mint")
         : this.checkIfCanMint(parseInt(this.state.lastMintTime));
     }
   };
@@ -109,7 +180,7 @@ class App extends Component {
       const diff = countDownTime - now;
       if (diff < 0) {
         mintBtn.removeAttribute("disabled");
-        mintBtn.innerHTML = "Mint My Crypto Boy";
+        mintBtn.innerHTML = "Mint";
         localStorage.removeItem(this.state.accountAddress);
         clearInterval(interval);
       } else {
@@ -151,99 +222,87 @@ class App extends Component {
       this.setState({ accountBalance });
       this.setState({ loading: false });
       const networkId = await web3.eth.net.getId();
-      const networkData = CryptoBoys.networks[networkId];
+      const networkData = CroSkulls.networks[networkId];
       if (networkData) {
         //load contract data
         this.setState({ loading: true });
-        const cryptoBoysContract = web3.eth.Contract(
-          CryptoBoys.abi,
+        const croSkullsContract = web3.eth.Contract(
+          CroSkulls.abi,
           networkData.address
         );
-        this.setState({ cryptoBoysContract });
+        this.setState({ croSkullsContract });
         this.setState({ contractDetected: true });
 
+        const contractOwner = await croSkullsContract.methods['getOwner']
+          .call();
+        this.setState( { croSkullsContractOwner: contractOwner })
+
+        let isMarketplace = await croSkullsContract.methods
+          .isMarketplace()
+          .call();
+        let isWhitelist = await croSkullsContract.methods
+          .isWhitelist()
+          .call();
+        let isAddressWhitelisted = await croSkullsContract.methods
+          .whitelist( accounts[0] )
+          .call();
+        
+        console.log( {
+          isMarketplace,
+          isWhitelist,
+          isAddressWhitelisted
+        } );
+        this.setState( {
+          isMarketplace,
+          isWhitelist,
+          isAddressWhitelisted
+        } );
+
         //get current token baseURI
-        let baseURI = await cryptoBoysContract.methods
+        let baseURI = await croSkullsContract.methods
           .baseURI()
           .call();
-
-        baseURI = 'https://gateway.pinata.cloud/ipfs/' + baseURI;
-        this.setState({ baseURI }); 
-
-        //get max total supply
-        //count actual circulating supply
-        const cryptoBoysCount = await cryptoBoysContract.methods
-        .cryptoBoyCounter()
-        .call();
-
-        this.setState({ cryptoBoysCount });
-        const cryptoBoysMaxSupply = await cryptoBoysContract.methods
-          .getMaxSupply()
-          .call();
-        
-        this.setState( { cryptoBoysMaxSupply } )
-
-        const result = await fetch(this.state.baseURI + '/_metadata.json' )
-        const metaDatas = await result.json();
-
-        this.setState({ loading: false });
-        for (var i = 1; i <= cryptoBoysCount; i++) {
-          const cryptoBoy = await cryptoBoysContract.methods
-          .allCryptoBoys(i)
-          .call();
-          metaDatas.map(async (metaData) => {
-            if( cryptoBoy.tokenId.toNumber() === metaData.edition )
-            this.setState({
-              cryptoBoys: [
-                ...this.state.cryptoBoys, {
-                  ...cryptoBoy,
-                  metaData,
-                }
-              ],
-              marketplaceView: [
-                ...this.state.cryptoBoys, {
-                  ...cryptoBoy,
-                  metaData,
-                }
-              ],
-            });
-          })
-        }
-
-        let floorPrice = 9999999999;
-        let highPrice = 0;
-        let cryptoBoys = this.state.cryptoBoys;
-        cryptoBoys.forEach( cryptoboy => {
-          let price = this.numToEth(cryptoboy.price)
-          console.log(price)
-          if( price < floorPrice )
-            floorPrice = price
           
-          if( price > highPrice)
-            highPrice = price
-        })
-        this.setState({ floorPrice, highPrice })
-        /*const cryptoBoysCost = await cryptoBoysContract.methods
+        this.setState({ loading: false });
+        if( baseURI ) {
+          baseURI = 'https://gateway.pinata.cloud/ipfs/' + baseURI;
+          this.setState({ baseURI }); 
+  
+          await this.fetchAllCroSkulls();
+  
+          const croSkullsMaxSupply = await croSkullsContract.methods
+            .getMaxSupply()
+            .call();
+          
+          this.setState( { croSkullsMaxSupply } )
+  
+          let floorPrice = 9999999999;
+          let highPrice = 0;
+          let croSkulls = this.state.croSkulls;
+          croSkulls.forEach( cryptoboy => {
+            let price = this.numToEth(cryptoboy.price)
+            console.log(price)
+            if( price < floorPrice )
+              floorPrice = price
+            
+            if( price > highPrice)
+              highPrice = price
+          })
+          this.setState({ floorPrice, highPrice })
+        }
+        /*const croSkullsCost = await croSkullsContract.methods
           .getCost()
           .call();
-        this.setState({ cryptoBoysCost });*/
+        this.setState({ croSkullsCost });*/
 
-        
-        //get contract owner
-        const contractOwner = await cryptoBoysContract.methods
-          .getOwner()
-          .call();
-        this.setState( {
-          cryptoBoysContractOwner: contractOwner
-        })
         //get total minted tokens ( include burned (?) )
-        let totalTokensMinted = await cryptoBoysContract.methods
+        let totalTokensMinted = await croSkullsContract.methods
           .getNumberOfTokensMinted()
           .call();
         totalTokensMinted = totalTokensMinted.toNumber();
         this.setState({ totalTokensMinted });
-        //get actual tokens owner by current address
-        let totalTokensOwnedByAccount = await cryptoBoysContract.methods
+
+        let totalTokensOwnedByAccount = await croSkullsContract.methods
           .getTotalNumberOfTokensOwnedByAnAddress(this.state.accountAddress)
           .call();
         totalTokensOwnedByAccount = totalTokensOwnedByAccount.toNumber();
@@ -253,6 +312,44 @@ class App extends Component {
       }
     }
   };
+
+  fetchAllCroSkulls = async () => {
+    let { croSkullsContract, croSkullsCount } = this.state
+    croSkullsCount = croSkullsCount ? croSkullsCount + 1 : croSkullsCount;
+    console.log(croSkullsCount)
+    let newCroSkullsCount = await croSkullsContract.methods
+        .croSkullCounter()
+        .call();
+    newCroSkullsCount = newCroSkullsCount.toNumber()
+    console.log( newCroSkullsCount  )
+
+    this.setState({ croSkullsCount: newCroSkullsCount });
+    const result = await fetch(this.state.baseURI + '/_metadata.json' );
+    const metaDatas = await result.json();
+    for (croSkullsCount; croSkullsCount <= newCroSkullsCount; croSkullsCount++) {
+      const croSkull = await croSkullsContract.methods
+      .allCroSkulls(croSkullsCount)
+      .call();
+      
+      metaDatas.map(async (metaData) => {
+        if( croSkull.tokenId.toNumber() === metaData.edition )
+        this.setState({
+          croSkulls: [
+            ...this.state.croSkulls, {
+              ...croSkull,
+              metaData,
+            }
+          ],
+          marketplaceView: [
+            ...this.state.croSkulls, {
+              ...croSkull,
+              metaData,
+            }
+          ],
+        });
+      })
+    }
+  }
 
   connectToMetamask = async () => {
     await window.ethereum.enable();
@@ -271,13 +368,13 @@ class App extends Component {
   }
 
   setMetaData = async () => {
-    const { cryptoBoys } = this.state
-    if (cryptoBoys.length !== 0) {
+    const { croSkulls } = this.state
+    if (croSkulls.length !== 0) {
       let traits = []
       let traitsTypes = []
-      if( cryptoBoys.length.length !== 0 ){
-        let boyLength = cryptoBoys.length
-        cryptoBoys.forEach( (cryptoboy, iBoy) => { //loop cryptoboy
+      if( croSkulls.length.length !== 0 ){
+        let boyLength = croSkulls.length
+        croSkulls.forEach( (cryptoboy, iBoy) => { //loop cryptoboy
           if( cryptoboy.metaData ){
             let traitsLength = cryptoboy.metaData.attributes.length
             cryptoboy.metaData.attributes.forEach( (trait, iTraits) => { // loop tratti
@@ -321,30 +418,30 @@ class App extends Component {
   };
 
   handleStatusNFTFilter = (ev) => {
-    let { cryptoBoys, accountAddress } = this.state;
+    let { croSkulls, accountAddress } = this.state;
     let value = ev.value
     console.log(value)
     let newMarketplaceView = [];
     switch (value){
       case 'all':
-        newMarketplaceView = cryptoBoys
+        newMarketplaceView = croSkulls
         break;
       case 'inSale':
-        cryptoBoys.forEach( ( cryptoBoy, i ) => {
-          if( cryptoBoy.forSale )
-            newMarketplaceView.push(cryptoBoy)
+        croSkulls.forEach( ( croSkull, i ) => {
+          if( croSkull.forSale )
+            newMarketplaceView.push(croSkull)
         } )
         break;
       case 'notInSale':
-        cryptoBoys.forEach( ( cryptoBoy, i ) => {
-          if( ! cryptoBoy.forSale )
-            newMarketplaceView.push(cryptoBoy)
+        croSkulls.forEach( ( croSkull, i ) => {
+          if( ! croSkull.forSale )
+            newMarketplaceView.push(croSkull)
         } )
         break;
       case 'owned':
-        cryptoBoys.forEach( ( cryptoBoy, i ) => {
-          if( cryptoBoy.currentOwner === accountAddress)
-            newMarketplaceView.push(cryptoBoy)
+        croSkulls.forEach( ( croSkull, i ) => {
+          if( croSkull.currentOwner === accountAddress)
+            newMarketplaceView.push(croSkull)
         } )
         break;
       }
@@ -354,7 +451,7 @@ class App extends Component {
   }
 
   handleFilterBar = (ev) => {
-    const { cryptoBoys, marketplaceView, activeFilters } = this.state;
+    const { croSkulls, marketplaceView, activeFilters } = this.state;
     let value = ev.value.split('_')
 
     let trait = value[0]
@@ -385,13 +482,13 @@ class App extends Component {
 
     console.log(newFilters)
     let newView = [];
-    cryptoBoys.map( ( cryptoBoy, i ) => { //crypto boy 1
-      if( cryptoBoy.metaData ){
+    croSkulls.map( ( croSkull, i ) => { //crypto boy 1
+      if( croSkull.metaData ){
         let filterValid = true
         newFilters.forEach( filter => { //filtro 1
           if( ! filterValid ) return
           let traitValid = false
-          cryptoBoy.metaData.attributes.forEach(forTrait => { // tratto 1
+          croSkull.metaData.attributes.forEach(forTrait => { // tratto 1
             if( traitValid ) return
 
             if( forTrait.trait_type === filter.trait_type && forTrait.value === filter.value || filter.value === 'none' ){ //tratto valido
@@ -402,7 +499,7 @@ class App extends Component {
           filterValid = traitValid
         })
         if(filterValid)
-          newView.push(cryptoBoy) // aggiungo il tratto
+          newView.push(croSkull) // aggiungo il tratto
       }
     })
 
@@ -415,7 +512,7 @@ class App extends Component {
     console.log( ev )
     const { numToEth } = this
     let order = ev != null ? ev.value : this.state.order
-    const { cryptoBoys, marketplaceView } = this.state;
+    const { croSkulls, marketplaceView } = this.state;
     if( order === 'ASC' ){
       marketplaceView.sort( (a, b) => {
         a = parseInt( numToEth(a.price) )
@@ -434,7 +531,7 @@ class App extends Component {
 
   setBaseURI = async ( _baseURI ) => {
     this.setState({ loading: true });
-    this.state.cryptoBoysContract.methods
+    this.state.croSkullsContract.methods
       .setBaseURI(_baseURI)
       .send({ from: this.state.accountAddress })
       .on("confirmation", () => {
@@ -444,45 +541,79 @@ class App extends Component {
   }
 
   setNftPerAddressLimit = (_limit) => {
-    this.state.cryptoBoysContract.methods
+    this.state.croSkullsContract.methods
       .setNftPerAddressLimit(_limit)
       .send({ from: this.state.accountAddress })
       .on("confirmation", () => {
+        console.log('limit')
         this.setState({ loading: false });
         this.setState({ nftPerAddressLimit: _limit });
       });
   }
 
   mintMyNFT = async (_mintAmount) => {
-    this.setState({ loading: true });
-    //sicuramente trovare la supply attuale
-    _mintAmount = _mintAmount;
-    if ( 1 ) {
+    _mintAmount = _mintAmount || false;
+    if ( _mintAmount ) {
       let previousTokenId;
-      previousTokenId = await this.state.cryptoBoysContract.methods
-        .cryptoBoyCounter()
+
+      let { croSkullsContract, accountAddress, croSkullsCost, currentTx } = this.state;
+
+      previousTokenId = await croSkullsContract.methods
+        .croSkullCounter()
         .call();
+
+      let callback_1 = async (c) => {
+        await this.fetchAllCroSkulls()
+        store.addNotification(
+          {
+            title: `CroSkull${_mintAmount > 1 ? 's' : '' } Minted!`,
+            message: `${c} confirmation(s)`,
+            type: "success",
+            insert: "top",
+            container: "bottom-right",
+            dismiss: {
+              duration: 4000
+            }
+          }
+        )
+        localStorage.setItem(accountAddress, new Date().getTime());
+      }
+
+      let callback_2 = (c) => {
+        window.location.hash = "/my-tokens"; // hash redirect alla pagina dei token 
+      }
+
       previousTokenId = previousTokenId.toNumber();
-      const tokenId = previousTokenId + _mintAmount;
-      const cost = this.state.cryptoBoysCost;
-      const totalCost = window.web3.utils.toWei( ( cost * _mintAmount ).toString(), "Ether");
-      this.state.cryptoBoysContract.methods
-        .mintCryptoBoy(_mintAmount)
-        .send({ from: this.state.accountAddress, value: totalCost })
-        .on("confirmation", () => {
-          localStorage.setItem(this.state.accountAddress, new Date().getTime());
-          this.setState({ loading: false });
-          return <Redirect to="/my-tokens" push={true} />   
-        })
-        .on("error", (error) => {
-          window.location.reload();
-        });
+      const totalCost = window.web3.utils.toWei( ( croSkullsCost * _mintAmount ).toString(), "Ether");
+      let txCroSkullMint = croSkullsContract.methods
+        .mintCroSkull(_mintAmount)
+        .send({ from: accountAddress, value: totalCost })
+        .on("confirmation", (c) => this.handleConfirmation(c, callback_1, callback_2) )
+        .on("error", () => window.location.reload );
+
+      this.setState( { currentTx: txCroSkullMint } );
+      await currentTx;
     }
   };
 
+  handleConfirmation = async ( confirmation, callback_1 = false, callback_2 = false ) => {
+    //try to globally handle all the transaction confirmation using transaction
+    console.log( confirmation );
+    if(confirmation === 1 && callback_1 ){
+      callback_1(confirmation)
+    }
+    if(confirmation === 3 ){
+      if( callback_2 )
+        callback_2(confirmation);
+      
+      this.state.currentTx.off("confirmation")
+      this.setState( { currentTx: [] } );
+    }
+  }
+
   toggleForSale = (tokenId) => {
     this.setState({ loading: true });
-    this.state.cryptoBoysContract.methods
+    this.state.croSkullsContract.methods
       .toggleForSale(tokenId)
       .send({ from: this.state.accountAddress })
       .on("confirmation", () => {
@@ -497,7 +628,7 @@ class App extends Component {
   changeTokenPrice = (tokenId, newPrice) => {
     this.setState({ loading: true });
     const newTokenPrice = window.web3.utils.toWei(newPrice, "Ether");
-    this.state.cryptoBoysContract.methods
+    this.state.croSkullsContract.methods
       .changeTokenPrice(tokenId, newTokenPrice)
       .send({ from: this.state.accountAddress })
       .on("confirmation", () => {
@@ -510,13 +641,13 @@ class App extends Component {
   };
 
   resetFilter = () => {
-    const { cryptoBoys } = this.state;
-    this.setState( { marketplaceView: cryptoBoys } )
+    const { croSkulls } = this.state;
+    this.setState( { marketplaceView: croSkulls } )
   }
 
-  buyCryptoBoy = (tokenId, price) => {
+  buyCroSkull = (tokenId, price) => {
     this.setState({ loading: true });
-    this.state.cryptoBoysContract.methods
+    this.state.croSkullsContract.methods
       .buyToken(tokenId)
       .send({ from: this.state.accountAddress, value: price })
       .on("confirmation", () => {
@@ -530,7 +661,8 @@ class App extends Component {
 
   render() {
     return (
-      <div>
+      <div className="container">
+        <ReactNotification />
         {!this.state.metamaskConnected ? (
           <ConnectToMetamask 
             connectToMetamask={this.connectToMetamask} 
@@ -543,7 +675,7 @@ class App extends Component {
         ) : (
           <>
             <HashRouter basename="/" >
-              <Navbar isAdmin={this.state.cryptoBoysContractOwner === this.state.accountAddress}/>
+              <Navbar isAdmin={this.state.croSkullsContractOwner === this.state.accountAddress}/>
               <Route
                 path="/"
                 exact
@@ -557,46 +689,50 @@ class App extends Component {
               <Route
                 path="/mint"
                 render={() => (
-                  <FormAndPreview
+                  <MintPage
                     mintMyNFT={this.mintMyNFT}
                     setMintBtnTimer={this.setMintBtnTimer}
-                    cryptoBoysMaxSupply={this.state.cryptoBoysMaxSupply}
-                    cryptoBoysCount={this.state.cryptoBoysCount}
-                    cryptoBoysCost={this.state.cryptoBoysCost}
+                    state={this.state}
                   />
                 )}
               />
+              
                 <Route
                 path="/marketplace"
                 render={() => (
-                  <AllCryptoBoys
-                    accountAddress={this.state.accountAddress}
-                    marketplaceView={this.state.marketplaceView}
-                    totalTokensMinted={this.state.totalTokensMinted}
-                    changeTokenPrice={this.changeTokenPrice}
-                    toggleForSale={this.toggleForSale}
-                    buyCryptoBoy={this.buyCryptoBoy}
-                    loading={this.state.loading}
-                    floorPrice={this.state.floorPrice}
-                    highPrice={this.state.highPrice}
-                    handleOrderChange={this.handleOrderChange}
-                    handleFilterBar={this.handleFilterBar}
-                    handleStatusNFTFilter={this.handleStatusNFTFilter}
-                    order={this.state.order}
-                    traits={this.state.traits}
-                    traitsTypes={this.state.traitsTypes}
-                    cryptoBoysMaxSupply={this.state.cryptoBoysMaxSupply}
-                    resetFilter={this.resetFilter}
-                    />
+                  this.state.isMarketplace ? 
+                    <AllCroSkulls
+                      accountAddress={this.state.accountAddress}
+                      marketplaceView={this.state.marketplaceView}
+                      croSkullsCount={this.state.croSkullsCount}
+                      changeTokenPrice={this.changeTokenPrice}
+                      toggleForSale={this.toggleForSale}
+                      buyCroSkull={this.buyCroSkull}
+                      loading={this.state.loading}
+                      floorPrice={this.state.floorPrice}
+                      highPrice={this.state.highPrice}
+                      handleOrderChange={this.handleOrderChange}
+                      handleFilterBar={this.handleFilterBar}
+                      handleStatusNFTFilter={this.handleStatusNFTFilter}
+                      order={this.state.order}
+                      traits={this.state.traits}
+                      traitsTypes={this.state.traitsTypes}
+                      croSkullsMaxSupply={this.state.croSkullsMaxSupply}
+                      resetFilter={this.resetFilter}
+                      />
+                    :
+                    <div class="card">
+                      <h1>Marketplace is Closed :C</h1>
+                    </div>
                   )}
                 />
 
               <Route
                 path="/my-tokens"
                 render={() => (
-                  <MyCryptoBoys
+                  <MyCroSkulls
                     accountAddress={this.state.accountAddress}
-                    cryptoBoys={this.state.cryptoBoys}
+                    croSkulls={this.state.croSkulls}
                     totalTokensOwnedByAccount={
                       this.state.totalTokensOwnedByAccount
                     }
@@ -609,21 +745,24 @@ class App extends Component {
                 path="/queries"
                 render={() => (
                   <Queries 
-                    cryptoBoysContract={this.state.cryptoBoysContract} 
+                    croSkullsContract={this.state.croSkullsContract} 
                     baseURI={this.state.baseURI}
                   />
                 )}
               />
                : '' }
               {
-                this.state.cryptoBoysContractOwner === this.state.accountAddress ?
+                this.state.croSkullsContractOwner === this.state.accountAddress ?
               <Route
                 path="/admin"
                 render={() => (
-                  <AdminDashboard 
-                  setBaseURI={this.setBaseURI} 
-                  baseURI={this.state.baseURI}
-                  setNftPerAddressLimit={this.setNftPerAddressLimit} />
+                  <AdminDashboard
+                    state={this.state}
+                    setBaseURI={this.setBaseURI} 
+                    setNftPerAddressLimit={this.setNftPerAddressLimit} 
+                    toggleSmartcontractVariables={this.toggleSmartcontractVariables}
+                    addAddressToWhitelist={this.addAddressToWhitelist}
+                  />
                 )}
               />
                :

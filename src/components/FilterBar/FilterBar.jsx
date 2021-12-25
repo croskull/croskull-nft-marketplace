@@ -1,4 +1,4 @@
-import React, { Component, useState, setState, useEffect } from "react";
+import React, { useState } from "react";
 import Select from "react-select"
 
 const FilterBar = ( { 
@@ -17,6 +17,14 @@ const FilterBar = ( {
         value: "owned", label: "Owned"
     }]
     const [loading, setLoading] = useState(false);
+
+    let customStyle = {
+        option: (provided, state) => ({
+          ...provided,
+          color: 'black',
+        })
+      }
+      
     return (
         <div className="filterBar align-items-right d-flex justify-content-right spaced">
             {  traitsTypes.length > 0 ?
@@ -38,6 +46,7 @@ const FilterBar = ( {
                                 onChange={handleFilterBar}
                                 key={i}
                                 placeholder="None"
+                                styles={customStyle}
                             />
                         </div>
                     )

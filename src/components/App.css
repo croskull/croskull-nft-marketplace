@@ -2,6 +2,49 @@ input::-webkit-input-placeholder {
   font-size: 1rem;
 }
 
+.adminDash {
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: top;
+}
+
+.croSkulls-main, .page-wrapper{
+  height: 100%;
+}
+
+.skullMetadata{
+  padding: 16px 12px !important;
+  margin: 12px 8px !important;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.border-shadow{
+  border: 1px solid #193d71 !important;
+  -webkit-box-shadow: 2px 3px 19px -3px #193D71;
+  box-shadow: 2px 3px 10px -3px #152742;
+  border-radius: 8px;
+  color: #fff !important;
+  background: transparent !important;
+  background-color: transparent;
+}
+
+.toggleContainer {
+  display: flex;
+  flex-direction: row;
+  column-gap: 20px;
+  align-items: center;
+  padding: 10px;
+}
+
+.toggleContainer > label {
+  padding: 0;
+  margin: 0;
+}
+
 input[type="color"]:hover {
   cursor: pointer;
 }
@@ -11,6 +54,7 @@ input[type="color"]:hover {
 .NFT-image{
   width: 100%;
   height: 100%;
+  border-radius: 8px;
 }
 
 .site-logo{

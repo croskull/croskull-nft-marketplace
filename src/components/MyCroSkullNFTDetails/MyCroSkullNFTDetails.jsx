@@ -1,7 +1,7 @@
 import React from "react";
 import { Accordion, Card } from "react-bootstrap";
 
-const MyCryptoBoyNFTDetails = (props) => {
+const MyCroSkullNFTDetails = (props) => {
   const {
     tokenId,
     tokenName,
@@ -10,7 +10,7 @@ const MyCryptoBoyNFTDetails = (props) => {
     previousOwner,
     numberOfTransfers,
     metaData
-  } = props.cryptoboy;
+  } = props.croskull;
   return (
     <div key={tokenId.toNumber()} className="mt-4 ml-3">
       <p>
@@ -61,4 +61,4 @@ const MyCryptoBoyNFTDetails = (props) => {
   );
 };
 
-export default MyCryptoBoyNFTDetails;
+export default MyCroSkullNFTDetails;

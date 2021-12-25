@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 
-const CryptoBoyNFTImage = ({ imageURI }) => {
+const CroSkullNFTImage = ({ imageURI }) => {
   imageURI = imageURI.replace('ipfs://', '')
   imageURI = imageURI.split('/')
   imageURI = `https://infura-ipfs.io/ipfs/${imageURI[0]}/${imageURI[1]}`
@@ -16,4 +16,4 @@ const CryptoBoyNFTImage = ({ imageURI }) => {
   );
 };
 
-export default CryptoBoyNFTImage;
+export default CroSkullNFTImage;
