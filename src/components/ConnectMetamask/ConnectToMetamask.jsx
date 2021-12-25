@@ -10,15 +10,15 @@ const ConnectToMetamask = ({ connectToMetamask, connectToWalletConnect }) => {
     <div className="container metamask">
       <div className="">
         <h1 className="display-5">
-          CROSkull NFT Marketplace
+          CroSkull NFT Marketplace
         </h1>
         <p className="lead">
-          Access CRSkull Metaverse
+          Access CroSkull Metaverse
         </p>
         <hr className="my-4" />
         <button
           onClick={connectToMetamask}
-          className="btn btn-primary d-flex align-items-center"
+          className="btn btn-dark d-flex align-items-center"
           style={{ fontSize: "0.9rem", letterSpacing: "0.14rem" }}
         >
           Connect Metamask{" "}
@@ -31,7 +31,7 @@ const ConnectToMetamask = ({ connectToMetamask, connectToWalletConnect }) => {
         <br></br>
         <button
           onClick={connectToWalletConnect}
-          className="btn btn-primary d-flex align-items-center"
+          className="btn btn-dark d-flex align-items-center"
           style={{ fontSize: "0.9rem", letterSpacing: "0.14rem" }}
         >
           Connect to WalletConnect{" "}
