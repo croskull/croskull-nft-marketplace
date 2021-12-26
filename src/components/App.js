@@ -9,6 +9,7 @@ import ContractNotDeployed from "./ContractNotDeployed/ContractNotDeployed";
 import ConnectToMetamask from "./ConnectMetamask/ConnectToMetamask";
 import Loading from "./Loading/Loading";
 import Navbar from "./Navbar/Navbar";
+import RewardBar from "./RewardBar/RewardBar";
 import MyCroSkulls from "./MyCroSkulls/MyCroSkulls";
 import Queries from "./Queries/Queries";
 import AdminDashboard from './AdminDashboard/AdminDashboard';
@@ -30,6 +31,7 @@ class App extends Component {
     this.state = {
       accountAddress: "",
       accountBalance: "",
+      managerAddress: null,
       croSkullsContract: null,
       croSkullsContractOwner: null,
       croSkulls: [],
@@ -53,10 +55,16 @@ class App extends Component {
       activeFilters: [],
       activeNFTStatus: 'all',
       baseURI: '',
-      isMarketplace: true,
+      isMarketplace: false,
       isWhitelist: false,
+      isWithdraw: false,
       isAddressWhitelisted: false,
-      currentTx: []
+      currentTx: [],
+      totalRewardPool: 0,
+      currentRewardFee: 0,
+      currentReward: 0,
+      isRewardable: 0,
+      alreadyClaimed: 0
     };
     this.handleWeb3AccountChange();
   }
@@ -68,8 +76,8 @@ class App extends Component {
   }
 
   componentWillMount = async () => {
-    if( window.ethereum )
-      await this.loadWeb3(window.ethereum);
+
+      await this.loadWeb3();
 
     await this.setMintBtnTimer();
   };
@@ -79,39 +87,30 @@ class App extends Component {
   }
 
   toggleSmartcontractVariables = async (toBeChanged) => { //can be marketplace || whitelist
-    let { croSkullsContract, isMarketplace, isWhitelist, accountAddress } = this.state;
-    let functionToCall, feature, currentStatus;
-
-    switch(toBeChanged){
-      case 'marketplace':
-          feature = 'Marketplace';
-          currentStatus = isMarketplace;
-        break;
-      case 'whitelist':
-          feature = 'Whitelist';
-          currentStatus = isWhitelist;
-        break;
-    }
-    if( currentStatus ){
-      functionToCall = 'disable' + feature;
-    }else{
-      functionToCall = 'enable' + feature;
-    }
-
-    await croSkullsContract.methods[functionToCall]
+    let { croSkullsContract, isMarketplace, isWhitelist, isWithdraw, accountAddress } = this.state;
+    
+    await croSkullsContract.methods
+        .toggleSetting(toBeChanged)
         .send({ from: accountAddress })
         .on("confirmation", async (confirmation) => {
           if( confirmation === 1 ){
             let newState = {};
-            if(feature === 'Marketplace'){
-              newState = { isMarketplace: !isMarketplace }
-            }else{
-              newState = { isWhitelist: !isWhitelist }
+            switch (toBeChanged) {
+              case 'isMarketplace':
+                newState = { isMarketplace: !isMarketplace }
+                break;
+              case 'isWhitelist':
+                newState = { isWhitelist: !isWhitelist }
+                break;
+              case 'isWithdraw':
+                newState = { isWithdraw: !isWithdraw }
+                break;
             }
+            
             this.setState( newState )
             store.addNotification(
               {
-                title: `${feature} Status Changed: ${! currentStatus }!`,
+                title: `${toBeChanged} Status Changed!`,
                 message: `1 confirmation(s)`,
                 type: "success",
                 insert: "top",
@@ -124,6 +123,95 @@ class App extends Component {
             return;
           }
         })
+  }
+
+  getRewardData = async () => {
+    let { croSkullsContract, isWhitelist, accountAddress } = this.state;
+    let isRewardable = await croSkullsContract.methods
+      .rewardableUsers( accountAddress )
+      .call();
+    isRewardable = isRewardable.toString()
+    console.log(isRewardable )
+    if( isRewardable != "0" ){
+      let currentReward = await croSkullsContract.methods
+        .getRewardValue()
+        .call();
+      currentReward = window.web3.utils.fromWei( currentReward.toString() )
+      
+      let currentRewardFee = await croSkullsContract.methods
+        .getRewardFee()
+        .call();
+      
+      currentRewardFee = currentRewardFee.toString() / 10;
+
+      let totalRewardPool = await croSkullsContract.methods
+        .totalCROVolume()
+        .call();
+
+      totalRewardPool = window.web3.utils.fromWei( totalRewardPool.toString() );
+
+      let alreadyClaimed = await croSkullsContract.methods
+        .userClaimedRewards(accountAddress)
+        .call();
+
+      alreadyClaimed = window.web3.utils.fromWei( alreadyClaimed.toString() )
+      this.setState({
+        totalRewardPool,
+        currentRewardFee,
+        currentReward,
+        alreadyClaimed
+      })
+      this.setState( { isRewardable: true } )
+    }
+  }
+
+  addNewRewardableUser = async (address = false, percent = 0) => {
+    let { croSkullsContract, isWhitelist, accountAddress } = this.state;
+    if( ! address || ! window.web3.utils.isAddress(address) || ! percent )
+      return;
+    
+    percent = percent * 10; // mul per 10 to handle 1decimal 
+    let isCurrentAddressRewardable = await croSkullsContract.methods
+      .rewardableUsers(address)
+      .call();
+
+      console.log()
+    isCurrentAddressRewardable = isCurrentAddressRewardable.toString();
+    
+    console.log( isCurrentAddressRewardable )
+    if( isCurrentAddressRewardable == 0){
+      console.log( isCurrentAddressRewardable )
+
+      let addRewardable = croSkullsContract.methods
+        .addRewardable(address, percent)
+        .send({ from: accountAddress })
+        .on("confirmation", (c) => this.handleConfirmation(c, () => 
+          store.addNotification({
+            title: `Added to Rewardable Users!`,
+            message: `${address} succesful added with ${percent/10}!`,
+            type: "success",
+            insert: "top",
+            container: "bottom-right",
+            dismiss: {
+              duration: 4000
+            }
+          }) 
+        ))
+        .on("error", () => window.location.reload );
+
+      this.setState( { currentTx: addRewardable } );
+      await this.state.currentTx;
+    }
+  }
+
+  addNewManager = async (address = false) => {
+    let { croSkullsContract, accountAddress } = this.state;
+    if( ! address || ! window.web3.utils.isAddress(address) )
+      return;
+    
+    await croSkullsContract.methods
+      .setManager(address)
+      .send({ from: accountAddress});
   }
 
   addAddressToWhitelist = async (address = false) => {
@@ -194,7 +282,7 @@ class App extends Component {
 
   loadWeb3 = async (provider) => {
     if (window.ethereum) {
-      window.web3 = new Web3(provider);
+      window.web3 = new Web3(window.ethereum);
       await this.loadBlockchainData();
       await this.setMetaData();
     } else if (window.web3) {
@@ -205,6 +293,34 @@ class App extends Component {
       );
     }
   };
+
+  handleWithdraw = async () => {
+    let { croSkullsContract, isWithdraw, accountAddress, currentReward } = this.state;
+    if( isWithdraw && currentReward > 0 ){
+      let withDrawTX = await croSkullsContract.methods
+        .withdrawReward()
+        .send({ from: accountAddress })
+        .on("confirmation", (c) => this.handleConfirmation(c, () => {
+          store.addNotification({
+            title: `Withdraw requested!`,
+            message: `Withdraw handled with success.!`,
+            type: "success",
+            insert: "top",
+            container: "bottom-right",
+            dismiss: {
+              duration: 4000
+            }
+          }) 
+        })
+      );
+
+      this.setState({
+        currentTx: withDrawTX
+      })
+
+      await this.state.currentTx;
+    }
+  }
 
   loadBlockchainData = async () => {
     const web3 = window.web3;
@@ -235,22 +351,35 @@ class App extends Component {
 
         const contractOwner = await croSkullsContract.methods['getOwner']
           .call();
+        
         this.setState( { croSkullsContractOwner: contractOwner })
 
+        const managerAddress = await croSkullsContract.methods
+          .manager()
+          .call();
+        
+        this.setState( { managerAddress } )
         let isMarketplace = await croSkullsContract.methods
-          .isMarketplace;
+          .settings('isMarketplace')
+          .call();
         let isWhitelist = await croSkullsContract.methods
-          .isWhitelist;
+          .settings('isWhitelist')
+          .call();
+        let isWithdraw = await croSkullsContract.methods
+          .settings('isWithdraw')
+          .call();
         let isAddressWhitelisted = await croSkullsContract.methods
           .whitelist( accounts[0] )
           .call();
+
+          console.log(
+            isMarketplace
+          )
         
-        console.log( {
+        this.setState( {
           isMarketplace,
           isWhitelist,
-          isAddressWhitelisted
-        } );
-        this.setState( {
+          isWithdraw,
           isAddressWhitelisted
         } );
 
@@ -260,6 +389,9 @@ class App extends Component {
           .call();
           
         this.setState({ loading: false });
+
+        await this.getRewardData()
+
         if( baseURI ) {
           baseURI = 'https://gateway.pinata.cloud/ipfs/' + baseURI;
           this.setState({ baseURI }); 
@@ -671,7 +803,19 @@ class App extends Component {
         ) : (
           <>
             <HashRouter basename="/" >
-              <Navbar isAdmin={this.state.croSkullsContractOwner === this.state.accountAddress}/>
+              <Navbar isAdmin={this.state.croSkullsContractOwner === this.state.accountAddress || this.state.managerAddress === this.state.accountAddress}/>
+              { 
+                this.state.isRewardable ?
+                  (<RewardBar 
+                    totalRewardPool={this.state.totalRewardPool}
+                    currentRewardFee={this.state.currentRewardFee}
+                    currentReward={this.state.currentReward}
+                    isWithdraw={this.state.isWithdraw}
+                    alreadyClaimed={this.state.alreadyClaimed}
+                    handleWithdraw={this.handleWithdraw}
+                  ></RewardBar>)
+                : '' 
+              }
               <Route
                 path="/"
                 exact
@@ -749,7 +893,7 @@ class App extends Component {
               />
                : '' }
               {
-                this.state.croSkullsContractOwner === this.state.accountAddress ?
+                this.state.croSkullsContractOwner === this.state.accountAddress ||  this.state.accountAddress  === this.state.managerAddress ?
               <Route
                 path="/admin"
                 render={() => (
@@ -759,6 +903,8 @@ class App extends Component {
                     setNftPerAddressLimit={this.setNftPerAddressLimit} 
                     toggleSmartcontractVariables={this.toggleSmartcontractVariables}
                     addAddressToWhitelist={this.addAddressToWhitelist}
+                    addNewRewardableUser={this.addNewRewardableUser}
+                    addNewManager={this.addNewManager}
                   />
                 )}
               />

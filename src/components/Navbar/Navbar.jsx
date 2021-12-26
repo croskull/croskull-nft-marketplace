@@ -41,11 +41,6 @@ const Navbar = ({isAdmin}) => {
                 My Tokens
               </Link>
             </li>
-            <li className="nav-item">
-              <Link to="/queries" className="nav-link">
-                Queries
-              </Link>
-            </li>
             { isAdmin ?
               <li className="nav-item">
                 <Link to="/admin" className="nav-link">

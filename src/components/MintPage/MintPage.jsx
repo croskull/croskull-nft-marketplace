@@ -33,9 +33,11 @@ class MintPage extends Component {
       croSkullsCount,
       croSkullsMaxSupply,
       croSkullsCost,
-      isAddressWhitelisted
+      isAddressWhitelisted,
+      isWhitelist,
     } = this.props.state;
 
+    console.log( isWhitelist )
     let {
       mintAmount,
       mintCost
@@ -58,7 +60,7 @@ class MintPage extends Component {
                 <p>Get now your <b>blockchain-unique CroSkull NFT</b> out of 6666 possibile Skulls with unique traits and dna.</p>
                 <p>Collet at least <b>3 CroSkulls</b> to be eligibility for the free-AirDrop of a <b>1/1 Potion Mystery Box</b>. <b>Mystery Box</b> will return you a <b>Potion</b>, you can use Potions to Mint CroSkull+ and revieve $SkullLP Token Rewards.</p>
               </div>
-              { isAddressWhitelisted ? (
+              { isAddressWhitelisted || ! isWhitelist ? (
                 <div>
                   <div className="mint-action">
                     <div>

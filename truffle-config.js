@@ -7,16 +7,16 @@ const MNEMONIC = process.env.MNEMONIC;
 console.log(MNEMONIC)
 module.exports = {
   networks: {
-    development: { //ganache
+    /*development: { //ganache
       host: "127.0.0.1",
       port: 7545,
       network_id: "*", // Match any network id
-    },
-    /*development: { //cronos cassini
+    },*/
+    development: { //cronos cassini
       provider: new HDWalletProvider(MNEMONIC, "https://cassini.crypto.org:8545"),
       network_id: 339,
       skipDryRun: true     
-     },*/
+     },
      cronos: {
        provider: new HDWalletProvider(MNEMONIC, "https://cassini.crypto.org:8545"), 
        network_id: 339,

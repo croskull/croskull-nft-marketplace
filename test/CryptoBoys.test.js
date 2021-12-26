@@ -1,10 +1,11 @@
 const { assert } = require("chai");
-
 const CroSkulls = artifacts.require("./CroSkulls.sol");
 
 const fromWei = (num) => {
   return web3.utils.fromWei( num, "ether" )
 }
+const toBN = web3.utils.toBN;
+const toWei = web3.utils.toWei;
 
 require("chai")
   .use(require("chai-as-promised"))
@@ -18,8 +19,6 @@ contract("CroSkulls", async (accounts) => {
   before(async () => {
     croSkulls = await CroSkulls.deployed();
     owner = accounts[0];
-
-    
   });
 
   describe("Deployment", async () => {
@@ -45,7 +44,6 @@ contract("CroSkulls", async (accounts) => {
   describe("Whitelist and Minting Antions", async () => {
     it("check if whitelist is enabled", async () => {
       let isWhitelist = await croSkulls.settings('isWhitelist');
-      console.log(isWhitelist)
       assert.equal(isWhitelist, true)
     });
 
@@ -116,15 +114,14 @@ contract("CroSkulls", async (accounts) => {
     })
 
     it("check total reward amount", async () => {
-      let totalCROReward = await croSkulls.totalCROReward();
-      totalCROReward = fromWei( totalCROReward );
-      console.log(totalCROReward);
-      console.log(contractBalance)
-      assert.equal(totalCROReward, contractBalance);
+      let totalCROVolume = await croSkulls.totalCROVolume();
+      totalCROVolume = fromWei( totalCROVolume );
+      assert.equal(totalCROVolume, contractBalance);
     })
 
     it("check current owner reward fee, should be 0 ", async () => {
-      await croSkulls.getRewardFee().should.be.rejected;
+      let rewardFee = await croSkulls.getRewardFee();
+      assert.equal(0,rewardFee )
     })
 
     it("set owner fee to 18,4%", async () => {
@@ -214,7 +211,7 @@ contract("CroSkulls", async (accounts) => {
 
     it("check current reward pool, should be 18", async () => {
       let totalReward = await croSkulls
-        .totalCROReward();
+        .totalCROVolume();
       totalReward = fromWei(totalReward)
       assert.equal(totalReward, 18);
     })
@@ -237,7 +234,7 @@ contract("CroSkulls", async (accounts) => {
       await croSkulls.toggleSetting('isWithdraw');
     })
 
-    it("testing disabled Update Rewards : minting some skulls", async () => {
+    it("testing rewards updating: minting some skulls| Should be equal to 34", async () => {
       for( let i = 2; i <= 9; i++){
         await croSkulls
           .mintCroSkull( 1,
@@ -247,16 +244,70 @@ contract("CroSkulls", async (accounts) => {
             }
         );
       }
-      let totalRewardsCRO = await croSkulls.totalCROReward();
+      let totalRewardsCRO = await croSkulls.totalCROVolume();
       totalRewardsCRO = fromWei(totalRewardsCRO);
-      console.log(totalRewardsCRO)
       let contractBalance = await web3.eth.getBalance(croSkulls.address);
       contractBalance = fromWei( contractBalance );
-      assert.notEqual(totalRewardsCRO, contractBalance)
+      assert.equal(totalRewardsCRO, contractBalance)
     })
 
+    it("check current owner rewards, should be 6.256", async () => {
+      let ownerRewards = await croSkulls.getRewardValue();
+      ownerRewards = fromWei(ownerRewards);
+      assert.equal(ownerRewards, 6.256);
+    })
+
+    let userRewards;
+
+    it("accounts1 try to withdraw and check balance", async () => {
+      let preUserBalance = toBN( await web3.eth.getBalance(accounts[1]) )
+      userRewards = await croSkulls.getRewardValue(
+        {
+          from: accounts[1]
+        }
+      );
+      let withdrawTX = await croSkulls.withdrawReward({
+        from: accounts[1]
+      })
+      let gasUsed = withdrawTX.receipt.gasUsed;
+
+      const tx = await web3.eth.getTransaction(withdrawTX.tx);
+      let gasCost =  toBN( gasUsed ).mul( toBN( tx.gasPrice ) )
+
+
+      let postUserBalance =   toBN( await web3.eth.getBalance(accounts[1] ) ).toString();
+      let calculatedFinalBalance = preUserBalance.add(
+        toBN(userRewards)
+      );
+
+      calculatedFinalBalance = calculatedFinalBalance.sub( gasCost );
+      calculatedFinalBalance = calculatedFinalBalance.toString();
+
+      assert.equal(calculatedFinalBalance,  postUserBalance )
+    })
+
+    it("check accounts[1] current ClaimedRewards", async () => {
+      let alreadyClaimed = await croSkulls.userClaimedRewards(accounts[1]);
+      assert.equal(userRewards.toString(), alreadyClaimed.toString() );
+    })
+
+    it("check accounts[1] current reward: should be 0 ", async () => {
+      let currentRewards = await croSkulls.getRewardValue(
+        {
+          from: accounts[1]
+        }
+      );
+      assert.equal(currentRewards.toString(), 0);
+    })
+
+    it("check owner current reward: should be 6.256 ", async () => {
+      let currentRewards = await croSkulls.getRewardValue();
+      assert.equal(fromWei( currentRewards) , 6.256 );
+    })
+
+
   })
-  return
+
   describe("Marketplace Actions", async () => {
     it("should reject - with marketplace disabled, toggle in sale", async () => {
       await croSkulls.toggleForSale(
@@ -278,7 +329,7 @@ contract("CroSkulls", async (accounts) => {
     })
 
     it("enable marketplace", async () => {
-      await croSkulls.enableMarketplace(
+      await croSkulls.toggleSetting( "isMarketplace",
         { from: owner }
       );
     })
@@ -308,6 +359,25 @@ contract("CroSkulls", async (accounts) => {
       );
     });
 
+    it("check owner reward rate: should be 6.27072", async () => {
+      //6.256 + 
+      let currentRewards = await croSkulls.getRewardValue();
+
+      let oldRewardValue = toBN(toWei( "6.256" ));
+
+      let rewardFee = await croSkulls.getRewardFee();
+      let lastTxValue = toBN(toWei( "2" ) ).divn(100).muln(4); // calcolo valore della tassa sulla vendita di tokens ( 4% )
+
+      lastTxValue = lastTxValue.div( 
+        toBN( 1000 )
+      ).mul(rewardFee) // sul 4% della fee marketplace, calcolo la Percentuale di Reward in base a quanto descritto nello smart contract, divisione per 1000 visto il ,0 decimale
+
+      let newRewardValue = oldRewardValue.add(
+        lastTxValue
+      )//aggiungo la nuova fee registrata al vecchio valore dell'user reward
+      assert.equal( fromWei(newRewardValue ) ,fromWei(currentRewards) );//asserisco che i 2 valori siano uguali.
+    })
+
     it("afterpurchase, check if token #1 is not forSale", async () => {
       let croSkull = await croSkulls.allCroSkulls(1, {
         from: owner
@@ -328,7 +398,7 @@ contract("CroSkulls", async (accounts) => {
     })
 
     it("disable marketplace", async () => {
-      await croSkulls.disableMarketplace(
+      await croSkulls.toggleSetting("isMarketplace",
         { from: owner }
       );
     })
@@ -341,5 +411,7 @@ contract("CroSkulls", async (accounts) => {
         }
       ).should.be.rejected;
     });
+
+
   })
 })

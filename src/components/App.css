@@ -11,6 +11,10 @@ input::-webkit-input-placeholder {
   align-items: top;
 }
 
+.form-control {
+  color: #000 !important;
+}
+
 .croSkulls-main, .page-wrapper{
   height: 100%;
 }

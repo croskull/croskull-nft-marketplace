@@ -8,7 +8,10 @@ class AdminDashboard extends Component {
         this.state = {
           newBaseURI: "",
           baseURI: props.state.baseURI ? props.state.baseURI : '',
-          addressToWhitelist: ''
+          addressToWhitelist: '',
+          addressToReward: '',
+          managerAddress: '',
+          percent: 0
         };
     }
 
@@ -27,16 +30,36 @@ class AdminDashboard extends Component {
             )
     }
 
+    handleNewRewardableUser = (e) => {
+        e.preventDefault();
+        if( this.state.addressToReward !== '' ){
+            this.props.addNewRewardableUser(
+                this.state.addressToReward,
+                this.state.percent
+            )
+        }
+    }
+
+    handleNewManager = (e) => {
+        e.preventDefault();
+        if( this.state.managerAddress !== '' ){
+            this.props.addNewManager(
+                this.state.managerAddress,
+            )
+        }
+    }
+
 
     render() {
 
         let {
             isMarketplace,
-            isWhitelist
+            isWhitelist,
+            isWithdraw
         } = this.props.state; 
 
         let {
-            toggleSmartcontractVariables
+            toggleSmartcontractVariables,
         } = this.props
         
         return (
@@ -76,6 +99,33 @@ class AdminDashboard extends Component {
                                 Update 
                             </button>   
                         </form>
+                        <form onSubmit={this.handleNewManager} className="pt-4 mt-1">
+                            <h5>
+                                Add user as Manager
+                            </h5>
+                            <div>
+                                <label htmlFor="address">Address to make Manager</label>
+                                <input
+                                required
+                                type="text"
+                                name="address"
+                                id="managerAddress"
+                                className="form-control"
+                                onChange={(e) => {
+                                    this.setState( { managerAddress: e.target.value })
+                                    }
+                                }
+                                />
+                                <button
+                                    id="whiteListAddress"
+                                    style={{ fontSize: "0.9rem", letterSpacing: "0.14rem" }}
+                                    type="submit"
+                                    className="btn mt-4 btn-block btn-outline-primary"
+                                >
+                                   Make Manager (Only Owner)
+                                </button>
+                            </div>
+                        </form>
                     </div>  
                     <div className="col-md-6">
                         <h5>
@@ -88,7 +138,7 @@ class AdminDashboard extends Component {
                                 id="toggleMarketplace"
                                 checked={isMarketplace}
                                 onChange={ () => {
-                                    toggleSmartcontractVariables('marketplace')
+                                    toggleSmartcontractVariables('isMarketplace')
                                 }}
                             />
                         </div>
@@ -99,7 +149,18 @@ class AdminDashboard extends Component {
                                 id="toggleWhitelist"
                                 checked={isWhitelist}
                                 onChange={ () => {
-                                    toggleSmartcontractVariables('whitelist')
+                                    toggleSmartcontractVariables('isWhitelist')
+                                }}
+                            />
+                        </div>
+                        <div className="toggleContainer">
+                            <label htmlFor="isWithdraw">{ isWithdraw ? 'Disable' : 'Enable' } Withdraw</label>
+                            <Switch
+                                name="isWithdraw"
+                                id="toggleWithdraw"
+                                checked={isWithdraw}
+                                onChange={ () => {
+                                    toggleSmartcontractVariables('isWithdraw')
                                 }}
                             />
                         </div>
@@ -130,6 +191,49 @@ class AdminDashboard extends Component {
                                     disabled={ ! isWhitelist }
                                 >
                                     Whitelist Address { isWhitelist || '(Disabled)'}
+                                </button>
+                            </div>
+                        </form>
+                        <form onSubmit={this.handleNewRewardableUser} className="pt-4 mt-1">
+                            <h5>
+                                Add an user to the rewardable list
+                            </h5>
+                            <div>
+                                <label htmlFor="address">Address to be Reward</label>
+                                <input
+                                required
+                                type="text"
+                                name="address"
+                                id="addressToAdd"
+                                className="wd-50 form-control"
+                                onChange={(e) => {
+                                    console.log(e.target.value)
+                                    this.setState( { addressToReward: e.target.value })
+                                    }
+                                }
+                                />
+
+                                <label htmlFor="percent">Percent Fee</label>
+                                <input
+                                required
+                                type="number"
+                                name="percent"
+                                id="percent"
+                                step=".1"
+                                className="wd-50 form-control"
+                                onChange={(e) => {
+                                    console.log(e.target.value)
+                                    this.setState( { percent: e.target.value })
+                                    }
+                                }
+                                />
+                                <button
+                                    id="addRewardable"
+                                    style={{ fontSize: "0.9rem", letterSpacing: "0.14rem" }}
+                                    type="submit"
+                                    className="btn mt-4 btn-block btn-outline-primary"
+                                >
+                                    Reward address
                                 </button>
                             </div>
                         </form>
