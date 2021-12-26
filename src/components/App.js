@@ -238,11 +238,9 @@ class App extends Component {
         this.setState( { croSkullsContractOwner: contractOwner })
 
         let isMarketplace = await croSkullsContract.methods
-          .isMarketplace()
-          .call();
+          .isMarketplace;
         let isWhitelist = await croSkullsContract.methods
-          .isWhitelist()
-          .call();
+          .isWhitelist;
         let isAddressWhitelisted = await croSkullsContract.methods
           .whitelist( accounts[0] )
           .call();
