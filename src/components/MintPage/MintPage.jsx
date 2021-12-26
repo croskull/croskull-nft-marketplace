@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import randomSkullsGif from "./random-skulls.gif"
+import randomSkullsGif from "./skulls.gif"
 import './MintPage.css';
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
@@ -9,12 +9,13 @@ class MintPage extends Component {
     this.state = {
       mintAmount: 1,
       mintCost: 1,
+      croSkullCost: 199,
     };
   }
 
 
   totalCost = (_mintAmount) => { 
-    return this.props.croSkullsCost * _mintAmount
+    return this.state.croSkullCost * _mintAmount
   };
 
   componentDidMount = async () => {
@@ -49,16 +50,13 @@ class MintPage extends Component {
         <form onSubmit={this.callMintMyNFTFromApp} className="pt-4 mt-1">
           <div className="row">
             <div className="col-md-6">
-              <LazyLoadImage
-                src={randomSkullsGif}
-                width="100%"
-                height="100%"
-              />
+              <img src={randomSkullsGif} className="gif"/>
             </div>
             <div className="mint-wrapper col-md-6">
               <div className="fp-text">
-                <p>Get now your <b>blockchain-unique CroSkull NFT</b> out of 6666 possibile Skulls with unique traits and dna.</p>
-                <p>Collet at least <b>3 CroSkulls</b> to be eligibility for the free-AirDrop of a <b>1/1 Potion Mystery Box</b>. <b>Mystery Box</b> will return you a <b>Potion</b>, you can use Potions to Mint CroSkull+ and revieve $SkullLP Token Rewards.</p>
+                <p>The CroSkull is a collection of 6.666 uniquely generated NFTs stored in the Cronos Chain.</p>
+                <p>Each CroSkull NFT is based on 6+ attributes with different rarities.</p>
+                <p>A CroSkull is not simply a PFP but is also the key to the insane Dr. Jiko’s laboratory experiments.</p>
               </div>
               { isAddressWhitelisted || ! isWhitelist ? (
                 <div>
@@ -85,6 +83,7 @@ class MintPage extends Component {
                       style={{fontSize: "0.9rem", letterSpacing: "0.14rem"  }}
                       type="submit"
                       className="btn mt-4 btn-block btn-outline-info elite"
+                      disabled={(this.state.mintAmount <1 ? true: false)}
                     >
                       Mint CroSkull
                       { mintAmount > 1 ? 
@@ -96,7 +95,7 @@ class MintPage extends Component {
                     <span className="cost-label" className="fp-text-m">Mint Cost (excluded network fees) </span>
                     <span className="cost-value" className="fp-text-m">
                       { mintAmount > 0 && croSkullsCost ? 
-                        `${this.totalCost(mintAmount)} Ξ` 
+                        `${this.totalCost(mintAmount)} CRO` 
                       : ``}
                     </span>
                   </div>

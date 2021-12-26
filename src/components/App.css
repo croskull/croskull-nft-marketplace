@@ -95,6 +95,7 @@ b, label{
   display: flex;
   flex-wrap: nowrap;
   flex-direction: column;
+  margin-top: 1%;
 }
 
 .cost-value{

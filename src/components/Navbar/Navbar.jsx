@@ -7,7 +7,7 @@ const Navbar = ({isAdmin}) => {
   return (
     <nav className="navbar navbar-expand-sm navbar-dark border-shadow header">
         <Link to="/" className="navbar-brand ml-2">
-          <img src={Logo} alt="CRSkull Logo" className="site-logo"/>
+          <img src={Logo} alt="CroSkull Logo" className="site-logo"/>
         </Link>
         <button
           className="navbar-toggler"
@@ -38,7 +38,7 @@ const Navbar = ({isAdmin}) => {
             </li>
             <li className="nav-item">
               <Link to="/my-tokens" className="nav-link">
-                My Tokens
+                My CroSkulls
               </Link>
             </li>
             { isAdmin ?
