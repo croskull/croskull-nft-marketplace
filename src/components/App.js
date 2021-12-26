@@ -53,8 +53,8 @@ class App extends Component {
       activeFilters: [],
       activeNFTStatus: 'all',
       baseURI: '',
-      isMarketplace: false,
-      isWhitelist: false,
+      isMarketplace: true,
+      isWhitelist: true,
       isAddressWhitelisted: false,
       currentTx: []
     };
@@ -251,8 +251,6 @@ class App extends Component {
           isAddressWhitelisted
         } );
         this.setState( {
-          isMarketplace,
-          isWhitelist,
           isAddressWhitelisted
         } );
 
@@ -719,6 +717,7 @@ class App extends Component {
                       resetFilter={this.resetFilter}
                       />
                     :
+                    
                     <div class="card">
                       <h1>Marketplace is Closed :C</h1>
                     </div>
