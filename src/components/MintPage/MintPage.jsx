@@ -82,7 +82,7 @@ class MintPage extends Component {
                       id="mintBt"
                       style={{fontSize: "0.9rem", letterSpacing: "0.14rem"  }}
                       type="submit"
-                      className="btn mt-4 btn-block btn-outline-success elite"
+                      className="btn mt-4 btn-block btn-outline-info elite"
                     >
                       Mint CroSkull
                       { mintAmount > 1 ? 
