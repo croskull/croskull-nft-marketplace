@@ -71,7 +71,8 @@ class MintPage extends Component {
                         max="20"
                         value={mintAmount || 1 }
                         className="form-control"
-                        placeholder="Enter Amount"
+                        placeholder="Enter Amount" 
+                        style={{ color: 'black' }}
                         onChange={(e) =>
                           this.setState({ mintAmount: e.target.value })
                         }
@@ -79,9 +80,9 @@ class MintPage extends Component {
                     </div>
                     <button
                       id="mintBt"
-                      style={{ fontSize: "0.9rem", letterSpacing: "0.14rem" }}
+                      style={{fontSize: "0.9rem", letterSpacing: "0.14rem"  }}
                       type="submit"
-                      className="btn mt-4 btn-block btn-outline-secondary"
+                      className="btn mt-4 btn-block btn-outline-success elite"
                     >
                       Mint CroSkull
                       { mintAmount > 1 ? 
@@ -98,13 +99,13 @@ class MintPage extends Component {
                     </span>
                   </div>
                   <div className="mt-4">
-                    <div className="alert alert-info">
+                    <div className="alert alert-info elite" >
                       <strong>{ `${croSkullsCount} / ${croSkullsMaxSupply}` } CroSkull{ croSkullsCount > 1 ? 's' : '' } Minted</strong>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="alert error alert-info">
+                <div className="alert error alert-info elite">
                   <strong>Your address is not Whitelisted! </strong>
                 </div>
               ) }

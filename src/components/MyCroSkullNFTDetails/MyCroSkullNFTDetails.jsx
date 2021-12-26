@@ -18,9 +18,6 @@ const MyCroSkullNFTDetails = (props) => {
         {tokenId.toNumber()}
       </p>
       <p>
-        <span className="font-weight-bold">Name</span> : {tokenName}
-      </p>
-      <p>
         <span className="font-weight-bold">Price</span> :{" "}
         {window.web3.utils.fromWei(price.toString(), "Ether")} Ξ
       </p>
@@ -39,21 +36,21 @@ const MyCroSkullNFTDetails = (props) => {
       <br></br>
       <Accordion>
         <Card>
-          <Accordion.Toggle eventKey="1" className="toogle-button">
+          <Accordion.Toggle eventKey="1" className="toogle-button btn-dark">
             Traits Properties
           </Accordion.Toggle>
           <Accordion.Collapse eventKey="1">
-            <Card.Body className="vertical mcbd-cbody">
-              {metaData ?
-                metaData.attributes.map(attribute => {
-                  return (
-                    <span className="font-weight-bold mcbd-span">{attribute.trait_type}:
-                      {attribute.value}
-                    </span>
-                  )
-                })
-                : ''}
-            </Card.Body>
+          <div className="d-flex list-group skullMetadata border-shadow">
+                            { metaData ? 
+                            metaData.attributes.map( attribute => {
+                                return (
+                                <span className="font-weight-bold">{attribute.trait_type}: 
+                                     {attribute.value}
+                                </span>
+                                )
+                            })
+                            : ''}
+                        </div>
           </Accordion.Collapse>
         </Card>
       </Accordion>

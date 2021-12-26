@@ -59,6 +59,7 @@ const FilterBar = ( {
                         options={nftStatusOptions}
                         onChange={handleStatusNFTFilter}
                         placeholder="all"
+                        styles={customStyle}
                     ></Select>
                 </div>
         </div>

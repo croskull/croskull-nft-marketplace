@@ -54,7 +54,7 @@ class App extends Component {
       activeNFTStatus: 'all',
       baseURI: '',
       isMarketplace: true,
-      isWhitelist: true,
+      isWhitelist: false,
       isAddressWhitelisted: false,
       currentTx: []
     };
