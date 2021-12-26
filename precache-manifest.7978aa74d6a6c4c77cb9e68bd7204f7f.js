@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "905c7e2078dae217a397",
+    "revision": "39d84e0321d6bc522cab",
     "url": "/croskull-nft-marketplace/static/css/main.85bb63ff.chunk.css"
   },
   {
-    "revision": "905c7e2078dae217a397",
-    "url": "/croskull-nft-marketplace/static/js/main.905c7e20.chunk.js"
+    "revision": "39d84e0321d6bc522cab",
+    "url": "/croskull-nft-marketplace/static/js/main.39d84e03.chunk.js"
   },
   {
     "revision": "9b991f758eaa1f8207f8",
@@ -40,7 +40,7 @@ self.__precacheManifest = [
     "url": "/croskull-nft-marketplace/static/media/loading.9ee7f2ce.gif"
   },
   {
-    "revision": "d65c5a27406ebea40bcf4fa14414b6f9",
+    "revision": "bbc701deabc7d091b86f111dacae3e35",
     "url": "/croskull-nft-marketplace/index.html"
   }
 ];

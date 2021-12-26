@@ -1,7 +1,7 @@
 {
   "main.css": "/croskull-nft-marketplace/static/css/main.85bb63ff.chunk.css",
-  "main.js": "/croskull-nft-marketplace/static/js/main.905c7e20.chunk.js",
-  "main.js.map": "/croskull-nft-marketplace/static/js/main.905c7e20.chunk.js.map",
+  "main.js": "/croskull-nft-marketplace/static/js/main.39d84e03.chunk.js",
+  "main.js.map": "/croskull-nft-marketplace/static/js/main.39d84e03.chunk.js.map",
   "static/css/1.3d4525ae.chunk.css": "/croskull-nft-marketplace/static/css/1.3d4525ae.chunk.css",
   "static/js/1.9b991f75.chunk.js": "/croskull-nft-marketplace/static/js/1.9b991f75.chunk.js",
   "static/js/1.9b991f75.chunk.js.map": "/croskull-nft-marketplace/static/js/1.9b991f75.chunk.js.map",
@@ -15,6 +15,6 @@
   "static/css/1.3d4525ae.chunk.css.map": "/croskull-nft-marketplace/static/css/1.3d4525ae.chunk.css.map",
   "static/css/main.85bb63ff.chunk.css.map": "/croskull-nft-marketplace/static/css/main.85bb63ff.chunk.css.map",
   "index.html": "/croskull-nft-marketplace/index.html",
-  "precache-manifest.db2ff325173c408b943425d6392d8efb.js": "/croskull-nft-marketplace/precache-manifest.db2ff325173c408b943425d6392d8efb.js",
+  "precache-manifest.7978aa74d6a6c4c77cb9e68bd7204f7f.js": "/croskull-nft-marketplace/precache-manifest.7978aa74d6a6c4c77cb9e68bd7204f7f.js",
   "service-worker.js": "/croskull-nft-marketplace/service-worker.js"
 }

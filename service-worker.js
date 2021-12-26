@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/croskull-nft-marketplace/precache-manifest.db2ff325173c408b943425d6392d8efb.js"
+  "/croskull-nft-marketplace/precache-manifest.7978aa74d6a6c4c77cb9e68bd7204f7f.js"
 );
 
 workbox.clientsClaim();
