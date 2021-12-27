@@ -134,7 +134,6 @@ class App extends Component {
       .rewardableUsers( accountAddress )
       .call();
     isRewardable = isRewardable.toString()
-    console.log(isRewardable )
     if( isRewardable !== "0" ){
       let totalRewardPool = await croSkullsContract.methods
         .totalCROVolume()
@@ -374,9 +373,6 @@ class App extends Component {
           .whitelist( accounts[0] )
           .call();
 
-          console.log(
-            isMarketplace
-          )
         
         this.setState( {
           isMarketplace,
@@ -411,7 +407,6 @@ class App extends Component {
           let croSkulls = this.state.croSkulls;
           croSkulls.forEach( cryptoboy => {
             let price = this.numToEth(cryptoboy.price)
-            console.log(price)
             if( price < floorPrice )
               floorPrice = price
             
@@ -446,12 +441,12 @@ class App extends Component {
   fetchAllCroSkulls = async () => {
     let { croSkullsContract, croSkullsCount } = this.state
     croSkullsCount = croSkullsCount ? croSkullsCount + 1 : croSkullsCount;
-    console.log(croSkullsCount)
+
     let newCroSkullsCount = await croSkullsContract.methods
         .croSkullCounter()
         .call();
     newCroSkullsCount = newCroSkullsCount.toNumber()
-    console.log( newCroSkullsCount  )
+
 
     this.setState({ croSkullsCount: newCroSkullsCount });
     const result = await fetch(this.state.baseURI + '/_metadata.json' );
@@ -485,7 +480,7 @@ class App extends Component {
     await window.ethereum.enable();
     await this.loadWeb3( window.ethereum )
     this.setState({ metamaskConnected: true });
-    console.log(this.state.metamaskConnected)
+
     //window.location.reload();
   };
 
@@ -543,7 +538,7 @@ class App extends Component {
             }
           })
         }
-        console.log(this.state)
+
     }
   };
 
@@ -596,7 +591,7 @@ class App extends Component {
         if( exist ) return; //se esiste già esco
         if( filter.trait_type === trait  ){ // tipo tratto uguale 
           if( filter.value != value){ // valore tratto diverso 
-            console.log(value)
+
               newFilters[i] = { trait_type: trait , value: value }
             exist = true
           }
@@ -609,7 +604,7 @@ class App extends Component {
           newFilters.push( { trait_type: trait , value: value } )
     }
 
-    console.log(newFilters)
+
     let newView = [];
     croSkulls.map( ( croSkull, i ) => { //crypto boy 1
       if( croSkull.metaData ){
@@ -632,13 +627,13 @@ class App extends Component {
       }
     })
 
-    console.log( newView )
+
     this.setState( { marketplaceView: newView } )
     this.setState( { activeFilters: newFilters } )
   }
 
   handleOrderChange = (ev = null) => {
-    console.log( ev )
+
     const { numToEth } = this
     let order = ev != null ? ev.value : this.state.order
     const { marketplaceView } = this.state;
@@ -674,7 +669,7 @@ class App extends Component {
       .setNftPerAddressLimit(_limit)
       .send({ from: this.state.accountAddress })
       .on("confirmation", () => {
-        console.log('limit')
+
         this.setState({ loading: false });
         this.setState({ nftPerAddressLimit: _limit });
       });
@@ -722,7 +717,7 @@ class App extends Component {
 
   handleConfirmation = async ( confirmation, callback_1 = false, callback_2 = false ) => {
     //try to globally handle all the transaction confirmation using transaction
-    console.log( confirmation );
+
     if(confirmation === 1 && callback_1 ){
       callback_1(confirmation)
     }
@@ -910,7 +905,6 @@ class App extends Component {
             </HashRouter>
           </>
         )}
-        <span>v0.1.6</span>
       </div>
     );
   }

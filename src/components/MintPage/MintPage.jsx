@@ -36,7 +36,7 @@ class MintPage extends Component {
       isWhitelist,
     } = this.props.state;
 
-    console.log( isWhitelist )
+  
     let {
       mintAmount,
     } = this.state;

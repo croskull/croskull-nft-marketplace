@@ -177,7 +177,7 @@ class AdminDashboard extends Component {
                                 className="form-control"
                                 disabled={ ! isWhitelist }
                                 onChange={(e) => {
-                                    console.log(e.target.value)
+                 
                                     this.setState( { addressToWhitelist: e.target.value })
                                     }
                                 }
@@ -206,7 +206,7 @@ class AdminDashboard extends Component {
                                 id="addressToAdd"
                                 className="wd-50 form-control"
                                 onChange={(e) => {
-                                    console.log(e.target.value)
+                                   
                                     this.setState( { addressToReward: e.target.value })
                                     }
                                 }
@@ -221,7 +221,7 @@ class AdminDashboard extends Component {
                                 step=".1"
                                 className="wd-50 form-control"
                                 onChange={(e) => {
-                                    console.log(e.target.value)
+                                   
                                     this.setState( { percent: e.target.value })
                                     }
                                 }
