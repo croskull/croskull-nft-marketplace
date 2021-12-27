@@ -29,7 +29,7 @@ const MyCroSkulls = ({
   return (
     <div className="container">
           <h5 className="mcb-title">
-            yout collection 
+            your collection 
           </h5>
           <h3 className="mcb-sub-title">
             CroSkulls: {totalTokensOwnedByAccount}
