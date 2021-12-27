@@ -1,5 +1,8 @@
 import React from "react";
 import { Accordion, Card } from "react-bootstrap";
+import news from './new_blue.png';
+import './MyCroSkullNFTDetails.css'
+
 
 const MyCroSkullNFTDetails = (props) => {
   const {
@@ -11,6 +14,7 @@ const MyCroSkullNFTDetails = (props) => {
     numberOfTransfers,
     metaData
   } = props.croskull;
+
   return (
     <div key={tokenId.toNumber()} className="mt-4 ml-3">
       <p>
@@ -46,6 +50,10 @@ const MyCroSkullNFTDetails = (props) => {
           </Accordion.Collapse>
         </Card>
       </Accordion>
+      {new Date().getTime() - metaData.date < 1800000 ?
+      <div><img src={news} className="details-img"></img> </div> :
+      <div> </div>
+    }
     </div>
   );
 };
