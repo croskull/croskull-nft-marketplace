@@ -36,8 +36,8 @@ const MyCroSkullNFTDetails = (props) => {
                             { metaData ? 
                             metaData.attributes.map( attribute => {
                                 return (
-                                <span className="font-weight-bold">{attribute.trait_type}: 
-                                     {attribute.value}
+                                <span className="font-weight-bold">{attribute.trait_type}:  
+                                     <span> </span>{attribute.value}
                                 </span>
                                 )
                             })
