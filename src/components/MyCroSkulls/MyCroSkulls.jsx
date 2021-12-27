@@ -36,7 +36,7 @@ const MyCroSkulls = ({
           return (
             <div
               key={croskull.tokenId.toNumber()}
-              className="w-50 p-4 mt-1 border"
+              className="skull-card"
             >
               <div className="row">
                 <div className="col-md-6">

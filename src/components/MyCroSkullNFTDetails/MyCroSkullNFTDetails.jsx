@@ -17,14 +17,6 @@ const MyCroSkullNFTDetails = (props) => {
         <span className="font-weight-bold">Token Id</span> :{" "}
         {tokenId.toNumber()}
       </p>
-      <p>
-        <span className="font-weight-bold">Price</span> :{" "}
-        {window.web3.utils.fromWei(price.toString(), "Ether")} CRO
-      </p>
-      <p>
-        <span className="font-weight-bold">No. of Transfers</span> :{" "}
-        {numberOfTransfers.toNumber()}
-      </p>
       {props.accountAddress === mintedBy &&
         props.accountAddress !== previousOwner ? (
         <div className="alert alert-success w-50 text-center m-auto">

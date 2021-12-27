@@ -30,3 +30,13 @@ p
     background: black;
     background-color: black ;
 }
+.skull-card
+{
+    width: 48%;
+    margin: 1% 1% 1% 1%;
+    z-index: 1; 
+    border: solid white 3px;
+    padding: 10px;
+    border-image-source: linear-gradient(130deg, #743ad5, #00b0f5);
+    border-image-slice: 1;
+}
