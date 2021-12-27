@@ -28,7 +28,7 @@ const MyCroSkullNFTDetails = (props) => {
       <br></br>
       <Accordion>
         <Card>
-          <Accordion.Toggle eventKey="1" className="toogle-button btn-dark">
+          <Accordion.Toggle eventKey="1" className="btn btn-outline-light">
             Traits Properties
           </Accordion.Toggle>
           <Accordion.Collapse eventKey="1">
@@ -37,7 +37,7 @@ const MyCroSkullNFTDetails = (props) => {
                             metaData.attributes.map( attribute => {
                                 return (
                                 <span className="font-weight-bold">{attribute.trait_type}:  
-                                     <span> </span>{attribute.value}
+                                     {" "}{attribute.value}
                                 </span>
                                 )
                             })

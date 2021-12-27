@@ -29,8 +29,9 @@ const MyCroSkulls = ({
   return (
     <div className="container">
           <h5 className="mcb-title">
-            Total No. of CroSkulls You Own : {totalTokensOwnedByAccount}
+            Your Collection 
           </h5>
+          <h3 className="mcb-sub-title">CroSkulls: {totalTokensOwnedByAccount}</h3>
       <div className="d-flex flex-wrap mb-2">
         {myCroSkulls.map(  (croskull) => {
           return (

@@ -13,6 +13,14 @@
     margin-top: 5%;
     text-align: center;
 }
+.mcb-sub-title
+{
+    font-family: 'Headhunter';
+    color: rgb(224, 240, 255);
+    font-size: 3vh;
+    margin-top: 5%;
+    text-align: center;
+}
 p
 {
     font-family: 'Special Elite', cursive;

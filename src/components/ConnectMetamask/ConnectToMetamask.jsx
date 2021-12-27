@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import metamaskIcon from "./metamask.svg";
+import cryptoIcon from "./crypto-com.svg";
 import './ConnectToMetamask.css';
 
 
@@ -34,10 +35,10 @@ const ConnectToMetamask = ({ connectToMetamask, connectToWalletConnect }) => {
           className="btn btn-dark d-flex align-items-center"
           style={{ fontSize: "0.9rem", letterSpacing: "0.14rem" }}
         >
-          Connect to WalletConnect{" "}
+          Connect to DeFi Wallet{" "}
           <img
-            src={metamaskIcon}
-            alt="metamask-icon"
+            src={cryptoIcon}
+            alt="crypto-com-icon"
             style={{ width: "2rem", marginLeft: "0.5rem" }}
           />
         </button>

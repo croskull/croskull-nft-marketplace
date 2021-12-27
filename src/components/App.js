@@ -17,6 +17,7 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import ReactNotification, { store } from 'react-notifications-component';
 import "./App.css";
 import 'react-notifications-component/dist/theme.css';
+import market from '../utils/market.jpg'
 
 
 const WCProvider = new WalletConnectProvider({
@@ -863,7 +864,7 @@ class App extends Component {
                     :
                     
                     <div class="card">
-                      <h1>Marketplace is Closed :C</h1>
+                      <img src={market} className="market" />
                     </div>
                   )}
                 />

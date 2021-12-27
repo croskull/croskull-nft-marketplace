@@ -116,3 +116,8 @@ b, label{
 .filterBar {
   align-items: center;
 }
+.market
+{
+  margin-top: 5%;
+  border-radius: 5%;
+}

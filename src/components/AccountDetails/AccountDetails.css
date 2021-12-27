@@ -17,6 +17,7 @@
         font-family: 'Headhunter';
         color: rgb(224, 240, 255);
         font-size: 4vh;
+        text-align: center;   
     }
     .ac-text
     {
@@ -24,7 +25,18 @@
         font-size: 2vh;
         color: rgb(224, 240, 255);
     }
+    .ac-br
+    {
+        margin-top: 5%;
+    }
     .my-4
     {
         background-color: #fff;
+    }
+    .link{
+        color: rgb(224, 240, 255);
+    }
+    .link:hover
+    {
+        color: #00b0f5;
     }
