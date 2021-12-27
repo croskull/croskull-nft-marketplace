@@ -52,6 +52,10 @@ contract("CroSkulls", async (accounts) => {
       assert.equal(isMarketplace, false );
     });
 
+    it("enable minting", async () => {
+      await croSkulls.toggleSetting('isMintable');
+    })
+
     it("should reject - with whitelist enabled, try to mint without begin in the whitelist", async () => {
       await croSkulls.mintCroSkull( 1, //_mintamount
         { 

@@ -8,11 +8,9 @@ class MintPage extends Component {
     super(props);
     this.state = {
       mintAmount: 1,
-      mintCost: 1,
       croSkullCost: 199,
     };
   }
-
 
   totalCost = (_mintAmount) => { 
     return this.state.croSkullCost * _mintAmount
@@ -41,7 +39,6 @@ class MintPage extends Component {
     console.log( isWhitelist )
     let {
       mintAmount,
-      mintCost
     } = this.state;
 
     return (
@@ -50,7 +47,7 @@ class MintPage extends Component {
         <form onSubmit={this.callMintMyNFTFromApp} className="pt-4 mt-1">
           <div className="row">
             <div className="col-md-6">
-              <img src={randomSkullsGif} className="gif"/>
+              <LazyLoadImage src={randomSkullsGif} className="gif"/>
             </div>
             <div className="mint-wrapper col-md-6">
               <div className="fp-text">

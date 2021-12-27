@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Select from "react-select"
 
 const FilterBar = ( { 
@@ -16,10 +16,9 @@ const FilterBar = ( {
     },{
         value: "owned", label: "Owned"
     }]
-    const [loading, setLoading] = useState(false);
 
     let customStyle = {
-        option: (provided, state) => ({
+        option: (provided) => ({
           ...provided,
           color: 'black',
         })

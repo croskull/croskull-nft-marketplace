@@ -14,19 +14,17 @@ class CroSkullNFTDetails extends Component {
 
   render() {
 
-    let {croskull} = this.props
-    if(this.props.toggleForSale || this.props.accountAddress == this.props.croskull.currentOwner)
-    {
+    let {croskull, accountAddress, toggleForSale} = this.props
+    if( toggleForSale || accountAddress === croskull.currentOwner){
     return (
-     
-      <div key={this.props.croskull.tokenId.toNumber()} className=" vertical skullItem-details">
+      <div key={croskull.tokenId.toNumber()} className=" vertical skullItem-details">
         <div>
-          {this.props.accountAddress === this.props.croskull.currentOwner ? (
+          {accountAddress === croskull.currentOwner ? (
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 this.callChangeTokenPriceFromApp(
-                  this.props.croskull.tokenId.toNumber(),
+                  croskull.tokenId.toNumber(),
                   this.state.newCroSkullPrice
                 );
               }}
@@ -61,14 +59,14 @@ class CroSkullNFTDetails extends Component {
           ) : null}
         </div>
         <div>
-          {this.props.accountAddress === this.props.croskull.currentOwner ? (
-            this.props.croskull.forSale ? (
+          {accountAddress === croskull.currentOwner ? (
+            croskull.forSale ? (
               <button
                 className="btn btn-outline-danger mt-4 w-100"
                 style={{ fontSize: "0.8rem", letterSpacing: "0.14rem" }}
                 onClick={() =>
                   this.props.toggleForSale(
-                    this.props.croskull.tokenId.toNumber()
+                    croskull.tokenId.toNumber()
                   )
                 }
               >
@@ -80,7 +78,7 @@ class CroSkullNFTDetails extends Component {
                 style={{ fontSize: "0.8rem", letterSpacing: "0.14rem" }}
                 onClick={() =>
                   this.props.toggleForSale(
-                    this.props.croskull.tokenId.toNumber()
+                    croskull.tokenId.toNumber()
                   )
                 }
               >
@@ -90,22 +88,22 @@ class CroSkullNFTDetails extends Component {
           ) : null}
         </div>
         <div>
-          {this.props.accountAddress !== this.props.croskull.currentOwner ? (
-            this.props.croskull.forSale ? (
+          {accountAddress !== croskull.currentOwner ? (
+            croskull.forSale ? (
               <button
                 className="btn btn-outline-primary mt-3 w-100"
-                value={this.props.croskull.price}
+                value={croskull.price}
                 style={{ fontSize: "0.8rem", letterSpacing: "0.14rem" }}
                 onClick={(e) =>
                   this.props.buyCroSkull(
-                    this.props.croskull.tokenId.toNumber(),
+                    croskull.tokenId.toNumber(),
                     e.target.value
                   )
                 }
               >
                 Buy For{" "}
                 {window.web3.utils.fromWei(
-                  this.props.croskull.price.toString(),
+                  croskull.price.toString(),
                   "Ether"
                 )}{" "}
                 Ξ

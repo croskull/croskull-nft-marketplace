@@ -1,5 +1,4 @@
 import React from "react";
-import { Accordion, Card } from "react-bootstrap";
 import news from './new_blue.png';
 import './MyCroSkullNFTDetails.css'
 
@@ -7,11 +6,8 @@ import './MyCroSkullNFTDetails.css'
 const MyCroSkullNFTDetails = (props) => {
   const {
     tokenId,
-    tokenName,
-    price,
     mintedBy,
     previousOwner,
-    numberOfTransfers,
     metaData
   } = props.croskull;
 

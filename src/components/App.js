@@ -106,6 +106,8 @@ class App extends Component {
               case 'isWithdraw':
                 newState = { isWithdraw: !isWithdraw }
                 break;
+              default:
+                return;
             }
             
             this.setState( newState )
@@ -127,47 +129,50 @@ class App extends Component {
   }
 
   getRewardData = async () => {
-    let { croSkullsContract, isWhitelist, accountAddress } = this.state;
+    let { croSkullsContract, accountAddress } = this.state;
     let isRewardable = await croSkullsContract.methods
       .rewardableUsers( accountAddress )
       .call();
     isRewardable = isRewardable.toString()
     console.log(isRewardable )
-    if( isRewardable != "0" ){
-      let currentReward = await croSkullsContract.methods
-        .getRewardValue()
-        .call();
-      currentReward = window.web3.utils.fromWei( currentReward.toString() )
-      
-      let currentRewardFee = await croSkullsContract.methods
-        .getRewardFee()
-        .call();
-      
-      currentRewardFee = currentRewardFee.toString() / 10;
-
+    if( isRewardable !== "0" ){
       let totalRewardPool = await croSkullsContract.methods
         .totalCROVolume()
         .call();
-
-      totalRewardPool = window.web3.utils.fromWei( totalRewardPool.toString() );
-
-      let alreadyClaimed = await croSkullsContract.methods
-        .userClaimedRewards(accountAddress)
-        .call();
-
-      alreadyClaimed = window.web3.utils.fromWei( alreadyClaimed.toString() )
-      this.setState({
-        totalRewardPool,
-        currentRewardFee,
-        currentReward,
-        alreadyClaimed
-      })
+      if( totalRewardPool ){
+        let currentReward = await croSkullsContract.methods
+          .getRewardValue()
+          .call();
+        
+        currentReward = window.web3.utils.fromWei( currentReward.toString() )
+        
+        let currentRewardFee = await croSkullsContract.methods
+          .getRewardFee()
+          .call();
+        
+        currentRewardFee = currentRewardFee.toString() / 10;
+  
+        totalRewardPool = window.web3.utils.fromWei( totalRewardPool.toString() );
+  
+        let alreadyClaimed = await croSkullsContract.methods
+          .userClaimedRewards(accountAddress)
+          .call();
+  
+        alreadyClaimed = window.web3.utils.fromWei( alreadyClaimed.toString() )
+        this.setState({
+          totalRewardPool,
+          currentRewardFee,
+          currentReward,
+          alreadyClaimed
+        })
+      }
+      
       this.setState( { isRewardable: true } )
     }
   }
 
   addNewRewardableUser = async (address = false, percent = 0) => {
-    let { croSkullsContract, isWhitelist, accountAddress } = this.state;
+    let { croSkullsContract, accountAddress } = this.state;
     if( ! address || ! window.web3.utils.isAddress(address) || ! percent )
       return;
     
@@ -176,13 +181,9 @@ class App extends Component {
       .rewardableUsers(address)
       .call();
 
-      console.log()
     isCurrentAddressRewardable = isCurrentAddressRewardable.toString();
     
-    console.log( isCurrentAddressRewardable )
-    if( isCurrentAddressRewardable == 0){
-      console.log( isCurrentAddressRewardable )
-
+    if( isCurrentAddressRewardable === 0){
       let addRewardable = croSkullsContract.methods
         .addRewardable(address, percent)
         .send({ from: accountAddress })
@@ -419,10 +420,10 @@ class App extends Component {
           })
           this.setState({ floorPrice, highPrice })
         }
-        /*const croSkullsCost = await croSkullsContract.methods
+        const croSkullsCost = await croSkullsContract.methods
           .getCost()
           .call();
-        this.setState({ croSkullsCost });*/
+        this.setState({ croSkullsCost });
 
         //get total minted tokens ( include burned (?) )
         let totalTokensMinted = await croSkullsContract.methods
@@ -549,7 +550,6 @@ class App extends Component {
   handleStatusNFTFilter = (ev) => {
     let { croSkulls, accountAddress } = this.state;
     let value = ev.value
-    console.log(value)
     let newMarketplaceView = [];
     switch (value){
       case 'all':
@@ -580,7 +580,7 @@ class App extends Component {
   }
 
   handleFilterBar = (ev) => {
-    const { croSkulls, marketplaceView, activeFilters } = this.state;
+    const { croSkulls, activeFilters } = this.state;
     let value = ev.value.split('_')
 
     let trait = value[0]
@@ -620,7 +620,7 @@ class App extends Component {
           croSkull.metaData.attributes.forEach(forTrait => { // tratto 1
             if( traitValid ) return
 
-            if( forTrait.trait_type === filter.trait_type && forTrait.value === filter.value || filter.value === 'none' ){ //tratto valido
+            if( ( forTrait.trait_type === filter.trait_type ) && ( forTrait.value === filter.value ) || ( filter.value === 'none' ) ){ //tratto valido
               traitValid = true
               return
             }
@@ -641,7 +641,7 @@ class App extends Component {
     console.log( ev )
     const { numToEth } = this
     let order = ev != null ? ev.value : this.state.order
-    const { croSkulls, marketplaceView } = this.state;
+    const { marketplaceView } = this.state;
     if( order === 'ASC' ){
       marketplaceView.sort( (a, b) => {
         a = parseInt( numToEth(a.price) )
@@ -687,10 +687,6 @@ class App extends Component {
 
       let { croSkullsContract, accountAddress, croSkullsCost, currentTx } = this.state;
 
-      previousTokenId = await croSkullsContract.methods
-        .croSkullCounter()
-        .call();
-
       let callback_1 = async (c) => {
         await this.fetchAllCroSkulls()
         store.addNotification(
@@ -712,7 +708,6 @@ class App extends Component {
         window.location.hash = "/my-tokens"; // hash redirect alla pagina dei token 
       }
 
-      previousTokenId = previousTokenId.toNumber();
       const totalCost = window.web3.utils.toWei( ( croSkullsCost * _mintAmount ).toString(), "Ether");
       let txCroSkullMint = croSkullsContract.methods
         .mintCroSkull(_mintAmount)
@@ -882,7 +877,7 @@ class App extends Component {
                   />
                 )}
               />
-              { this.state.baseURI != '' ? 
+              { this.state.baseURI !== '' ? 
               <Route
                 path="/queries"
                 render={() => (
@@ -906,6 +901,7 @@ class App extends Component {
                     addAddressToWhitelist={this.addAddressToWhitelist}
                     addNewRewardableUser={this.addNewRewardableUser}
                     addNewManager={this.addNewManager}
+                    addBulkToWhitelist={this.addBulkToWhitelist}
                   />
                 )}
               />

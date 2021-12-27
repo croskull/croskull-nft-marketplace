@@ -1,6 +1,5 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { Component } from "react";
 import Switch from "react-switch";
-import Web3 from "web3";
 
 class AdminDashboard extends Component {
     constructor(props) {

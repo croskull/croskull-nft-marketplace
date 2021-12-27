@@ -7,9 +7,9 @@ const AccountDetails = ({ accountAddress, accountBalance }) => {
       <div className="container ac-home">
         <h1 className="ac-title">CroSkull NFT</h1>
         <p className="ac-text ac-br">
-        The Croskull is a collection of 6,666 uniquely generated NFTs stored in the Cronos Chain.
+          The Croskull is a collection of 6,666 uniquely generated NFTs stored in the Cronos Chain.
         <br></br>
-        Each Croskull NFT is based on 6+ attributes with different rarities.
+          Each Croskull NFT is based on 6+ attributes with different rarities.
         </p>
         <p className="ac-text ac-br">
         Want to know more? <span><a className="link" href="https://www.croskull.com">Click Here!</a></span>
@@ -19,7 +19,11 @@ const AccountDetails = ({ accountAddress, accountBalance }) => {
         <h4 className="ac-text">{accountAddress}</h4>
         <p className="ac-text">Account balance :</p>
         <h4 className="ac-text">{accountBalance} CRO</h4>
-        <img src={banner} width={"100%"}/>
+        <img 
+          src={banner} 
+          width={"100%"}
+          alt="CroSkulls Banner"
+        />
       </div>
   );
 };

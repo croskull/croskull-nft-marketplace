@@ -3,7 +3,7 @@
   "version": "0.1.7",
   "description": "CROSkull NFT Marketplace",
   "author": "hiutaky",
-  "homepage": "https://hiutaky.github.io/croskull-nft-marketplace/",
+  "homepage": "https://app.croskull.com",
   "dependencies": {
     "@openzeppelin/contracts": "^3.4.1",
     "@truffle/hdwallet-provider": "^1.2.3",

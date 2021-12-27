@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import metamaskIcon from "./metamask.svg";
 import cryptoIcon from "./crypto-com.svg";
 import './ConnectToMetamask.css';

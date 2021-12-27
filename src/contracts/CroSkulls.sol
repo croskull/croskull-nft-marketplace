@@ -12,25 +12,22 @@ contract CroSkulls is ERC721 {
   string public collectionName;
   string public collectionNameSymbol;
   uint256 public croSkullCounter;
-  uint256 public cost = 1 ether;
+  uint256 public cost = 0 ether;
   uint256 public maxSupply = 6666;
   uint256 public maxMintAmount = 5;
-  uint256 public nftPerAddressLimit = 100;
-  uint256 public rewardPoolsCounter;
+  uint256 public nftPerAddressLimit = 5;
+  uint256 public marketplaceFee = 4;
   uint256 public totalRewardPercent;
   address public owner;
   address public manager;
-  uint256 public marketplaceFee = 4;
-  //diego
+  uint256 public totalCROVolume = 0;
 
   mapping(uint256 => CroSkull) public allCroSkulls;
   mapping(address => uint256) public addressMintedBalance;
-  mapping(string => bool) public tokenURIExists;
   mapping(string => bool) public settings;
   mapping(address => bool) public whitelist;
-  mapping(address => uint256) public rewardableUsers; //keep track of rewardable users
-  mapping(address => uint256) public userClaimedRewards; // keep track of withdrawed amount
-  uint256 public totalCROVolume = 0;//keep track of total rewardable CRO volume, used to calculate rewards
+  mapping(address => uint256) public rewardableUsers;
+  mapping(address => uint256) public userClaimedRewards;
 
   struct CroSkull {
     uint256 tokenId;
@@ -42,9 +39,15 @@ contract CroSkulls is ERC721 {
     bool forSale;
   }
 
-
   modifier isWithdrable() {
     require(settings['isWithdraw'], "Withdraw disabled");
+    _;
+  }
+
+  modifier isMintable () {
+    if( msg.sender != owner || msg.sender != manager ){
+      require(settings['isMintable'], "Mint Disabled");
+    }
     _;
   }
 
@@ -73,13 +76,14 @@ contract CroSkulls is ERC721 {
   }
 
   // initialize contract while deployment with contract's collection name and token
-  constructor( bool _isMarketplace, bool _isWhitelist, bool _isWithdraw ) ERC721("CROSkull", "CRS") {
+  constructor( bool _isMarketplace, bool _isWhitelist, bool _isWithdraw, bool _isMintable ) ERC721("CROSkull", "CRS") {
     owner = msg.sender;
     collectionName = name();
     collectionNameSymbol = symbol();
     settings['isMarketplace'] = _isMarketplace;
     settings['isWhitelist'] = _isWhitelist;
     settings['isWithdraw'] = _isWithdraw;
+    settings['isMintable'] = _isMintable;
   }
 
   function setBaseURI( string memory baseURI ) public onlyOwner {
@@ -107,12 +111,11 @@ contract CroSkulls is ERC721 {
   }
 
   // mint a new crypto boy
-  function mintCroSkull(uint256 _mintAmount ) isWhitelisted payable external {
+  function mintCroSkull(uint256 _mintAmount ) isWhitelisted isMintable payable external {
     require(msg.sender != address(0));
     require(_mintAmount > 0);
     require(_mintAmount <= maxMintAmount);
     require(msg.value >= cost * _mintAmount);
-
 
     uint256 supply = totalSupply();
     require(supply + _mintAmount <= maxSupply);
@@ -169,10 +172,12 @@ contract CroSkulls is ERC721 {
     uint256 totalNumberOfTokensOwned = balanceOf(_owner);
     return totalNumberOfTokensOwned;
   }
+
   function getTokenExists(uint256 _tokenId) public view returns(bool) {
     bool tokenExists = _exists(_tokenId);
     return tokenExists;
   }
+
   function buyToken(uint256 _tokenId) public marketplaceEnabled payable {
     require( settings['isMarketplace']);
     require(msg.sender != address(0));
@@ -243,12 +248,12 @@ contract CroSkulls is ERC721 {
     maxMintAmount = _newmaxMintAmount;
   }
 
-  function addRewardable(address _rewardableAddress, uint256 percent) public onlyOwner {
+  function addRewardable(address _rewardableAddress, uint256 _percent) public onlyOwner {
     require( rewardableUsers[_rewardableAddress] <= 0 );
-    require( totalRewardPercent + percent <= 1000 );
-    require( percent < 231);
-    rewardableUsers[_rewardableAddress] = percent;
-    userClaimedRewards[_rewardableAddress] = 0;
+    require( totalRewardPercent + _percent <= 1000 );
+    require( _percent < 231);
+    totalRewardPercent = totalRewardPercent.add(_percent);
+    rewardableUsers[_rewardableAddress] = _percent;
   }
 
   function withdrawReward() public payable isWithdrable {
@@ -260,7 +265,8 @@ contract CroSkulls is ERC721 {
   }
 
   function getRewardValue() public view returns(uint256){
-    uint256 fee = rewardableUsers[msg.sender];
+    uint256 fee = getRewardFee();
+    uint256 claimableRewards;
     require( fee > 0);
     //check already recived rewards
     uint256 rawRewards = totalCROVolume
@@ -268,9 +274,11 @@ contract CroSkulls is ERC721 {
       .mul(fee);
 
     uint256 alreadyClaimed = userClaimedRewards[msg.sender];
-    uint256 claimableRewards = rawRewards.sub(alreadyClaimed);
-    assert(rawRewards >= claimableRewards);
-    assert(address(this).balance >= claimableRewards);
+    if( alreadyClaimed > 0 ){
+      claimableRewards = rawRewards.sub(alreadyClaimed);
+    }else{
+      claimableRewards = rawRewards;
+    }
     return claimableRewards;
   }
 
