@@ -21,6 +21,17 @@ const MyCroSkullNFTDetails = (props) => {
         <span className="font-weight-bold">Token Id</span> :{" "}
         {tokenId.toNumber()}
       </p>
+      <div className="d-flex list-group skullMetadata border-shadow">
+        {metaData ?
+          metaData.attributes.map(attribute => {
+            return (
+              <span className="font-weight-bold">{attribute.trait_type}:
+                {" "}{attribute.value}
+              </span>
+            )
+          })
+          : ''}
+      </div>
       {props.accountAddress === mintedBy &&
         props.accountAddress !== previousOwner ? (
         <div className="alert alert-success w-50 text-center m-auto">
@@ -29,32 +40,13 @@ const MyCroSkullNFTDetails = (props) => {
       ) : (
         <div className="alert alert-info w-50 text-center m-auto">Bought</div>
       )}
-      <br></br>
-      <Accordion>
-        <Card>
-          <Accordion.Toggle eventKey="1" className="btn btn-outline-light">
-            Traits Properties
-          </Accordion.Toggle>
-          <Accordion.Collapse eventKey="1">
-          <div className="d-flex list-group skullMetadata border-shadow">
-                            { metaData ? 
-                            metaData.attributes.map( attribute => {
-                                return (
-                                <span className="font-weight-bold">{attribute.trait_type}:  
-                                     {" "}{attribute.value}
-                                </span>
-                                )
-                            })
-                            : ''}
-                        </div>
-          </Accordion.Collapse>
-        </Card>
-      </Accordion>
       {new Date().getTime() - metaData.date < 1800000 ?
-      <div><img src={news} className="details-img"></img> </div> :
-      <div> </div>
-    }
+        <div><img src={news} className="details-img"></img> </div> :
+        <div> </div>
+      }
+
     </div>
+
   );
 };
 
