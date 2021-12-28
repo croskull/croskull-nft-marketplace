@@ -1,10 +1,10 @@
 {
   "main.css": "/static/css/main.6396186e.chunk.css",
-  "main.js": "/static/js/main.f719cf0d.chunk.js",
-  "main.js.map": "/static/js/main.f719cf0d.chunk.js.map",
+  "main.js": "/static/js/main.ba8c9b8e.chunk.js",
+  "main.js.map": "/static/js/main.ba8c9b8e.chunk.js.map",
   "static/css/1.3d4525ae.chunk.css": "/static/css/1.3d4525ae.chunk.css",
-  "static/js/1.584951ff.chunk.js": "/static/js/1.584951ff.chunk.js",
-  "static/js/1.584951ff.chunk.js.map": "/static/js/1.584951ff.chunk.js.map",
+  "static/js/1.9b4ccd03.chunk.js": "/static/js/1.9b4ccd03.chunk.js",
+  "static/js/1.9b4ccd03.chunk.js.map": "/static/js/1.9b4ccd03.chunk.js.map",
   "runtime~main.js": "/static/js/runtime~main.229c360f.js",
   "runtime~main.js.map": "/static/js/runtime~main.229c360f.js.map",
   "static/media/skulls.gif": "/static/media/skulls.2039ad1d.gif",
@@ -15,9 +15,9 @@
   "static/media/new_blue.png": "/static/media/new_blue.d88b0154.png",
   "static/media/market.jpg": "/static/media/market.d612e672.jpg",
   "static/media/MyCroSkulls.css": "/static/media/HeadhunterRegular-6Y1x.078337f9.ttf",
-  "static/css/main.6396186e.chunk.css.map": "/static/css/main.6396186e.chunk.css.map",
   "static/css/1.3d4525ae.chunk.css.map": "/static/css/1.3d4525ae.chunk.css.map",
+  "static/css/main.6396186e.chunk.css.map": "/static/css/main.6396186e.chunk.css.map",
   "index.html": "/index.html",
-  "precache-manifest.f41947019da367402162ee34ecf10ae1.js": "/precache-manifest.f41947019da367402162ee34ecf10ae1.js",
+  "precache-manifest.752ed176a57dfa02cb31c3f95657062c.js": "/precache-manifest.752ed176a57dfa02cb31c3f95657062c.js",
   "service-worker.js": "/service-worker.js"
 }
