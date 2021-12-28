@@ -139,30 +139,34 @@ class App extends Component {
         .totalCROVolume()
         .call();
       if( totalRewardPool ){
-        let currentReward = await croSkullsContract.methods
+        /*let currentReward = await croSkullsContract.methods
           .getRewardValue()
           .call();
         
-        currentReward = window.web3.utils.fromWei( currentReward.toString() )
+        currentReward = window.web3.utils.fromWei( currentReward.toString() )*/
         
         let currentRewardFee = await croSkullsContract.methods
-          .getRewardFee()
+          .rewardableUsers(accountAddress)
           .call();
         
+
+        
         currentRewardFee = currentRewardFee.toString() / 10;
+
+        console.log(currentRewardFee )
   
         totalRewardPool = window.web3.utils.fromWei( totalRewardPool.toString() );
-  
-        let alreadyClaimed = await croSkullsContract.methods
+        let currentReward = totalRewardPool / 100 * currentRewardFee;
+        /*let alreadyClaimed = await croSkullsContract.methods
           .userClaimedRewards(accountAddress)
           .call();
   
-        alreadyClaimed = window.web3.utils.fromWei( alreadyClaimed.toString() )
+        alreadyClaimed = window.web3.utils.fromWei( alreadyClaimed.toString() )*/
         this.setState({
           totalRewardPool,
           currentRewardFee,
           currentReward,
-          alreadyClaimed
+          /*alreadyClaimed*/
         })
       }
       
@@ -391,30 +395,16 @@ class App extends Component {
         await this.getRewardData()
 
         if( baseURI ) {
+          baseURI = baseURI.replace('ipfs://', '');
           baseURI = 'https://gateway.pinata.cloud/ipfs/' + baseURI;
           this.setState({ baseURI }); 
-  
-          await this.fetchAllCroSkulls();
-  
           const croSkullsMaxSupply = await croSkullsContract.methods
             .getMaxSupply()
             .call();
           
           this.setState( { croSkullsMaxSupply } )
-  
-          let floorPrice = 9999999999;
-          let highPrice = 0;
-          let croSkulls = this.state.croSkulls;
-          croSkulls.forEach( cryptoboy => {
-            let price = this.numToEth(cryptoboy.price)
-            if( price < floorPrice )
-              floorPrice = price
-            
-            if( price > highPrice)
-              highPrice = price
-          })
-          this.setState({ floorPrice, highPrice })
-        }
+
+
         const croSkullsCost = await croSkullsContract.methods
           .getCost()
           .call();
@@ -432,6 +422,23 @@ class App extends Component {
           .call();
         totalTokensOwnedByAccount = totalTokensOwnedByAccount.toNumber();
         this.setState({ totalTokensOwnedByAccount });
+  
+          await this.fetchAllCroSkulls();
+  
+  
+          let floorPrice = 9999999999;
+          let highPrice = 0;
+          let croSkulls = this.state.croSkulls;
+          croSkulls.forEach( cryptoboy => {
+            let price = this.numToEth(cryptoboy.price)
+            if( price < floorPrice )
+              floorPrice = price
+            
+            if( price > highPrice)
+              highPrice = price
+          })
+          this.setState({ floorPrice, highPrice })
+        }
       } else {
         this.setState({ contractDetected: false });
       }
@@ -447,9 +454,8 @@ class App extends Component {
         .call();
     newCroSkullsCount = newCroSkullsCount.toNumber()
 
-
     this.setState({ croSkullsCount: newCroSkullsCount });
-    const result = await fetch(this.state.baseURI + '/_metadata.json' );
+    const result = await fetch(this.state.baseURI + '_metadata' );
     const metaDatas = await result.json();
     for (croSkullsCount; croSkullsCount <= newCroSkullsCount; croSkullsCount++) {
       const croSkull = await croSkullsContract.methods
@@ -457,7 +463,7 @@ class App extends Component {
       .call();
       
       metaDatas.map(async (metaData) => {
-        if( croSkull.tokenId.toNumber() === metaData.edition )
+        if( /*croSkull.tokenId.toNumber()*/ croSkullsCount === metaData.edition )
         this.setState({
           croSkulls: [
             ...this.state.croSkulls, {
@@ -678,8 +684,6 @@ class App extends Component {
   mintMyNFT = async (_mintAmount) => {
     _mintAmount = _mintAmount || false;
     if ( _mintAmount ) {
-      let previousTokenId;
-
       let { croSkullsContract, accountAddress, croSkullsCost, currentTx } = this.state;
 
       let callback_1 = async (c) => {
@@ -703,7 +707,7 @@ class App extends Component {
         window.location.hash = "/my-tokens"; // hash redirect alla pagina dei token 
       }
 
-      const totalCost = window.web3.utils.toWei( ( croSkullsCost * _mintAmount ).toString(), "Ether");
+      const totalCost = window.web3.utils.toWei( ( 199 * _mintAmount ).toString(), "Ether");
       let txCroSkullMint = croSkullsContract.methods
         .mintCroSkull(_mintAmount)
         .send({ from: accountAddress, value: totalCost })
