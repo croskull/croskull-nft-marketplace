@@ -858,8 +858,18 @@ class App extends Component {
                     :
                     
                     <div class="card">
+
+                       <div className="market-title">
+                        <h2>
+                        Click <a href="https://app.ebisusbay.com/collection/0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F">Here!</a> to trade CroSkull on Ebisu's bay marketplace!
+                        </h2>
+                      </div>
+
+                      <br></br>
                       <img src={market} className="market" />
-                    </div>
+                      
+                     
+                    </div>     
                   )}
                 />
 

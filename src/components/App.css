@@ -121,3 +121,17 @@ b, label{
   margin-top: 5%;
   border-radius: 5%;
 }
+.market-title
+{
+  font-family: 'headhunter';
+  text-align: center;
+  margin-top: 5%;
+}
+.market-title a
+{
+  color: rgb(0, 140, 255);
+}
+.market-title a:hover
+{
+  color: rgb(0, 140, 255);;
+}
