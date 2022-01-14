@@ -7,6 +7,7 @@ import "./bootstrap.min.css";
 import "./index.css";
 
 ReactDOM.render(
+  
   <React.StrictMode>
     <App />
   </React.StrictMode>,

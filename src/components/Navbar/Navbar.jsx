@@ -41,6 +41,11 @@ const Navbar = ({isAdmin}) => {
                 My CroSkulls
               </Link>
             </li>
+            <li className="nav-item">
+              <Link to="/croskull-adventure" className="nav-link">
+                Adventure
+              </Link>
+            </li>
             { isAdmin ?
               <li className="nav-item">
                 <Link to="/admin" className="nav-link">

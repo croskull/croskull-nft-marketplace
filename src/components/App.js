@@ -7,6 +7,7 @@ import AllCroSkulls from "./AllCroSkulls/AllCroSkulls";
 import AccountDetails from "./AccountDetails/AccountDetails";
 import ContractNotDeployed from "./ContractNotDeployed/ContractNotDeployed";
 import ConnectToMetamask from "./ConnectMetamask/ConnectToMetamask";
+import CroskullAdventure from "./CroskullAdventure/CroskullAdventure";
 import Loading from "./Loading/Loading";
 import Navbar from "./Navbar/Navbar";
 import RewardBar from "./RewardBar/RewardBar";
@@ -784,6 +785,7 @@ class App extends Component {
 
   render() {
     return (
+      
       <div className="container">
         <ReactNotification />
         {!this.state.metamaskConnected ? (
@@ -857,7 +859,7 @@ class App extends Component {
                       />
                     :
                     
-                    <div class="card">
+                    <div>
 
                        <div className="market-title">
                         <h2>
@@ -916,6 +918,19 @@ class App extends Component {
               />
                :
                '' }
+               <Route
+                path="/croskull-adventure"
+                render={() => (
+                  <CroskullAdventure
+                    accountAddress={this.state.accountAddress}
+                    croSkulls={this.state.croSkulls}
+                    totalTokensOwnedByAccount={
+                      this.state.totalTokensOwnedByAccount
+                    }
+                    baseURI={this.state.baseURI}
+                  />
+                )}
+              />
             </HashRouter>
           </>
         )}

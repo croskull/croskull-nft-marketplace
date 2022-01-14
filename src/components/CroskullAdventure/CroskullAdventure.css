@@ -1,0 +1,205 @@
+@font-face {
+    font-family: 'Headhunter';
+    src: url('../../utils/HeadhunterRegular-6Y1x.ttf')  format('truetype');
+    font-weight: bold;
+    };
+    @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+
+
+
+
+.adventure-container
+{
+    padding: 5%;
+    border-radius: 25px;
+    margin-top: 10%;
+    margin-bottom: 10%;
+    background: linear-gradient(to top, rgb(0, 73, 141), rgba(255, 0, 255, 0.5));
+        
+}
+.adventure-container p
+{
+    color: rgb(151, 151, 151);
+}
+.adventure-container h3
+{
+    font-family: 'Headhunter';
+}
+.adventure-banner
+{
+    width: 100%;
+}
+.adventure-title
+{
+    font-family: 'Headhunter';
+    font-size: 6vh;
+    text-align: center;
+    color: rgb(224, 240, 255);
+    margin-top: 5%;
+}
+
+/*TAVERN*/
+.tavern-container
+{
+    background: #0a1f3b;
+    padding: 5%;
+    margin-top: 10%;
+    border-radius: 25px;
+}
+.tavern-container h1
+{
+    font-family: 'Headhunter';
+    color: rgb(224, 240, 255);
+    cursor: pointer;
+}
+.tavern-mobile-row
+{
+    background-image: url("./treasure.png");
+    background-position: center;
+    background-size: cover;
+}
+.tavern-desktop-row
+{
+    background-image: url("./tavern.jpg");
+    background-position: center;
+    background-size: cover;
+    
+}
+.tavern-desktop-row img
+{
+    margin-top: 10%;
+    margin-bottom: 10%;
+    margin-left: 10%;
+    width: 80%;
+}
+.tavern-mobile-row img
+{
+    margin-top: 5%;
+    margin-bottom: 5%;
+    margin-left: 30%;
+    width: 50%;
+    text-align: center;
+}
+
+
+/*POOL*/
+.pool-container h1
+{
+    font-family: 'Headhunter';
+    color: rgb(224, 240, 255);
+    margin-bottom: 5%;
+}
+.pool-container h3
+{
+    font-family: 'Headhunter';
+    color: rgb(224, 240, 255);
+    margin-bottom: 2%;
+    margin-top: 2%;
+    font-size: 2vh;
+}
+.adventure-token-img
+{
+    width: 20%;
+    max-height: 60px;
+    max-width: 60px;
+    border-radius: 15px;
+    border: 1px solid black;
+    float: left;
+    margin-right: 10px;
+}
+.adventure-dd
+{
+    text-align: right;
+}
+
+/*MISSION*/
+.mission-container
+{
+    background: #0a1f3b;
+    padding: 5%;
+    margin-top: 10%;
+    border-radius: 25px;
+}
+.mission-container h1
+{
+    font-family: 'Headhunter';
+    color: rgb(224, 240, 255);
+    cursor: pointer;
+}
+.mission-mobile-row
+{
+    background-image: url("./treasure.png");
+    background-position: center;
+    background-size: cover;
+}
+.mission-desktop-row
+{
+    background-image: url("./cave.png");
+    /*
+    background-position: center;
+    background-size: cover;
+    */
+}
+.mission-desktop-row img
+{
+    margin-top: 30%;
+    margin-bottom: 36%;
+    margin-left: 10%;
+    width: 80%;
+}
+.mission-mobile-row img
+{
+    margin-top: 5%;
+    margin-bottom: 5%;
+    margin-left: 30%;
+    width: 50%;
+    text-align: center;
+}
+.img-card
+{
+    width: 100%;
+    z-index: 1; 
+    border: solid white 5px;
+    border-image-source: linear-gradient(130deg, #743ad5, #00b0f5);
+    border-image-slice: 1;
+}
+.selected-card
+{
+    width: 100%;
+    z-index: 1; 
+    border: solid white 5px;
+    border-image-source: linear-gradient(130deg, #f7e600, #00f529);
+    border-image-slice: 1;
+}
+
+
+/*REWARD*/
+.reward-container
+{
+    font-family: 'Headhunter';
+    margin-top: 10%;
+}
+.reward-container h4
+{
+    font-size: 2vh;
+}
+.reward
+{
+    font-size: 20px;
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
+.reward img
+{
+    width: 10%;
+    max-width: 50px;
+    max-height: 50px;
+    padding-bottom: 10px;
+    margin-right: 10px;
+}
+.cnt-3 p
+{
+    margin-top: 1%;
+    margin-bottom: 1%;
+    text-align: left;
+}
