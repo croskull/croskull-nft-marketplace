@@ -12,11 +12,11 @@ module.exports = {
       port: 7545,
       network_id: "*", // Match any network id
     },
-    /*development: { //cronos cassini
+    cassini: { //cronos cassini
       provider: new HDWalletProvider(MNEMONIC, "https://cassini.crypto.org:8545"),
       network_id: 339,
       skipDryRun: true
-     },*/
+     },
      cronos: {
        provider: new HDWalletProvider(MNEMONIC, "https://evm-cronos.crypto.org"), 
        network_id: 25,
@@ -27,7 +27,7 @@ module.exports = {
   contracts_build_directory: "./src/abis/",
   compilers: {
     solc: {
-      version: "<0.8.0",
+      version: ">0.8.0",
       optimizer: {
         enabled: true,
         runs: 200,

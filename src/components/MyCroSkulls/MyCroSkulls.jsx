@@ -8,6 +8,7 @@ const MyCroSkulls = ({
   accountAddress,
   croSkulls,
   totalTokensOwnedByAccount,
+  fetchAllCroSkulls,
 }) => {
   const [loading, setLoading] = useState(false);
   const [myCroSkulls, setMyCroSkulls] = useState([]);
@@ -34,6 +35,11 @@ const MyCroSkulls = ({
           <h3 className="mcb-sub-title">
             CroSkulls: {totalTokensOwnedByAccount}
           </h3>
+          <button
+          onClick={fetchAllCroSkulls}
+          >
+            Refresh Skulls
+          </button>
       <div className="d-flex flex-wrap mb-2">
         {myCroSkulls.map(  (croskull) => {
           return (
