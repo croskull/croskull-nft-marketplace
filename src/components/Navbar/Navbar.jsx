@@ -3,7 +3,7 @@ import icon from "./favicon-32x32.png";
 import Logo from "./logo-cr-skull-white.png";
 import { Link } from "react-router-dom";
 
-const Navbar = ({isAdmin}) => {
+const Navbar = ({isAdmin, accountAddress}) => {
   return (
     <nav className="navbar navbar-expand-sm navbar-dark border-shadow header">
         <Link to="/" className="navbar-brand ml-2">
@@ -25,25 +25,35 @@ const Navbar = ({isAdmin}) => {
               <Link to="/" className="nav-link">
                 Home
               </Link>
-            </li>
+            </li>      
             <li className="nav-item">
-              <Link to="/mint" className="nav-link">
-                Mint NFT
+              <Link to="/tavern" className="nav-link">
+                Tavern
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/marketplace" className="nav-link">
+              <Link to="/adventure" className="nav-link">
+                Adventure
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="" className="nav-link" disabled>
+                Shop
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="" className="nav-link" disabled>
+                Bank
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/marketplace" className="nav-link" disabled>
                 Marketplace
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/my-tokens" className="nav-link">
-                My CroSkulls
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/croskull-adventure" className="nav-link">
-                Adventure
+              <Link to="" className="nav-link" disabled>
+                Buy Grave$
               </Link>
             </li>
             { isAdmin ?
@@ -53,7 +63,11 @@ const Navbar = ({isAdmin}) => {
                 </Link>
               </li>
             : '' }
-
+              <li className="nav-item">
+              <Link  className="nav-link">
+                  {accountAddress.substring(0,2)}...{accountAddress.substring(38,42)}
+                </Link>
+            </li>
           </ul>
         </div>
     </nav>

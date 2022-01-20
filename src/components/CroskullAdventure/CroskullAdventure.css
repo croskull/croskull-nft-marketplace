@@ -8,198 +8,222 @@
 
 
 
-.adventure-container
+/*NUOVA IMPAGINAZIONE*/
+*::-webkit-scrollbar {
+    width: 12px;
+  }
+  
+  *::-webkit-scrollbar-track {
+    background: white;
+  }
+  
+  *::-webkit-scrollbar-thumb {
+    background-color: blue;
+    border-radius: 20px;
+    border: 3px solid white;
+  }
+/*HEADER*/
+.header-adventure
 {
-    padding: 5%;
-    border-radius: 25px;
-    margin-top: 10%;
-    margin-bottom: 10%;
-    background: linear-gradient(to top, rgb(0, 73, 141), rgba(255, 0, 255, 0.5));
-        
-}
-.adventure-container p
-{
-    color: rgb(151, 151, 151);
-}
-.adventure-container h3
-{
-    font-family: 'Headhunter';
-}
-.adventure-banner
-{
-    width: 100%;
+    width: 95%;
+    margin-left: 2.5%;
 }
 .adventure-title
 {
-    font-family: 'Headhunter';
-    font-size: 6vh;
-    text-align: center;
-    color: rgb(224, 240, 255);
-    margin-top: 5%;
+border: white 1px solid;
+border-radius: 15px 0 0px 15px;
+text-align: center;
 }
-
-/*TAVERN*/
-.tavern-container
-{
-    background: #0a1f3b;
-    padding: 5%;
-    margin-top: 10%;
-    border-radius: 25px;
-}
-.tavern-container h1
+.adventure-title h1
 {
     font-family: 'Headhunter';
-    color: rgb(224, 240, 255);
-    cursor: pointer;
+    font-size: 3vh;
+    margin-top: 10px;
 }
-.tavern-mobile-row
+.skull-in-adventure
 {
-    background-image: url("./treasure.png");
-    background-position: center;
+    border: white 1px solid;
+    border-radius: 0 15px 15px 0;
+    text-align: right;
+}
+.skull-in-adventure h3
+{
+    font-family: 'Special Elite';
+    font-size: 1.5vh;
+    margin-top: 2vh;
+}
+/*CONTAINER IMMAGINI */
+.adventure-container{
+    margin-top: 1%;
+    margin-bottom: 1%;
+    overflow-x: auto;
+}
+.img-skull
+{
+    width: 90%;
+    margin:5%;
+    border: 1px solid black;
+    border-radius: 15px;
+}
+.div-skull
+{
+    margin: 5%;
+    z-index: 1; 
+    border: 1px solid white;
+    border-image-slice: 1;
+    text-align: right;
+    border-radius: 15px;
+    -webkit-box-shadow: rgba(0,0,0,0.8) 0px 0 15px;
+    -moz-box-shadow: rgba(0,0,0,0.8) 0 0 15px;
+    box-shadow: rgba(0,0,0,0.8) 0 0 15px;
+}
+.adventure-container p
+{
+    margin: 3%;
+}
+.adventure-container .selected
+{
+    border: 1px solid #00f529;
+    border-radius: 15px;
+    -webkit-box-shadow: #faef57 0px 0 15px;
+    -moz-box-shadow: #faef57 0 0 15px;
+    box-shadow: #faef57 0 0 15px;
+}
+.div-skull
+{
+    background-image: url("./Purple theme.png");
+    background-repeat: no-repeat;
     background-size: cover;
 }
-.tavern-desktop-row
+.div-skull p
 {
-    background-image: url("./tavern.jpg");
-    background-position: center;
-    background-size: cover;
-    
+    margin-left: 3%;
+    text-align: left;
 }
-.tavern-desktop-row img
+.div-skull button
 {
-    margin-top: 10%;
-    margin-bottom: 10%;
-    margin-left: 10%;
-    width: 80%;
+    margin: 3%;
 }
-.tavern-mobile-row img
+.div-button button
 {
-    margin-top: 5%;
-    margin-bottom: 5%;
-    margin-left: 30%;
-    width: 50%;
-    text-align: center;
-}
-
-
-/*POOL*/
-.pool-container h1
-{
-    font-family: 'Headhunter';
-    color: rgb(224, 240, 255);
-    margin-bottom: 5%;
-}
-.pool-container h3
-{
-    font-family: 'Headhunter';
-    color: rgb(224, 240, 255);
-    margin-bottom: 2%;
+    margin-right: 5%;
     margin-top: 2%;
-    font-size: 2vh;
+}
+.container-data
+{
+    border: 1px solid white;
+    border-radius: 15px 15px 0 0;
+}
+.row-data
+{
+    text-align: left;
+}
+.row-data p
+{
+    margin-top: 5%;
+    margin-left: 5%;
 }
 .adventure-token-img
 {
-    width: 20%;
-    max-height: 60px;
-    max-width: 60px;
+    margin-top: 5%;
+    width: 100%;
+    max-height: 30px;
+    max-width: 30px;
     border-radius: 15px;
-    border: 1px solid black;
-    float: left;
+    border: 1px solid white;
     margin-right: 10px;
+    margin-left: 5%;
+    float: left;
 }
-.adventure-dd
-{
-    text-align: right;
-}
-
-/*MISSION*/
-.mission-container
-{
-    background: #0a1f3b;
-    padding: 5%;
-    margin-top: 10%;
-    border-radius: 25px;
-}
-.mission-container h1
-{
-    font-family: 'Headhunter';
-    color: rgb(224, 240, 255);
-    cursor: pointer;
-}
-.mission-mobile-row
-{
-    background-image: url("./treasure.png");
-    background-position: center;
-    background-size: cover;
-}
-.mission-desktop-row
-{
-    background-image: url("./cave.png");
-    /*
-    background-position: center;
-    background-size: cover;
-    */
-}
-.mission-desktop-row img
-{
-    margin-top: 30%;
-    margin-bottom: 36%;
-    margin-left: 10%;
-    width: 80%;
-}
-.mission-mobile-row img
+.fire-token-img
 {
     margin-top: 5%;
-    margin-bottom: 5%;
-    margin-left: 30%;
-    width: 50%;
-    text-align: center;
-}
-.img-card
-{
     width: 100%;
-    z-index: 1; 
-    border: solid white 5px;
-    border-image-source: linear-gradient(130deg, #743ad5, #00b0f5);
-    border-image-slice: 1;
-}
-.selected-card
-{
-    width: 100%;
-    z-index: 1; 
-    border: solid white 5px;
-    border-image-source: linear-gradient(130deg, #f7e600, #00f529);
-    border-image-slice: 1;
-}
-
-
-/*REWARD*/
-.reward-container
-{
-    font-family: 'Headhunter';
-    margin-top: 10%;
-}
-.reward-container h4
-{
-    font-size: 2vh;
-}
-.reward
-{
-    font-size: 20px;
-    margin-top: 1%;
-    margin-bottom: 1%;
-}
-.reward img
-{
-    width: 10%;
-    max-width: 50px;
-    max-height: 50px;
-    padding-bottom: 10px;
+    max-height: 30px;
+    max-width: 30px;
     margin-right: 10px;
+    margin-left: 5%;
+    float: left;
 }
-.cnt-3 p
+.info-data
 {
-    margin-top: 1%;
-    margin-bottom: 1%;
-    text-align: left;
+    border: 1px solid white;
+    border-radius: 0 0 15px 15px;
 }
+.info-data h3
+{
+    font-family: 'headhunter';
+    font-size: 1vh;
+    margin: 2%;
+}
+.info-stat
+{
+    margin: 5%;
+    text-align: center;
+    border: 1px solid white;
+}
+.malus
+{
+    width: 70%;
+    margin-top: 0% !important;
+}
+
+.info-data img
+{
+    width: 90%;
+    margin: 5%;
+}
+.claim-button
+{
+    margin: 5%;
+    margin-left: 10%;
+    text-align: left; 
+    margin-top: 0%;
+}
+.tavern-button
+{   
+    margin: 5%;
+    margin-right: 10% ;
+    margin-top: 0%;
+    text-align: right;
+}
+.left-text
+{
+    margin-left: 5%;
+}
+.info-box span
+{
+    font-family: 'Special Elite';
+    float: right;
+    margin-right: 5%;
+}
+.info-box .progress
+{
+    margin-top: 0% !important;
+    margin-bottom: 0% !important;
+}
+.to-tavern-button
+{
+    font-size: 0.8vh !important;
+}
+.sword-img
+{
+    width: 15%;
+    margin-right: 20%;
+}
+.div-details
+{
+    width: 90%;
+    margin: 5%;
+}
+.div-details p
+{
+    text-align: left;
+    margin: 0%;
+}
+.div-details h4
+{
+    font-family: 'Special Elite';
+    border-bottom: 1px solid white;
+}
+

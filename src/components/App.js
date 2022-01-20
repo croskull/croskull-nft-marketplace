@@ -8,6 +8,7 @@ import AccountDetails from "./AccountDetails/AccountDetails";
 import ContractNotDeployed from "./ContractNotDeployed/ContractNotDeployed";
 import ConnectToMetamask from "./ConnectMetamask/ConnectToMetamask";
 import CroskullAdventure from "./CroskullAdventure/CroskullAdventure";
+import Tavern from "./Tavern/Tavern";
 import Loading from "./Loading/Loading";
 import Navbar from "./Navbar/Navbar";
 import RewardBar from "./RewardBar/RewardBar";
@@ -786,7 +787,7 @@ class App extends Component {
   render() {
     return (
       
-      <div className="container">
+      <div className="container-fluid">
         <ReactNotification />
         {!this.state.metamaskConnected ? (
           <ConnectToMetamask 
@@ -800,7 +801,7 @@ class App extends Component {
         ) : (
           <>
             <HashRouter basename="/" >
-              <Navbar isAdmin={this.state.croSkullsContractOwner === this.state.accountAddress || this.state.managerAddress === this.state.accountAddress}/>
+              <Navbar isAdmin={this.state.croSkullsContractOwner === this.state.accountAddress || this.state.managerAddress === this.state.accountAddress} accountAddress={this.state.accountAddress}/>
               { 
                 this.state.isRewardable ?
                   (<RewardBar 
@@ -919,7 +920,20 @@ class App extends Component {
                :
                '' }
                <Route
-                path="/croskull-adventure"
+                path="/tavern"
+                render={() => (
+                  <Tavern
+                    accountAddress={this.state.accountAddress}
+                    croSkulls={this.state.croSkulls}
+                    totalTokensOwnedByAccount={
+                      this.state.totalTokensOwnedByAccount
+                    }
+                    baseURI={this.state.baseURI}
+                  />
+                )}
+              />
+              <Route
+                path="/adventure"
                 render={() => (
                   <CroskullAdventure
                     accountAddress={this.state.accountAddress}
