@@ -83,7 +83,7 @@ class Tavern extends Component {
                               onClick={() => this.selectTavernCr(cr)}
                               className={this.state.selectTavernCr.includes(cr) ? 'selected img-skull' : 'img-skull'}></img>
                               <img src={boccale} className="boc-img"/>
-                            <button className="to-adventure-button btn btn-info btn-sm rounded">Send On Adventure</button>
+                            <button className="to-adventure-button btn btn-2 btn-sm rounded">Send On Adventure</button>
                           </div>
                         </div>
                       );
@@ -103,7 +103,7 @@ class Tavern extends Component {
                               onClick={() => this.selectTavernCr(cr)}
                               className={this.state.selectTavernCr.includes(cr) ? 'selected img-skull' : 'img-skull'}></img>
                               <img src={boccale} className="boc-img"/>
-                            <button className="to-adventure-button btn btn-info btn-sm rounded" onClick={() => this.sendSingle(cr)}>Send  On Adventure</button>
+                            <button className="to-adventure-button btn btn-2 btn-sm rounded" onClick={() => this.sendSingle(cr)}>Send  On Adventure</button>
                           </div>
                         </div>
                       );
@@ -113,8 +113,8 @@ class Tavern extends Component {
               </div>
             </div>
             <div className="div-button">
-              <button className="btn btn-info rounded" onClick={() => this.sendAll()}>Send All</button>
-              <button className="btn btn-info rounded" hidden={(this.state.selectTavernCr.length > 0 ? false : true)} onClick={() => this.sendSelected()}>Send Selected</button>
+              <button className="btn btn-2 rounded" onClick={() => this.sendAll()}>Send All</button>
+              <button className="btn btn-2 rounded" hidden={(this.state.selectTavernCr.length > 0 ? false : true)} onClick={() => this.sendSelected()}>Send Selected</button>
             </div>
           </div>
 
@@ -172,7 +172,7 @@ class Tavern extends Component {
               </div>
 
               <div className="div-data-button">
-              <Link to="/adventure" className="btn btn-info rounded">
+              <Link to="/adventure" className="btn btn-2 rounded">
                 Adventure
               </Link>
               </div>
@@ -182,6 +182,9 @@ class Tavern extends Component {
           </div>
 
         </div>
+        <div class="card">
+  Magic Card
+</div>
       </div>
     );
   }

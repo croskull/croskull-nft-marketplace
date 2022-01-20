@@ -5,6 +5,9 @@
   "author": "hiutaky",
   "homepage": "https://app.croskull.com",
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/react-fontawesome": "^0.1.16",
     "@openzeppelin/contracts": "^3.4.1",
     "@truffle/hdwallet-provider": "^1.2.3",
     "@walletconnect/qrcode-modal": "^1.7.0",

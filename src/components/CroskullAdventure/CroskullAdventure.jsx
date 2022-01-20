@@ -7,6 +7,8 @@ import cave from './cave.png';
 import fire from './fire.png';
 import sword from './attack.png';
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faInfoCircle} from '@fortawesome/free-solid-svg-icons';
 import { LazyLoadImage, trackWindowScroll } from "react-lazy-load-image-component";
 
 class CroskullAdventure extends Component {
@@ -92,7 +94,7 @@ class CroskullAdventure extends Component {
                               onClick={() => this.selectAdventureCr(cr)}
                               className={this.state.selectAdventureCr.includes(cr) ? 'selected img-skull' : 'img-skull'}></img>
                             <img src={sword} className="sword-img"></img>
-                            <button className="btn btn-info btn-sm to-tavern-button">Send To Tavern</button>
+                            <button className="btn btn-2 btn-sm to-tavern-button">Send To Tavern</button>
                           </div>
                         </div>
                       );
@@ -112,7 +114,7 @@ class CroskullAdventure extends Component {
                               onClick={() => this.selectAdventureCr(cr)}
                               className={this.state.selectAdventureCr.includes(cr) ? 'selected img-skull' : 'img-skull'}></img>
                             <img src={sword} className="sword-img"></img>
-                            <button className="btn btn-info btn-sm rounded to-tavern-button" onClick={() => this.sendSingle(cr)}>Send To Tavern</button>
+                            <button className="btn btn-2 btn-sm rounded to-tavern-button" onClick={() => this.sendSingle(cr)}>Send To Tavern</button>
                           </div>
                         </div>
                       );
@@ -122,8 +124,8 @@ class CroskullAdventure extends Component {
               </div>
             </div>
             <div className="div-button">
-              <button className="btn btn-info rounded" onClick={() => this.sendAll()}>Send All</button>
-              <button className="btn btn-info rounded" hidden={(this.state.selectAdventureCr.length > 0 ? false : true)} onClick={() => this.sendSelected()}>Send Selected</button>
+              <button className="btn btn-2 rounded" onClick={() => this.sendAll()}>Send All</button>
+              <button className="btn btn-2 rounded" hidden={(this.state.selectAdventureCr.length > 0 ? false : true)} onClick={() => this.sendSelected()}>Send Selected</button>
             </div>
           </div>
 
@@ -135,7 +137,7 @@ class CroskullAdventure extends Component {
               <div className="row align-items-center row-data">
                 <div className="col-6">
                   <img src={fire} className="fire-token-img"></img>
-                  <p>Burn Malus: {malus}%</p>
+                  <p data-toggle="modal" data-target="#malusModal" style={{cursor: 'pointer'}}>Burn Malus: {malus}% <FontAwesomeIcon icon={faInfoCircle} /></p>
                   <div class="progress malus">
                     <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style={{ width: malus + '%' }} aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"> {malus}% </div>
                   </div>
@@ -147,6 +149,22 @@ class CroskullAdventure extends Component {
                 <div className="col-3 align-items-center">
                   <img src={token} className="adventure-token-img"></img>
                   <p>Souls Earned: 20</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal fade" id="malusModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="malusModal" style={{color: 'black'}}>Malus Info</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body" style={{color: 'black'}}>
+                    IL MALUS È QUALCOSA CHE FA GNE
+                  </div>
                 </div>
               </div>
             </div>
@@ -180,10 +198,10 @@ class CroskullAdventure extends Component {
 
               <div className="row">
                 <div className="col-6">
-                  <button className="claim-button btn btn-warning rounded">Claim</button>
+                  <button className="claim-button btn btn-1 rounded">Claim</button>
                 </div>
                 <div className="col-6" style={{ textAlign: 'right' }}>
-                  <Link to="/tavern" className="tavern-button btn btn-info rounded">
+                  <Link to="/tavern" className="tavern-button btn  rounded btn-2">
                     Tavern
                   </Link>
                 </div>
