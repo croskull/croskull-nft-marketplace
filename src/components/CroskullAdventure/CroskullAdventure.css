@@ -1,4 +1,4 @@
-@font-face {
+/* @font-face {
     font-family: 'Headhunter';
     src: url('../../utils/HeadhunterRegular-6Y1x.ttf')  format('truetype');
     font-weight: bold;
@@ -8,7 +8,7 @@
 
 
 
-/*NUOVA IMPAGINAZIONE*/
+
 *::-webkit-scrollbar {
     width: 12px;
   }
@@ -22,7 +22,7 @@
     border-radius: 20px;
     border: 3px solid white;
   }
-/*HEADER*/
+
 .header-adventure
 {
     width: 95%;
@@ -52,7 +52,7 @@ text-align: center;
     font-size: 1.5vh;
     margin-top: 2vh;
 }
-/*CONTAINER IMMAGINI */
+
 .adventure-container{
     margin-top: 1%;
     margin-bottom: 1%;
@@ -102,6 +102,7 @@ text-align: center;
     left: -2%;
     animation: spin 2.5s linear infinite;
 }
+/*
 .div-skull
 {
     background-image: url("./Purple theme.png");
@@ -241,10 +242,10 @@ text-align: center;
     cursor: pointer;
 }
 .btn-1:hover {
-    background-position: right center; /* change the direction of the change here */
+    background-position: right center; 
   }
   .btn-2:hover {
-    background-position: right center; /* change the direction of the change here */
+    background-position: right center; 
   }
   .btn-1 {
     background-image: linear-gradient(to right, #f6d365 0%, #fda085 51%, #f6d365 100%);
@@ -255,4 +256,152 @@ text-align: center;
     background-image: linear-gradient(to right, #7323f3 0%, #3665b6 51%, #7323f3 100%);
     background-size: 200% auto;
     transition: 0.5s;
+  } */
+
+  .adventure{
+    margin-top: 1%;
+    background-image: url(ice-bonefire.jpg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    width: 100%;
+    border-radius: 15px;
+    padding-bottom: 10%;
+}
+.adventure .head
+{
+  padding-top: 3%;
+  margin-bottom: 3%;
+}
+.adventure .div-skull
+{
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    margin: 1%;
+    width: 20vh;
+    height: 25vh;
+    border: 3px solid rgb(252, 247, 0);
+    margin-top: 3%;
+    margin-bottom: 3%;
+}
+.adventure .div-skull span
+{
+    margin: 5%;
+}
+.adventure .div-skull .d-flex
+{
+    margin: 3%;
+    margin-top: 82%;
+}
+.adventure .div-skull .d-flex button
+{
+   font-size: 0.75vh;
+}
+.adventure .selected{
+  border: #00c231 3px solid;
+  border-image: linear-gradient(
+    var(--rotate)
+    , #805dff, #3ccfe3, #00c231) ;
+    animation: spin 2.5s linear infinite;
+    border-image-slice: 3;
+}
+@property --rotate {
+  syntax: "<angle>";
+  initial-value: 132deg;
+  inherits: false;
+}
+@keyframes spin {
+  0% {
+    --rotate: 0deg;
   }
+  100% {
+    --rotate: 360deg;
+  }
+}
+.adventure .div-button button
+{
+  margin-top: 3%;
+  margin-right: 3%;
+  margin-bottom: 3%;
+}
+.adventure .skulls-container
+{
+    margin: 1%;
+    border-radius: 15px;
+    background:rgba(13, 16, 63, 0.562);
+}
+.adventure .details-container
+{
+    text-align: center;
+    margin-top: 1%;
+}
+.adventure #dungeon-icon
+{
+   float: left;
+   color: #00c231;
+   margin: 1%;
+}
+.adventure .season-container
+{
+    text-align: left;
+    margin-top: 1%;
+}
+.adventure .season-container .progress
+{
+    margin-top: 0% !important;
+    margin-bottom: 0% !important;
+}
+.adventure #burn-icon
+{
+   float: left;
+   color: #c20000;
+   margin: 1%;
+}
+.adventure .malus-container
+{
+    text-align: left;
+    margin-top: 2%;
+}
+.adventure .malus-container .progress
+{
+    margin-top: 0% !important;
+    margin-bottom: 0% !important;
+}
+.adventure .graves-container
+{
+    text-align: left;
+    margin-top: 2%;
+}
+.adventure .claim-container
+{
+    text-align: left;
+    margin-top: 2%;
+}
+.adventure .souls-container
+{
+    text-align: left;
+    margin-top: 2%;
+}
+.adventure #token-icon
+{
+   float: left;
+   color: #0003c244;
+   margin: 1%;
+}
+.adventure .claim-button
+{
+    width: 100%;
+    border-radius: 15px;
+    color: black;
+    margin-top: 17%;
+}
+.adventure .data-container
+{
+    width: 50%;
+    margin-left: 25%;
+    margin-top: 10%;
+    border-radius: 15px;
+    background:rgba(13, 16, 63, 0.562);
+    padding: 2%;
+}
