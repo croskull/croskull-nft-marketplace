@@ -3,6 +3,7 @@ import { HashRouter, Route } from "react-router-dom";
 import Web3 from "web3";
 import CroSkulls from "../abis/CroSkulls.json";
 import MintPage from "./MintPage/MintPage";
+import Book from "./Book/Book";
 import AllCroSkulls from "./AllCroSkulls/AllCroSkulls";
 import AccountDetails from "./AccountDetails/AccountDetails";
 import ContractNotDeployed from "./ContractNotDeployed/ContractNotDeployed";
@@ -20,6 +21,7 @@ import ReactNotification, { store } from 'react-notifications-component';
 import "./App.css";
 import 'react-notifications-component/dist/theme.css';
 import market from '../utils/market.jpg'
+import { faBookmark } from "@fortawesome/free-solid-svg-icons";
 
 
 const WCProvider = new WalletConnectProvider({
@@ -942,6 +944,16 @@ class App extends Component {
                       this.state.totalTokensOwnedByAccount
                     }
                     baseURI={this.state.baseURI}
+                  />
+                )}
+              />
+              <Route
+                path="/book"
+                exact
+                render={() => (
+                  <Book
+                    accountAddress={this.state.accountAddress}
+                    accountBalance={this.state.accountBalance}
                   />
                 )}
               />

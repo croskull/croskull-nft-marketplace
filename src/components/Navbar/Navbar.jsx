@@ -56,6 +56,11 @@ const Navbar = ({isAdmin, accountAddress}) => {
                 Buy Grave$
               </Link>
             </li>
+            <li className="nav-item">
+              <Link to="/book" className="nav-link" disabled>
+                Book
+              </Link>
+            </li>
             { isAdmin ?
               <li className="nav-item">
                 <Link to="/admin" className="nav-link">
