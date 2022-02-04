@@ -3,19 +3,19 @@ import {
     ethers
 } from 'ethers';
 // log
-import store from "../store";
-import CroSkulls from "../../abis/CroSkulls.json";
 import CroSkullsAmbassador from "../../abis/CroSkullsAmbassador.json";
 import StakingArtifacts from "../../abis/croSkullStaking.json";
 import Grave from "../../abis/Grave.json";
+import Description from "../../abis/nftDescription.json";
 import {
-    fetchData, sendNotification
+    fetchData, sendNotification, getSkullsData
 } from "../data/dataActions";
 
-const networkId = 339 || 5777; //25 production, 339 cassini, 5777 ganache local env
+const networkId =  338 || 5777; //25 production, 339 cassini, 5777 ganache local env
 const stakingAddress = StakingArtifacts.networks[networkId].address;
 const graveAddress = Grave.networks[networkId].address;
 const ContractAddress = CroSkullsAmbassador.networks[networkId].address;
+const descriptionAddress = Description.networks[networkId].address;
 
 //const ContractAddress = CroSkulls.networks[networkId].address;
 
@@ -63,23 +63,23 @@ export const connect = (_provider = false) => {
         dispatch(connectRequest());
         let provider;
 
-        console.log(window.ethereum)
         if (_provider) {
             provider = _provider;
         } else if (!provider) {
             provider = window.ethereum
         }
-        console.log(provider)
+
         let ethProvider = new ethers.providers.Web3Provider(provider, "any");
         if (ethProvider.provider.networkVersion == networkId) {
             let signer = ethProvider.getSigner(0);
-            let croSkullsContract = new ethers.Contract(ContractAddress, CroSkulls.abi, signer);
+            let croSkullsContract = new ethers.Contract(ContractAddress, CroSkullsAmbassador.abi, signer);
             let croSkullsStaking = new ethers.Contract(stakingAddress, StakingArtifacts.abi, signer);
             let croSkullsGrave = new ethers.Contract(graveAddress, Grave.abi, signer);
+            let croSkullsDescription = new ethers.Contract(descriptionAddress, Description.abi, signer);
             let accounts = await provider.request({
                 method: 'eth_accounts',
             })
-
+            
             if (accounts.length === 0) {
                 dispatch(noAccount())
             } else {
@@ -89,7 +89,7 @@ export const connect = (_provider = false) => {
                     message: `${accountAddress}`,
                     type: "default"
                 }))
-                let accountBalance = await ethProvider.getBalance(accountAddress).toString();
+                let accountBalance = await ( await ethProvider.getBalance(accountAddress)).toString();
                 dispatch(connectSuccess({
                     accountAddress,
                     accountBalance,
@@ -97,8 +97,10 @@ export const connect = (_provider = false) => {
                     provider,
                     croSkullsContract,
                     croSkullsStaking,
-                    croSkullsGrave
+                    croSkullsGrave,
+                    croSkullsDescription
                 }))
+                dispatch(getSkullsData())
             }
             //await this.loadBlockchainData()
         } else {
@@ -107,6 +109,7 @@ export const connect = (_provider = false) => {
 
     }
 }
+
 
 export const updateAccount = (account) => {
     return async (dispatch) => {

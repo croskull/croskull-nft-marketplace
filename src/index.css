@@ -1,5 +1,9 @@
-body
-{
+body {
     /*background-color: #0b1424;*/
-    background: linear-gradient(to left, #2894ff, #a200ff);
+    background: #221B47;
+    color: #E1E9FF;
+    flex-direction: column;
+    align-items: stretch;
+    align-content: flex-end;
+    flex-wrap: nowrap;
 }

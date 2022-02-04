@@ -6,9 +6,10 @@ const initialState = {
     accountAddress: "",
     accountBalance: "",
     managerAddress: null,
-    croSkullsContract: null,
+    croSkullsContract: false,
     croSkullsStaking: false,
     croSkullsGrave: false,
+    croSkullsDescription: false,
     providerConnected: false,
     contractDetected: false,
 };
@@ -33,6 +34,7 @@ const blockchainReducer = (state = initialState, action) => {
                 croSkullsContract: payload.croSkullsContract,
                 croSkullsStaking: payload.croSkullsStaking,
                 croSkullsGrave: payload.croSkullsGrave,
+                croSkullsDescription: payload.croSkullsDescription,
                 provider: payload.provider,
                 providerConnected: true,
             };

@@ -1,13 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
 
-.container-black
-{
-  background: linear-gradient(to top, #000000, transparent);
-  height: 100%;
-  padding-bottom: 10%;
-}
 input::-webkit-input-placeholder {
   font-size: 1rem;
+}
+
+.boxed {
+  max-width: 1280px;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+}
+
+.container-fluid {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
 }
 
 .adminDash {
@@ -21,21 +30,33 @@ input::-webkit-input-placeholder {
   color: #000 !important;
 }
 
-.croSkulls-main, .page-wrapper{
+.croSkulls-main,
+.page-wrapper {
   height: 100%;
 }
 
-.skullMetadata{
+.skullMetadata {
   padding: 16px 12px !important;
   margin: 12px 8px !important;
   font-family: 'Special Elite', cursive;
+}
+
+.container-fluid {
+  padding: 0px !important;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
 }
 
 #root {
   min-height: 100vh;
 }
 
-.border-shadow{
+.border-shadow {
   border: 1px solid #193d71 !important;
   -webkit-box-shadow: 2px 3px 19px -3px #193D71;
   box-shadow: 2px 3px 10px -3px #152742;
@@ -53,7 +74,7 @@ input::-webkit-input-placeholder {
   padding: 10px;
 }
 
-.toggleContainer > label {
+.toggleContainer>label {
   padding: 0;
   margin: 0;
 }
@@ -61,31 +82,31 @@ input::-webkit-input-placeholder {
 input[type="color"]:hover {
   cursor: pointer;
 }
-.navbar{
-  background-color: #111;
-}
-.NFT-image{
+
+.NFT-image {
   width: 100%;
   height: 100%;
   border-radius: 8px;
 }
 
-.site-logo{
+.site-logo {
   height: 50px;
 }
-.card-body{
+
+.card-body {
   justify-content: space-between;
 }
 
-.spaced{
+.spaced {
   column-gap: 10px;
 }
 
-b, label{
+b,
+label {
   font-weight: 600 !important;
 }
 
-.col-md-6{
+.col-md-6 {
   row-gap: 20px;
 }
 
@@ -97,19 +118,19 @@ b, label{
   align-items: flex-start;
 }
 
-.vertical{
+.vertical {
   display: flex;
   flex-wrap: nowrap;
   flex-direction: column;
   margin-top: 1%;
 }
 
-.cost-value{
+.cost-value {
   font-size: 26px;
   color: #000;
 }
 
-.mint-wrapper{
+.mint-wrapper {
   padding: 25px;
 }
 
@@ -122,23 +143,24 @@ b, label{
 .filterBar {
   align-items: center;
 }
-.market
-{
+
+.market {
   margin-top: 5%;
   border-radius: 5%;
   width: 100%;
 }
-.market-title
-{
+
+.market-title {
   font-family: 'headhunter';
   text-align: center;
   margin-top: 5%;
 }
-.market-title a
-{
+
+.market-title a {
   color: rgb(0, 140, 255);
 }
-.market-title a:hover
-{
-  color: rgb(0, 140, 255);;
+
+.market-title a:hover {
+  color: rgb(0, 140, 255);
+  ;
 }

@@ -1,29 +1,18 @@
 import React, { Component } from "react";
 import { HashRouter, Route } from "react-router-dom";
-import MintPage from "./components/MintPage/MintPage";
 import AllCroSkulls from "./components/AllCroSkulls/AllCroSkulls";
 import AccountDetails from "./components/AccountDetails/AccountDetails";
 import ContractNotDeployed from "./components/ContractNotDeployed/ContractNotDeployed";
 import ConnectToMetamask from "./components/ConnectMetamask/ConnectToMetamask";
-import CroskullAdventure from "./components/CroskullAdventure/CroskullAdventure.jsx";
+import CroskullAdventure from "./components/CroskullAdventure/CroskullAdventure";
 import Loading from "./components/Loading/Loading";
 import Navbar from "./components/Navbar/Navbar";
-import RewardBar from "./components/RewardBar/RewardBar";
-import MyCroSkulls from "./components/MyCroSkulls/MyCroSkulls";
-import Queries from "./components/Queries/Queries";
-import AdminDashboard from './components/AdminDashboard/AdminDashboard';
-import market from './utils/market.jpg'
-import CroSkulls from "./abis/CroSkulls.json";
-import StakingArtifacts from "./abis/croSkullStaking.json";
-import Grave from "./abis/Grave.json";
-import "./App.css";
 import Notifier from "./components/Notifier/Notifier";
-import 'react-notifications-component/dist/theme.css';
-import { Contract, ethers } from 'ethers';
-import cryptoIcon from './components/ConnectMetamask/crypto-com.svg';
-
-//redux
+import Tavern from "./components/Tavern/Tavern";
+import market from './utils/market.jpg'
+import { ethers } from 'ethers';
 import store from "./redux/store";
+import "./App.css";
 
 let provider, contract, stakingContract, graveContract, ethProvider, signer;
 //const ContractAddress = "0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F";
@@ -32,41 +21,8 @@ class App extends Component {
     super(props);
     this.state = {
       blockchain: 0,
-      accountAddress: "",//b
-      accountBalance: "",//b
-      managerAddress: null,//b
-      croSkullsContract: null,//b
-      croSkullsContractOwner: null,//b
-      croSkulls: [],//b
-      croSkullsCount: 0,//b
-      croSkullsMaxSupply: 0,//b
-      croSkullsCost: 1,//remove
-      nftPerAddressLimit: 0,//remove
-      loading: false,//this
-      providerConnected: false,//b
-      contractDetected: false,//b
-      croSkullsStaking: false,
-      croSkullsGrave: false,
-      //data reducer
-      totalTokensMinted: 0,//remove
-      totalTokensOwnedByAccount: 0,//remove
-      lastMintTime: null,//remove
-      floorPrice: 0,//d
-      highPrice: 0,//d
-      baseURI: '',//d
-      isMarketplace: false,//d
-      isWhitelist: false,//d to remove
-      isWithdraw: false,//d ??
-      isAddressWhitelisted: false,//remove
-      isAdmin: false,//d
-      currentTx: [],//d
       //reward
-      isRewardable: 0,//d
-      totalRewardPool: 0,//d
-      currentRewardFee: 0,//d
-      currentReward: 0,//d
-      alreadyClaimed: 0,//d
-      //init  marketplace
+      
       traits: [],
       traitsTypes: [],
       order: 'ASC',
@@ -78,27 +34,6 @@ class App extends Component {
 
   componentWillMount = async () => {
     this.subscribe()
-    /*await this.loadWeb3();
-    await this.setMintBtnTimer();*/
-    /*await dispatch(setProvider())
-    //await this.setProvider()
-
-    await this.connectTo()
-    await this.initEvents()*/
-    /*if( window.ethereum && window.ethereum.networkVersion == networkId ){
-      web3Modal.connect()
-      ethProvider = window.ethereum
-    }else if( window.ethereum) {
-      this.setState(
-        { contractDetected: false }
-      )
-      
-      ethProvider = window.ethereum
-      await this.initEvents()
-      console.log( this.state.contractDetected)
-    }else{
-      await this.handleConnect()
-    }*/
   };
 
   initEvents = () => {
@@ -123,14 +58,6 @@ class App extends Component {
     })
   }
 
-  /*handleConnect = () => {
-    web3Modal.on("connect", async (_provider) => {
-
-      await this.setProvider( _provider )
-      
-    })
-  }*/
-
   setProvider = (_provider = false ) => {
     if( _provider ){
       provider = _provider;
@@ -138,12 +65,6 @@ class App extends Component {
       provider = window.ethereum
     }
   }
-
-  connectTo = async ( ) => {
-    
-  }
-
-
 
   loadBlockchainData = async () => {
     let accounts = 0
@@ -404,17 +325,7 @@ class App extends Component {
   };
 
   loadWeb3 = async (provider) => {
-    /*if (window.ethereum) {
-      window.web3 = new Web3(window.ethereum);
-      await this.loadBlockchainData();
-      await this.setMetaData();
-    } else if (window.web3) {
-      window.web3 = new Web3(window.web3.currentProvider);
-    } else {
-      window.alert(
-        "Non-Ethereum browser detected. You should consider trying MetaMask!"
-      );
-    }*/
+    
   };
 
   handleWithdraw = async () => {
@@ -848,7 +759,7 @@ class App extends Component {
     let { blockchain } = this.state
     console.log( blockchain )
     return (
-      <div className="container">
+      <div className="main container-fluid">
         <Notifier data={store.getState().data} />
         { ! blockchain.providerConnected ? (
           <ConnectToMetamask 
@@ -862,19 +773,7 @@ class App extends Component {
               ) : (
                 <>
             <HashRouter basename="/" >
-              <Navbar isAdmin={ this.state.accountAddress === this.state.contractOwner || this.state.accountAddress === this.state.managerAddress}/>
-              {  
-                this.state.isRewardable ?
-                  (<RewardBar 
-                    totalRewardPool={this.state.totalRewardPool}
-                    currentRewardFee={this.state.currentRewardFee}
-                    currentReward={this.state.currentReward}
-                    isWithdraw={this.state.isWithdraw}
-                    alreadyClaimed={this.state.alreadyClaimed}
-                    handleWithdraw={this.handleWithdraw}
-                  ></RewardBar>)
-                : '' 
-              }
+              <Navbar/>
               <Route
                 path="/"
                 exact
@@ -886,17 +785,6 @@ class App extends Component {
                 )}
               />
               <Route
-                path="/mint"
-                render={() => (
-                  <MintPage
-                    mintMyNFT={this.mintMyNFT}
-                    setMintBtnTimer={this.setMintBtnTimer}
-                    state={this.state}
-                  />
-                )}
-              />
-              
-                <Route
                 path="/marketplace"
                 render={() => (
                   this.state.isMarketplace ? 
@@ -931,55 +819,26 @@ class App extends Component {
                     </div>     
                   )}
                 />
-
               <Route
-                path="/my-tokens"
+                path="/adventure"
                 render={() => (
-                  <MyCroSkulls
+                  <CroskullAdventure
                     accountAddress={this.state.accountAddress}
                     croSkulls={this.state.croSkulls}
                     totalTokensOwnedByAccount={
                       this.state.totalTokensOwnedByAccount
                     }
-                    baseURI={this.state.baseURI}
-                    fetchAllCroSkulls={this.fetchAllCroSkulls}
-                  />
-                )}
-              />
-              { this.state.baseURI !== '' ? 
-              <Route
-                path="/queries"
-                render={() => (
-                  <Queries 
-                    croSkullsContract={this.state.croSkullsContract} 
+                    provider={ethProvider}
+                    croSkullContract={contract}
+                    stakingContract={stakingContract}
                     baseURI={this.state.baseURI}
                   />
                 )}
               />
-               : '' }
-              {
-                this.state.croSkullsContractOwner === this.state.accountAddress ||  this.state.accountAddress  === this.state.managerAddress ?
               <Route
-                path="/admin"
+                path="/tavern"
                 render={() => (
-                  <AdminDashboard
-                    state={this.state}
-                    setBaseURI={this.setBaseURI} 
-                    setNftPerAddressLimit={this.setNftPerAddressLimit} 
-                    toggleSmartcontractVariables={this.toggleSmartcontractVariables}
-                    addAddressToWhitelist={this.addAddressToWhitelist}
-                    addNewRewardableUser={this.addNewRewardableUser}
-                    addNewManager={this.addNewManager}
-                    addBulkToWhitelist={this.addBulkToWhitelist}
-                  />
-                )}
-              />
-               :
-               '' }
-              <Route
-                path="/croskull-adventure"
-                render={() => (
-                  <CroskullAdventure
+                  <Tavern
                     accountAddress={this.state.accountAddress}
                     croSkulls={this.state.croSkulls}
                     totalTokensOwnedByAccount={

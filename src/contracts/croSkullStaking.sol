@@ -29,11 +29,11 @@ contract croSkullStaking is IERC721Receiver {
     uint public poolRewardSupply;
     uint public poolWithdrawedAmount;
     uint public startStakeTimestamp;
-    uint public vestingDuration = 3 * 365 days;
+    uint public vestingDuration = 100 days;
     uint public cycleInterval = 10 seconds;
-    uint public soulsDropInterval = 60 days;
-    uint public stakeMalusDuration = 20 days;
-    uint public stakeMalusFee = 50;
+    uint public soulsDropInterval = 30 days;
+    uint public stakeMalusDuration = 32 days;
+    uint public stakeMalusFee = 80;
 
     bool internal locked;
 
@@ -185,7 +185,7 @@ contract croSkullStaking is IERC721Receiver {
             return;
 
         UserInfo storage currentUser = userDetails[_from];
-        if( currentUser.tokenCount == 0 ) {
+        if( currentUser.tokenCount == 0 && currentUser.lastWithdrawTimestamp == 0 ) {
             currentUser.lastWithdrawTimestamp = block.timestamp;
             currentUser.availableBalance = 0;
             currentUser.enabled = true;
@@ -240,7 +240,7 @@ contract croSkullStaking is IERC721Receiver {
         poolWithdrawedAmount += userRewards;
         userDetails[_to].lastWithdrawTimestamp = block.timestamp;
         userDetails[_to].startingStake = block.timestamp;
-        userDetails[_to].alreadyClaimed = userRewards;
+        userDetails[_to].alreadyClaimed += userRewards;
         userDetails[_to].availableBalance = 0;
     }
 

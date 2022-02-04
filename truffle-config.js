@@ -12,10 +12,10 @@ module.exports = {
       port: 7545,
       network_id: "*", // Match any network id
     },
-    cassini: { //cronos cassini
-      provider: new HDWalletProvider(MNEMONIC, "https://cassini.crypto.org:8545"),
-      network_id: 339,
-      skipDryRun: true
+    testnet: { //cronos cassini
+      provider: new HDWalletProvider(MNEMONIC, "https://cronos-testnet-3.crypto.org:8545"),
+      network_id: "*",
+      //skipDryRun: true
      },
      cronos: {
        provider: new HDWalletProvider(MNEMONIC, "https://evm-cronos.crypto.org"), 

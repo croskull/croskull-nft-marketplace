@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import ReactNotification, { store } from 'react-notifications-component';
+import  ReactNotification, {store} from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css'
 
 const Notifier = ({data}) => {
 
-    //const { data } = store.getState()
+    //const { data } = Store.getState()
 
     const [ state, setNotifier ] = useState({
         message: "",
@@ -26,7 +26,7 @@ const Notifier = ({data}) => {
                     insert: "top",
                     container: "bottom-left",
                     dismiss: {
-                        duration: 4000
+                        duration: 6000
                     }
                 }
             )
