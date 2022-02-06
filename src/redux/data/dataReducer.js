@@ -17,6 +17,7 @@ const initialState = {
     rewards: 0,
     cyclesLastWithdraw: 0,
     soulsGenerated: 0,
+    userGraveBalance: 0,
     title: "",
     message: "",
     type: "info", // success, danger, info, warning
@@ -79,7 +80,13 @@ const dataReducer = (state = initialState, action) => {
                 lastBlock: payload.lastBlock,
                 blockTimestamp: payload.blockTimestamp,
                 alreadyClaimed: payload.alreadyClaimed,
-                soulsGenerated: payload.soulsGenerated
+                soulsGenerated: payload.soulsGenerated,
+                userGraveBalance: payload.userGraveBalance
+            }
+        case "UPDATE_STATE": 
+            return {
+                ...state,
+                [payload.key]: payload.value
             }
         case "STAKING_DISABLED":
             return {
@@ -100,6 +107,27 @@ const dataReducer = (state = initialState, action) => {
             return {
                 ...state,
                 skullsStories: payload.skullsStories
+            }
+        case "CLEAN_DATA":
+            return {
+                ...state,
+                loading: false,
+                approval: false,
+                croSkulls: [],
+                croSkullsStaked: [],
+                croSkullsCount: 0,
+                alreadyClaimed: 0,
+                malusFee: 0,
+                rewardPlusMalus: 0,
+                rewards: 0,
+                cyclesLastWithdraw: 0,
+                soulsGenerated: 0,
+                title: "",
+                message: "",
+                type: "info", // success, danger, info, warning
+                tx: "",
+                error: false,
+                errorMsg: "",
             }
         default:
             return state;

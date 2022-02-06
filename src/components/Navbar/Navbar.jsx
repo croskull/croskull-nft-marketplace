@@ -1,18 +1,18 @@
-import {
-  ethers
-} from 'ethers';
+import { ethers } from 'ethers';
 import React , { useEffect, useState } from "react";
 import store from "../../redux/store";
 import Logo from "./logo-cr-skull-white.png";
 import { Link } from "react-router-dom";
+import menuIcon from "./menu-icon.svg";
 import './navbar.css';
 
 const Navbar = () => {
   let { blockchain, data } = store.getState();
-  let { rewardPlusMalus, malusFee, soulsGenerated, croSkulls, rewards, croSkullsStaked } = data
-  let { accountBalance, accountAddress } = blockchain
-  let rewardFormatted = formatEther(rewardPlusMalus);
-  rewardFormatted = rewardFormatted.slice(0, 5 );
+  let { rewardPlusMalus, malusFee, soulsGenerated, userGraveBalance, croSkulls, rewards, croSkullsStaked } = data
+  let { accountBalance, accountAddress, provider } = blockchain
+  let rewardFormatted = formatEther(rewardPlusMalus).slice(0, 5 )
+  userGraveBalance = formatEther(userGraveBalance).slice(0, 5 )
+
   return (
     <nav className="boxed navbar navbar-expand-sm header">
       <Link to="/" className="crLogo">
@@ -23,7 +23,12 @@ const Navbar = () => {
         data-toggle="collapse"
         data-target="#navbarNav"
       >
-        <span className="navbar-toggler-icon">X</span>
+        <span className="navbar-toggler-icon">
+          <img 
+            src={menuIcon}
+            className="toggler-icon"
+             />
+        </span>
       </button>
       <div 
         className="flex-v balances"
@@ -31,7 +36,7 @@ const Navbar = () => {
         <span>Balance</span>
         <span>{ `${ formatEther(accountBalance).slice(0, 5 ) } CRO` }</span>
         <span>{ `${croSkulls.length ? croSkulls.length : 0} Skulls` }</span>
-        <span>{ `${ rewardFormatted } Grave` }</span>
+        <span>{ `${ userGraveBalance } Grave` }</span>
       </div>
       <div 
         className="flex-v season"

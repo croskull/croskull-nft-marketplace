@@ -36,28 +36,6 @@ class App extends Component {
     this.subscribe()
   };
 
-  initEvents = () => {
-    window.ethereum.on('accountsChanged', accounts => {
-      provider.accountChanged(accounts)
-
-      console.log( accounts )
-    })
-
-    ethProvider.on('network', async (_new, old) => {
-      console.log( _new, old )
-      await this.connectTo( )
-
-    })
-    window.ethereum.on('connect', async chainId => {
-      console.log( chainId )
-      await this.connectTo( )
-
-    })
-    window.ethereum.on('message', message => {
-      console.log( message )
-    })
-  }
-
   setProvider = (_provider = false ) => {
     if( _provider ){
       provider = _provider;
@@ -81,7 +59,6 @@ class App extends Component {
       accountBalance =  formatEther( accountBalance )
       this.setState({ accountBalance });
       this.setState({ loading: false });
-      
       this.setState({ croSkullsContract: contract });
       this.setState({ contractDetected: true });
 

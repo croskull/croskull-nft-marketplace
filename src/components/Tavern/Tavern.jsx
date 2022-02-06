@@ -25,6 +25,7 @@ const Tavern = () => {
   let { blockchain, data } = store.getState()
 
   const [viewState, setViewState] = useState( {
+    currentView: 'tavern', //tavern or adventure
     selectedSkulls: [],
     selectedStakeSkulls: []
   })
@@ -61,14 +62,13 @@ const Tavern = () => {
 
   const ipfsUri =  ""  || "https://bafybeifax734esbihweq543p5jldhwj4djszkrevo6u7tig4xlorihx53m.ipfs.infura-ipfs.io/"
   
-  const client = IpfsHttpClient(new URL('https://ipfs.infura.io:5001/api/v0'));
 
-  useEffect(() => {
+  /*useEffect(() => {
     if( blockchain.contractDetected && ! data.croSkulls.length ){
       dispatch(getSkullsData())
       dispatch(refreshSkullsStories())
     }
-  }, [blockchain.contractDetected])
+  }, [blockchain.contractDetected])*/
 
   useEffect( () => { 
     console.log( storyState )
@@ -86,6 +86,7 @@ const Tavern = () => {
   }, [editorStory] )
   
   const fetchSkullDescription = async ( { tokenId, ownerOf } ) => {
+    console.log( tokenId, ownerOf )
     let { croSkullsDescription, accountAddress } = blockchain
     let ipfsHash = await croSkullsDescription.descriptionHashes( tokenId )
     ipfsHash = ipfsHash.toString()
@@ -93,7 +94,7 @@ const Tavern = () => {
       ipfsHash = ipfsHash.replace('ipfs://', 'https://ipfs.infura.io/ipfs/')
       let hashMetadata = await fetch( ipfsHash );
       let { name, description, birthDate, deathDate, hobby, twitter, faction} = await hashMetadata.json();
-
+      console.log( ipfsHash )
       setStoryState( {
         ...storyState,
         name,
@@ -107,27 +108,25 @@ const Tavern = () => {
         tokenId,
         ownerOf: ownerOf ? ownerOf : storyState.ownerOf
       } )
+    } else {
+      setStoryState( {
+        tokenId,
+        ownerOf: ownerOf ? ownerOf : accountAddress,
+        display: true
+      })
     }
-  }
-
-  const viewSkullStory = ( skullId ) => {
-    setStoryState( {
-      ...storyState,
-      tokenId: skullId
-    } )
   }
 
   const saveSkullStory = async ( ) => {
     let { croSkullsDescription, ethProvider, accountBalance } = blockchain
     let storyfied = JSON.stringify(editorStory)
     let descriptionBuffer = Buffer.from(storyfied)
-    console.log( storyfied, descriptionBuffer )
     try {
+      const client = IpfsHttpClient(new URL('https://ipfs.infura.io:5001/api/v0'));
       const ipfsResponse = await client.add(descriptionBuffer);
       if( ipfsResponse.path != "" ){
         let costInCRO = await croSkullsDescription._getcostInCRO()
         costInCRO = costInCRO.toString()
-        console.log( accountBalance, costInCRO, ipfsResponse.path)
         if( accountBalance >= costInCRO ){
           let path = `ipfs://${ipfsResponse.path}`
           let skullStoryTx = croSkullsDescription.updateUsingCRO( 
@@ -152,7 +151,7 @@ const Tavern = () => {
                 tx,
                 type: "success"
               }))
-              fetchSkullDescription( editorStory.tokenId )
+              fetchSkullDescription( { tokenId: editorStory.tokenId })
               setEditorStory({
                 ...editorStory,
                 display: false
@@ -215,24 +214,14 @@ const Tavern = () => {
     } )
   }
 
-  //quill description editor settings
-  let modules = {
-    toolbar: [
-      [{ 'header': [1, 2, false] }],
-      ['bold', 'italic', 'underline','strike', 'blockquote'],
-      [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
-      ['clean']
-    ],
-  };
+  useEffect( () => {
+    console.log( viewState )
+  }, [viewState])
 
-  let formats = [
-    'header',
-    'bold', 'italic', 'underline', 'strike', 'blockquote',
-    'list', 'bullet', 'indent',
-  ];
+  //quill description editor setting
 
   let { croSkullsStaked, croSkulls, skullsStories } = data;
-  let { accountAddress } = blockchain
+  let { accountAddress, accountBalance } = blockchain
   let totalSkulls = croSkullsStaked.length > 0 ? croSkullsStaked.length + croSkulls.length : 0
   let { 
     tokenId,
@@ -388,7 +377,7 @@ const Tavern = () => {
                     className="skull-button save-cro"
                     onClick={ () => saveSkullStory() }
                   >
-                    Update using (1) CRO
+                    { accountBalance >= 0 ? `Update using (1) CRO` : `Insufficient CRO Balance`}
                   </button>
                   <button
                     className="skull-button save-grave"
@@ -411,7 +400,7 @@ const Tavern = () => {
                   <span>Faction: { faction }</span>
                   <span>Twitter: { twitter }</span>
                   {
-                    ethers.utils.getAddress(storyState.ownerOf) == ethers.utils.getAddress(accountAddress) ? (
+                    storyState.ownerOf && ethers.utils.getAddress(storyState.ownerOf) == ethers.utils.getAddress(accountAddress) ? (
                       <button 
                         className="skull-button edit-button"
                         onClick={ () => {
@@ -461,7 +450,49 @@ const Tavern = () => {
           <div 
             className="skull-viewer"
           >
-            <div className="skulls-list">
+            <div
+              className="tab-head"
+            >
+              <ul
+                className="view-list"              
+              >
+                <li
+                  className={`skull-button view-button ${ viewState.currentView == 'tavern' ? 'active' : ''}`}
+                  onClick={ () => {
+                    setViewState( {
+                      ...viewState,
+                      currentView: 'tavern'
+                    } )
+                  }}
+                >
+                  Tavern { croSkulls.length > 0 ? `(${croSkulls.length})` : '' }
+                </li>
+                <li
+                  className={`skull-button view-button ${ viewState.currentView == 'adventure' ? 'active' : ''}`}
+                  onClick={ () => {
+                    setViewState( {
+                      ...viewState,
+                      currentView: 'adventure'
+                    } )
+                  }}
+                >
+                  Adventure { croSkullsStaked.length > 0 ? `(${croSkullsStaked.length})` : '' }
+                </li>
+                <li
+                  className={`skull-button view-button ${ viewState.currentView == 'inventory' ? 'active' : ''}`}
+                  onClick={ () => {
+                    setViewState( {
+                      ...viewState,
+                      currentView: 'inventory'
+                    } )
+                  }}
+                >
+                  Inventory
+                </li>
+              </ul>
+            </div>
+            { viewState.currentView == 'tavern' ? (
+              <div className="skulls-list in-tavern">
               <div className="list-head">
                 <h2>Skulls in Tavern { `(${croSkulls.length}/${totalSkulls})` }</h2>
                 <div className="div-button">
@@ -484,7 +515,7 @@ const Tavern = () => {
                   </button>
                 </div>
               </div>
-              <div className="flex-display flex-row flex-nowrap">
+              <div className="flex-display flex-row flex-wrap">
                 {
                   (croSkulls).map((cr, index) => {
                     return (
@@ -517,14 +548,7 @@ const Tavern = () => {
                           <button
                             className="skull-button story-button"
                             onClick={ () => {
-                              if( cr != storyState.tokenId ){
-                                fetchSkullDescription({ tokenId: cr, accountAddress })
-                              }else{
-                                setStoryState({
-                                  ...storyState,
-                                  display: true
-                                })
-                              }
+                                fetchSkullDescription({ tokenId: cr, ownerOf: accountAddress })
                             }}
                           > 
                             <img 
@@ -542,66 +566,87 @@ const Tavern = () => {
                 }
               </div>
             </div>
-            <div className="skulls-list">
-              <div className="list-head">
-                <h2>Skulls in Mission { `(${croSkullsStaked.length}/${totalSkulls})` }</h2>
-                <div className="div-button">
-                  {
-                    croSkullsStaked.length > 0 ? (
-                    <button className="skull-button btn-success" 
-                      onClick={() => dispatch( toTavern( croSkullsStaked ) ) }
-                    >
-                      Retire All ({ croSkulls.length })
-                    </button>
-                    ): ( '') 
-                  }
-                  <button 
-                    className="skull-button btn-success" 
-                    hidden={(viewState.selectedStakeSkulls.length > 0 ? false : true)} 
-                    onClick={() => dispatch( toTavern( viewState.selectedStakeSkulls ) ) }
+          ) : viewState.currentView == 'adventure' ? (
+            <div className="skulls-list in-adventure">
+            <div className="list-head">
+              <h2>Skulls in Mission { `(${croSkullsStaked.length}/${totalSkulls})` }</h2>
+              <div className="div-button">
+                {
+                  croSkullsStaked.length > 0 ? (
+                  <button className="skull-button btn-success" 
+                    onClick={() => dispatch( toTavern( croSkullsStaked ) ) }
                   >
-                    Retire Selected Skulls ( {viewState.selectedStakeSkulls.length} )
+                    Retire All
                   </button>
-                  <Link to="/adventure">
-                    <button
-                      className="skull-button"
-                    >
-                      Adventure
-                    </button>
-                  </Link>
-                </div>
-              </div>
-              <div className="flex-display flex-row flex-nowrap">
-              {
-                  (croSkullsStaked).map((cr, index) => {
-                    return (
-                      <div key={cr} className='col-sm-3' >
-                        <LazyLoadImage 
-                          src={`${ipfsUri}${cr}.png`}
-                          className={viewState.selectedStakeSkulls.includes(cr) ? 'selected div-skull ' : 'div-skull'} 
-                          onClick={() => selectStakedSkull(cr)}
-                        />
-                        <span className="badge badge-dark rounded">#{cr}</span>
-                        <button 
-                          className="skull-button retire-button"
-                          onClick={ () => {
-                            dispatch(toTavern(cr))
-                          }}
-                        > 
-                          <FontAwesomeIcon icon={faRunning} /> 
-                          Retire
-                        </button>
-                      </div>
-                    );
-                  })
+                  ): ( '') 
                 }
+                <button 
+                  className="skull-button btn-success" 
+                  hidden={(viewState.selectedStakeSkulls.length > 0 ? false : true)} 
+                  onClick={() => dispatch( toTavern( viewState.selectedStakeSkulls ) ) }
+                >
+                  Retire Selected ({viewState.selectedStakeSkulls.length})
+                </button>
+                <Link to="/adventure">
+                  <button
+                    className="skull-button"
+                  >
+                    Adventure
+                  </button>
+                </Link>
               </div>
             </div>
+            <div className="flex-display flex-row flex-wrap">
+            {
+                (croSkullsStaked).map((cr, index) => {
+                  return (
+                    <div key={cr} className='col-sm-3' >
+                      <LazyLoadImage 
+                        src={`${ipfsUri}${cr}.png`}
+                        className={viewState.selectedStakeSkulls.includes(cr) ? 'selected div-skull ' : 'div-skull'} 
+                        onClick={() => selectStakedSkull(cr)}
+                      />
+                      <span className="badge rounded">#{cr}</span>
+                      <button 
+                        className="skull-button retire-button"
+                        onClick={ () => {
+                          dispatch(toTavern(cr))
+                        }}
+                      > 
+                        <FontAwesomeIcon icon={faRunning} /> 
+                        Retire
+                      </button>
+                    </div>
+                  );
+                })
+              }
+            </div>
+          </div>
+          ) : viewState.currentView == 'inventory' ? (
+            <div className="inventory-list">
+              
+            </div>
+          ) : ('')}
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+let modules = {
+    toolbar: [
+      [{ 'header': [1, 2, false] }],
+      ['bold', 'italic', 'underline','strike', 'blockquote'],
+      [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+      ['clean']
+    ],
+  };
+
+  let formats = [
+    'header',
+    'bold', 'italic', 'underline', 'strike', 'blockquote',
+    'list', 'bullet', 'indent',
+  ];
 
 export default Tavern;

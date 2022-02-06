@@ -8,9 +8,9 @@ import StakingArtifacts from "../../abis/croSkullStaking.json";
 import Grave from "../../abis/Grave.json";
 import Description from "../../abis/nftDescription.json";
 import {
-    fetchData, sendNotification, getSkullsData
+  sendNotification, getSkullsData, cleanData
 } from "../data/dataActions";
-
+const chainId = "0x152"; //testnet - 3
 const networkId =  338 || 5777; //25 production, 339 cassini, 5777 ganache local env
 const stakingAddress = StakingArtifacts.networks[networkId].address;
 const graveAddress = Grave.networks[networkId].address;
@@ -58,7 +58,7 @@ const noAccount = () => {
     }
 }
 
-export const connect = (_provider = false) => {
+export const connect = (_provider = false, newChainId = false) => {
     return async (dispatch) => {
         dispatch(connectRequest());
         let provider;
@@ -67,10 +67,12 @@ export const connect = (_provider = false) => {
             provider = _provider;
         } else if (!provider) {
             provider = window.ethereum
+            dispatch(handleProviderChanges(provider))
         }
 
+
         let ethProvider = new ethers.providers.Web3Provider(provider, "any");
-        if (ethProvider.provider.networkVersion == networkId) {
+        if (provider.chainId == chainId) {
             let signer = ethProvider.getSigner(0);
             let croSkullsContract = new ethers.Contract(ContractAddress, CroSkullsAmbassador.abi, signer);
             let croSkullsStaking = new ethers.Contract(stakingAddress, StakingArtifacts.abi, signer);
@@ -105,17 +107,28 @@ export const connect = (_provider = false) => {
             //await this.loadBlockchainData()
         } else {
             dispatch(contractNotDetected())
+            provider.request({
+                "id": 1,
+                "jsonrpc": "2.0",
+                "method": "wallet_switchEthereumChain",
+                "params": [
+                  {
+                    "chainId": chainId,
+                  }
+                ]
+            })
         }
-
     }
 }
 
-
-export const updateAccount = (account) => {
+export const handleProviderChanges = (provider) => {
     return async (dispatch) => {
-        dispatch(updateAccountRequest({
-            account: account
-        }));
-        dispatch(fetchData(account));
-    };
-};
+        provider.on( 'accountsChanged', (accounts) => {
+            dispatch(cleanData())
+            dispatch(connect())
+        })
+        provider.on( 'chainChanged', (_chainId) => {
+                dispatch(connect(provider))
+        })
+    }
+}

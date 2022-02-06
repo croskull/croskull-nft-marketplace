@@ -1,9 +1,14 @@
 import React from "react";
 import './AccountDetails.css';
 import banner from "./banner.png"
-import { Link } from "react-router-dom";
+import { ethers } from 'ethers';
+import store from "../../redux/store";
 
-const AccountDetails = ({ accountAddress, accountBalance }) => {
+
+const AccountDetails = () => {
+  let { blockchain } = store.getState();
+  let { accountBalance, accountAddress } = blockchain
+  accountBalance = formatEther(accountBalance).slice(0, 5 )
   return (
       <div className="container ac-home">
         <h1 className="ac-title">CroSkull NFT</h1>
@@ -20,15 +25,6 @@ const AccountDetails = ({ accountAddress, accountBalance }) => {
         <p className="ac-text ac-br">
         Want to know more? <span><a className="link" href="https://www.croskull.com">Click Here!</a></span>
         </p>
-
-        <Link to="/mint" className="navbar-brand ml-2">
-          <button
-            className="btn btn-dark d-flex align-items-center"
-            style={{ fontSize: "0.9rem", letterSpacing: "0.14rem" }}
-          >
-            Mint Now > {" "}
-          </button>
-        </Link>
         <hr className="my-4" />
         <p className="ac-text">Account address :</p>
         <h4 className="ac-text">{accountAddress}</h4>
@@ -38,5 +34,7 @@ const AccountDetails = ({ accountAddress, accountBalance }) => {
       </div>
   );
 };
+
+const formatEther = num => ethers.utils.formatEther(num)
 
 export default AccountDetails;

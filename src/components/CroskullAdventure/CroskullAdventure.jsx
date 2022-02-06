@@ -131,9 +131,6 @@ const CroskullAdventure = () => {
             <div className="col-sm-10">
               <h1>Adventure CroSkulls: {  totalSkulls > 0 ?  `(${croSkullsStaked.length}/${totalSkulls})` : `Loading` } </h1>
             </div>
-            <div className="col-sm-2">
-              <button className="btn btn-sm btn-warning ml-auto rounded"> <FontAwesomeIcon icon={faBeer} /> Tavern</button>
-            </div>
           </div>
           <div 
             className="skull-viewer"
@@ -152,7 +149,7 @@ const CroskullAdventure = () => {
                         />
                         <span class="badge badge-dark rounded">#{cr}</span>
                         <button 
-                          className="btn btn-sm btn-danger skull-button retire-button"
+                          className="skull-button retire-button"
                           onClick={ () => {
                             dispatch(toTavern(cr))
                           }}
@@ -179,7 +176,7 @@ const CroskullAdventure = () => {
                         />
                         <span class="badge badge-dark rounded">#{cr}</span>
                         <button 
-                          className="btn btn-sm btn-danger skull-button retire-button"
+                          className="skull-button retire-button"
                           onClick={ () => {
                             dispatch(toTavern(cr))
                           }}
@@ -195,11 +192,11 @@ const CroskullAdventure = () => {
             </div>
           </div>
           <div className="div-button">
-            <button className="btn btn-sm btn-success rounded" 
+            <button className="skull-button retire-button" 
               onClick={() => dispatch( toTavern( croSkullsStaked ) )}
             >Retire All</button>
             <button 
-              className="btn btn-sm btn-success rounded" 
+              className="skull-button retire-button" 
               hidden={(viewState.selectedSkulls.length > 0 ? false : true)} 
               onClick={() => dispatch( toTavern( viewState.selectedSkulls ) ) }
             >Retire Selected ({viewState.selectedSkulls.length})</button>

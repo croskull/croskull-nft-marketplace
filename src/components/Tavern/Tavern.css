@@ -1,24 +1,10 @@
-@font-face {
-  font-family: 'Headhunter';
-  src: url('../../utils/HeadhunterRegular-6Y1x.ttf') format('truetype');
-  font-weight: bold;
+@media (min-width:641px)  { 
+
+}
+@media (min-width:961px)  {
+
 }
 
-;
-@import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
-
-
-.tavern ::-webkit-scrollbar {
-  width: 12px
-}
-
-.tavern ::-webkit-scrollbar-thumb {
-  background: rgb(45, 4, 226);
-}
-
-.tavern ::-webkit-scrollbar-track {
-  background: transparent
-}
 
 @font-face {
   font-family: 'Headhunter';
@@ -27,8 +13,13 @@
 };
 @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
 
-.tavern ::-webkit-scrollbar {
-  width: 12px
+.tavern::-webkit-scrollbar {
+  width: 0px !important;
+}
+.tavern::-webkit-scrollbar-track{
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 10px;
+	background-color: #F5F5F5;
 }
 
 .tavern ::-webkit-scrollbar-thumb {
@@ -36,7 +27,7 @@
 }
 
 .tavern ::-webkit-scrollbar-track {
-  background: transparent
+  background: transparent;
 }
 
 .icon-container {
@@ -64,10 +55,6 @@
   min-height: 90vh;
 }
 
-.tavern .flex-row {
-  overflow-x: auto;
-}
-
 .tavern .head {
   margin: 12px 0px;
 }
@@ -89,6 +76,10 @@
 .tavern .stories-wrapper {
   max-width: 85%;
   width: 100%;
+}
+
+@media screen {
+  
 }
 
 .tavern .items-container {
@@ -244,7 +235,7 @@
 }
 
 .story-modal .description-editor{
-  background-color: #ffff;
+  background-color: #E1E9FF;
   color: #000;
 }
 
@@ -298,7 +289,7 @@
 
 /** */
 
-.tavern .skull-button{
+.skull-button{
   font-size: 14px;
   padding: 4px 12px !important;
   border-radius: 6px !important;
@@ -309,30 +300,56 @@
   transition: transform .54s cubic-bezier(0,.52,.47,.98) 0s;
 }
 
-.tavern .skull-button:hover{
+.skull-button:hover{
   transform: scale(0.9);
 }
 
-.tavern .skull-button svg{
+.skull-button svg{
   margin-right: 6px;
+}
+
+.view-list {
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-evenly;
+  align-items: stretch;
+}
+
+.skulls-list .flex-display{
+  overflow-y: scroll;
+  max-height: 90vh;
+}
+
+.skull-button.view-button {
+  padding: 6px 12px !important;
+  background: #9e6eff;
+  font-size: 18px;
+}
+.skull-button.view-button.active {
+  border: 2px solid #E1E9FF;
 }
 
 .retire-button{
   position: absolute;
   left: 15px;
   bottom: 15px;
-  color: #fff !important;
+  background-color: #b6403c;
+  color: #E1E9FF !important;
+
+  background: #b6403c !important;
 }
 
 .retire-button:hover{
   background: #b6403c !important;
 }
 
-.tavern .sell-button {
-  background: #f0ad4e;
+.sell-button {
+  background: #F5E144;
 }
 
-.tavern .story-button{
+.story-button{
   display: flex;
   flex-direction: row;
   align-content: center;
@@ -340,16 +357,16 @@
   column-gap: 6px;
   justify-content: space-between;
   background: #2c2ce2;
-  color: #fff;
+  color: #E1E9FF;
 }
 
-.tavern .mission-button {
+.mission-button {
   background-color: rgb(55, 146, 114);
-  color: #fff !important;
+  color: #E1E9FF !important;
 }
 
 .taver .mission-button:hover {
-  color: #fff;
+  color: #E1E9FF;
 }
 
 .tavern .badge {
@@ -357,6 +374,7 @@
   top: 15px;
   left: 15px;
   font-size: 14px;
+  background-color: #4947ad;
 }
 
 .tavern .col-sm-3{
@@ -364,11 +382,12 @@
 }
 
 .tavern .div-skull {
+  cursor: pointer;
   width: 100%;
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
-  border: 4px solid rgb(252, 247, 0);
+  border: 6px solid #E1E9FF;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -410,7 +429,7 @@
 }
 
 .tavern .selected {
-  border: #00c231 3px solid;
+  border: #00c231 6px solid;
   border-image: linear-gradient(var(--rotate), #805dff, #3ccfe3, #00c231);
   animation: spin 2.5s linear infinite;
   border-image-slice: 3;
@@ -516,10 +535,6 @@
   margin-top: 6px;
   font-size: 18px;
 }
-.tavern .retire-button{
-  background-color: #b6403c;
-  color: #fff;
-}
 
 .tavern .data-container {
   width: 100%;
@@ -534,6 +549,35 @@
   border-radius: 15px;
   background: rgba(13, 16, 63, 0.562);
 }
+
+/** MEDIA QUERY */
+@media (min-width:320px) and (max-width:640px) { 
+  .stories-wrapper {
+    max-width: 100% !important;
+    width: 100%;
+  }
+  .items-container, .balances {
+    display: none !important;
+  }
+  h1 {
+    font-size: 22px !important;
+  }
+  h2 {
+    font-size: 18px !important;
+  }
+  .div-skull {
+    min-width: 120px;
+  }
+  .list-head {
+    flex-direction: column;
+    row-gap: 6px;
+    margin: 6px 0px;
+  }
+  .div-button {
+    overflow-x: scroll !important;
+  }
+}
+
 
 /** ANIMATIONS */
 

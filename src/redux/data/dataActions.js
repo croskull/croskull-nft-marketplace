@@ -15,6 +15,13 @@ const fetchDataSuccess = (payload) => {
   };
 };
 
+const updateState = ( payload ) => {
+  return {
+    type: "UPDATE_STATE",
+    payload: payload
+  }
+}
+
 const fetchDataFailed = (payload) => {
   return {
     type: "CHECK_DATA_FAILED",
@@ -32,6 +39,12 @@ const setSkullsStories = (payload) => {
 const skullsRequest = () => {
   return {
       type: "SKULLS_REQUEST"
+  }
+}
+
+export const cleanData = () => {
+  return {
+      type: "CLEAN_DATA"
   }
 }
 
@@ -64,6 +77,7 @@ const notificationRequest = (payload) => {
 
 export const refreshSkullsStories = () => {
   return async (dispatch) => {
+    console.log('refreshSkullsStories')
     let { croSkullsDescription, accountAddress, ethProvider } = store.getState().blockchain
 
     let storiesFilter = croSkullsDescription.filters.DescriptionUpdate()
@@ -86,20 +100,21 @@ export const refreshSkullsStories = () => {
     let skullsStories = []
     storyEvents.map( story => {
       let { tokenId, ownerOf, ipfsHash } = story.args;
-      console.log( story )
       skullsStories[tokenId] = {
         ownerOf: ownerOf,
         ipfsHash: ipfsHash
       }
+      dispatch(updateState({
+        key: 'skullsStories',
+        value: skullsStories
+      }))
     })
 
-
-    console.log( skullsStories )
-    dispatch(
+    /*dispatch(
       setSkullsStories( {
         skullsStories
       })
-    )
+    )*/
   }
 }
 
@@ -123,7 +138,6 @@ export const toTavern = ( skulls = false ) => { // UnStake Skull
 
     await stakeSkullTx.then(
       async (tx) => {
-        console.log( tx )
         dispatch(sendNotification({
           title: `Transaction Sent`,
           message: 'Waiting for confirmation...',
@@ -157,7 +171,6 @@ export const toMission = ( skulls = false ) => { // UnStake Skull
 
     await stakeSkullTx.then(
       async (tx) => {
-        console.log( tx )
         dispatch(sendNotification({
           title: `Transaction Sent`,
           message: 'Waiting for confirmations',
@@ -179,16 +192,20 @@ export const toMission = ( skulls = false ) => { // UnStake Skull
 
 export const getStakingData =  () => {
   return async (dispatch) => {
-    let {croSkullsStaking, croSkullsContract, accountAddress, ethProvider} = store.getState().blockchain;
+    console.log('getStakingData')
+    let {croSkullsStaking, croSkullsContract, croSkullsGrave, accountAddress, ethProvider} = store.getState().blockchain;
+    let initialState = store.getState().data
     let started = await croSkullsStaking.started()
     if( started ){
       let isApproved = await croSkullsStaking.approvalStatus();
-      let croSkullsAmount = await croSkullsContract.balanceOf( accountAddress )
       if( ! isApproved ){ //approved Staking contract as Operator into ERC721 Contract
         //prevediamo una sezione dove mostrare il bottone per attivare l'approval sul contratto NFT
         dispatch(stakingDisabled())
       }else{
         let malusFee = await croSkullsStaking.calculateMalusFee()
+        malusFee = malusFee.toString()
+
+
         let rewardPlusMalus = await croSkullsStaking.calculateRewardsPlusMalus()
         let rewards = await croSkullsStaking.calculateRewards()
         let rewardPerCycle = await croSkullsStaking._rewardPerCycles()
@@ -197,10 +214,10 @@ export const getStakingData =  () => {
         let userDetails = await croSkullsStaking.userDetails( accountAddress )
         let soulsGenerated = await croSkullsStaking.calculateDroppedSouls();
         let alreadyClaimed = userDetails.alreadyClaimed;
+        let userGraveBalance = await croSkullsGrave.balanceOf(accountAddress)
         
         let lastBlock =  await ethProvider.getBlock()
         let blockTimestamp = lastBlock.timestamp;
-        malusFee = malusFee.toString()
         rewardPlusMalus = rewardPlusMalus.toString()
         rewards = rewards.toString()
         rewardPerCycle = rewardPerCycle.toString()
@@ -208,6 +225,7 @@ export const getStakingData =  () => {
         startStakeTimestamp = startStakeTimestamp.toString()
         soulsGenerated = soulsGenerated.toString()
         alreadyClaimed = alreadyClaimed.toString()
+        userGraveBalance = userGraveBalance.toString()
         
         dispatch(fetchStakingSuccess({
           malusFee,
@@ -220,7 +238,8 @@ export const getStakingData =  () => {
           blockTimestamp,
           userDetails,
           alreadyClaimed,
-          soulsGenerated
+          soulsGenerated,
+          userGraveBalance
         }))
       }
     }else{
@@ -231,6 +250,7 @@ export const getStakingData =  () => {
 
 export const getSkullsData = () => {
   return async (dispatch) => {
+      console.log('getSkullsData')
       dispatch(fetchDataRequest());
       let {
           croSkullsContract,
@@ -240,6 +260,7 @@ export const getSkullsData = () => {
       } = store.getState().blockchain
 
       dispatch(refreshSkullsStories())
+      dispatch(getStakingData())
 
       let receivedFilter = croSkullsContract.filters.Transfer(null, accountAddress)
       let transferedFilter = croSkullsContract.filters.Transfer(accountAddress)
@@ -268,7 +289,6 @@ export const getSkullsData = () => {
       }
 
       let inStakeTokens = await croSkullsStaking.getTokensIds()
-      console.log( inStakeTokens )
       let received = [];
       let transfered = [];
       receivedEvents.map(event => {
@@ -290,48 +310,16 @@ export const getSkullsData = () => {
               transfered[tokenId] = 1
           }
       })
-      console.log( transfered )
       let final = []
       received.forEach((nTrasfer, tokenId) => {
           if (  nTrasfer > transfered[tokenId] || nTrasfer && !transfered[tokenId]) {
               final.push(tokenId)
           }
       })
-      //let sfiltred = received.filter( x => ! transfered.includes(x))
       final = final.filter(x => !inStakeTokens.includes(x))
       dispatch(skullsSuccess( {
           croSkulls: final,
           croSkullsStaked: inStakeTokens
       }))
-      console.log( final, inStakeTokens )
-      dispatch(getStakingData())
-      //await this.getStakingData()
   }
 }
-
-
-export const fetchData = () => {
-  return async (dispatch) => {
-    dispatch(fetchDataRequest());
-    try {
-      let totalSupply = await store
-        .getState()
-        .blockchain.smartContract.methods.totalSupply()
-        .call();
-      // let cost = await store
-      //   .getState()
-      //   .blockchain.smartContract.methods.cost()
-      //   .call();
-
-      dispatch(
-        fetchDataSuccess({
-          totalSupply,
-          // cost,
-        })
-      );
-    } catch (err) {
-      console.log(err);
-      dispatch(fetchDataFailed("Could not load data from contract."));
-    }
-  };
-};
