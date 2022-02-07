@@ -7,8 +7,10 @@ import store from "../../redux/store";
 
 const AccountDetails = () => {
   let { blockchain } = store.getState();
-  let { accountBalance, accountAddress } = blockchain
-  accountBalance = formatEther(accountBalance).slice(0, 5 )
+  let { accountBalance, accountAddress, contractDetected } = blockchain
+  if( contractDetected ){
+    accountBalance = formatEther(accountBalance).slice(0, 5 )
+  }
   return (
       <div className="container ac-home">
         <h1 className="ac-title">CroSkull NFT</h1>
@@ -30,7 +32,6 @@ const AccountDetails = () => {
         <h4 className="ac-text">{accountAddress}</h4>
         <p className="ac-text">Account balance :</p>
         <h4 className="ac-text">{accountBalance} CRO</h4>
-        
       </div>
   );
 };

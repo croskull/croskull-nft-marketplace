@@ -25,6 +25,12 @@ const connectRequest = () => {
     };
 };
 
+const cleanBlockchain = () => {
+    return {
+        type: "CLEAN_BLOCKCHAIN",
+    };
+}
+
 const connectSuccess = (payload) => {
     return {
         type: "CONNECTION_SUCCESS",

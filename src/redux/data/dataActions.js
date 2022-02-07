@@ -77,9 +77,11 @@ const notificationRequest = (payload) => {
 
 export const refreshSkullsStories = () => {
   return async (dispatch) => {
-    console.log('refreshSkullsStories')
-    let { croSkullsDescription, accountAddress, ethProvider } = store.getState().blockchain
+    let { croSkullsDescription, contractDetected,accountAddress, ethProvider } = store.getState().blockchain
 
+    if( ! contractDetected || ! accountAddress)
+      return
+    
     let storiesFilter = croSkullsDescription.filters.DescriptionUpdate()
 
     let currentBlock = await ethProvider.getBlockNumber()
@@ -193,8 +195,11 @@ export const toMission = ( skulls = false ) => { // UnStake Skull
 export const getStakingData =  () => {
   return async (dispatch) => {
     console.log('getStakingData')
-    let {croSkullsStaking, croSkullsContract, croSkullsGrave, accountAddress, ethProvider} = store.getState().blockchain;
+    let {croSkullsStaking, contractDetected, croSkullsContract, croSkullsGrave, accountAddress, ethProvider} = store.getState().blockchain;
     let initialState = store.getState().data
+    if( ! contractDetected || ! accountAddress)
+      return
+
     let started = await croSkullsStaking.started()
     if( started ){
       let isApproved = await croSkullsStaking.approvalStatus();
@@ -258,7 +263,8 @@ export const getSkullsData = () => {
           accountAddress,
           ethProvider
       } = store.getState().blockchain
-
+      if( ! croSkullsContract )
+        return
       dispatch(refreshSkullsStories())
       dispatch(getStakingData())
 

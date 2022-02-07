@@ -738,16 +738,7 @@ class App extends Component {
     return (
       <div className="main container-fluid">
         <Notifier data={store.getState().data} />
-        { ! blockchain.providerConnected ? (
-          <ConnectToMetamask 
-          connectToWeb3={this.connectToWeb3} 
-          connectToWalletConnect={this.connectToWalletConnect}
-          />
-          ) : ! blockchain.contractDetected ? (
-            <ContractNotDeployed /> 
-            ) : blockchain.loading ? (
-              <Loading />
-              ) : (
+        {  (
                 <>
             <HashRouter basename="/" >
               <Navbar/>

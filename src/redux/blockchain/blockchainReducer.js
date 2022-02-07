@@ -48,6 +48,10 @@ const blockchainReducer = (state = initialState, action) => {
                 ...state,
                 account: action.payload.account,
             };
+        case "CLEAN_BLOCKCHAIN":
+            return {
+                initialState
+            }
         case "CONTRACT_NOT_DETECTED":
             return {
                 ...state,

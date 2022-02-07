@@ -41,8 +41,8 @@ input::-webkit-input-placeholder {
   font-family: 'Special Elite', cursive;
 }
 
-.container-fluid {
-  padding: 0px !important;
+.container-fluid.main {
+  padding: 0px;
 }
 
 .main {

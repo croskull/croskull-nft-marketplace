@@ -1,6 +1,5 @@
 import React, {useEffect} from "react";
 import metamaskIcon from "./metamask.svg";
-import cryptoIcon from "./crypto-com.svg";
 import {DeFiWeb3Connector } from 'deficonnect';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import Web3Modal from 'web3modal';
@@ -15,7 +14,7 @@ const ConnectToMetamask = ({ connectToWeb3, connectToWalletConnect }) => {
   const dispatch = useDispatch();
   let { provider, ethProvider, providerConnected, loading } = store.getState().blockchain
 
-  if( window.ethereum.isConnected() && ! loading ){
+  if( window.ethereum.isConnected() && ! loading || providerConnected && ! loading ){
     dispatch( connect() ) // try default provider es metamask
   }
 
@@ -53,7 +52,6 @@ const ConnectToMetamask = ({ connectToWeb3, connectToWalletConnect }) => {
             style={{ width: "2rem", marginLeft: "0.5rem" }}
           />
           <img
-            src={cryptoIcon}
             alt="crypto-icon"
             style={{ width: "2rem", marginLeft: "0.5rem" }}
           />
@@ -77,7 +75,6 @@ const providerOptions = {
   },
   "custom-defiwallet": {
       display: {
-          logo: cryptoIcon,
           name: "Crypto.com DeFi Wallet",
           description: "Connect with the CDC DeFi Wallet"
       },

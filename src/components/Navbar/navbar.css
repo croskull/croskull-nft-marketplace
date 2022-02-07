@@ -5,6 +5,10 @@
 .crLogo{
     padding: 1em;
     background: #16112D;
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
 }
 
 @media screen and (max-width: 992px) {
@@ -36,7 +40,7 @@
 }
 
 .balances{
-    background: linear-gradient(-45deg, #23a6d5, #23d5ab);
+    background: #221b47;
     padding: 6px 12px;
     font-size: 12px;
     background-size: 400% 400%;
@@ -50,10 +54,21 @@
     font-size: 12px;
     background-size: 400% 400%;
     animation: gradient 5s infinite;
-    background: linear-gradient( -45deg, #ee7752, #e73c7e) !important;
+    background: #9e6eff;
 }
 
 .navbar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    z-index: 99999999;
+    min-width: 100vw !important;
     width: 100%;
     align-items: stretch !important;
+}
+
+@media (min-width:320px) and (max-width:640px) { 
+    .navbar{
+        position: relative !important;
+    }
 }

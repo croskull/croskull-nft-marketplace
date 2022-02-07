@@ -5,10 +5,15 @@ import store from "../../redux/store";
 import { useDispatch } from "react-redux";
 import title from './title.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDungeon, faBeer, faFireAlt, faGhost, faSkull, faSkullCrossbones, faRunning } from '@fortawesome/free-solid-svg-icons';
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import { faDungeon, faBeer, faFireAlt, faGhost, faSkull, faSkullCrossbones, faRunning, faLocationArrow } from '@fortawesome/free-solid-svg-icons';
 import './CroskullAdventure.css';
 import season1Banner from './season-1-banner.png';
 
+
+const ipfsUri =  "https://bafybeifax734esbihweq543p5jldhwj4djszkrevo6u7tig4xlorihx53m.ipfs.infura-ipfs.io/"
+const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/"
+const ipfsUri128 = "https://croskull.mypinata.cloud/ipfs/QmZn1HvYE1o1J8LhNpxFTj5k8LQb2bWT49YvbrhB3r19Xx/"
 
 const CroskullAdventure = () => {
   let { blockchain, data } = store.getState()
@@ -114,81 +119,54 @@ const CroskullAdventure = () => {
 
   let { approval, blockTimestamp, rewardPlusMalus, malusFee, startStakeTimestamp, rewards, rewardPerCycle, croSkullsStaked, croSkulls, cyclesLastWithdraw, alreadyClaimed, soulsGenerated } = data;
   let totalSkulls = croSkullsStaked.length > 0 ? croSkullsStaked.length + croSkulls.length : 0
-  console.log( soulsGenerated )
   let globalStartTimestamp = startStakeTimestamp;
   let finishStake = parseInt(globalStartTimestamp) + HUNDRED_DAYS_IN_SEC;
   let diffStake = finishStake - blockTimestamp;
-
+  let malusPercent =  malusFee * 125 / 100  
   let userStakeDate = formatDate( cyclesLastWithdraw * 10 )
   let seasonRemainingDate = formatDate( diffStake )
   let seasonDurationDate = formatDate( blockTimestamp - globalStartTimestamp )
   let seasonProgress = parseInt( 100 / HUNDRED_DAYS_IN_SEC *  (blockTimestamp - globalStartTimestamp ) )
   return (
     <div className="container-fluid adventure">
-      <div className="boxed">
+      <div className="row boxed">
         <div className="col-8 skulls-container">
-          <div className="row head">
+          <div className="head">
             <div className="col-sm-10">
               <h1>Adventure CroSkulls: {  totalSkulls > 0 ?  `(${croSkullsStaked.length}/${totalSkulls})` : `Loading` } </h1>
             </div>
           </div>
           <div 
             className="skull-viewer"
-            style={{ overflowX: 'auto' }}
           >
-            <div className="row flex-row flex-nowrap">
+          <div className="skulls-list in-tavern">
+            <div className="flex-display flex-row flex-wrap">
               {
                 (croSkullsStaked).map((cr, index) => {
-                  if (index < (croSkullsStaked.length / 2)) {
-                    return (
-                      <div key={cr} className='col-sm-3' >
-                        <img 
-                          src={`${ipfsUri}${cr}.png`}
-                          className={viewState.selectedSkulls.includes(cr) ? 'selected div-skull ' : 'div-skull'} 
-                          onClick={() => selectSkull(cr)}
-                        />
-                        <span class="badge badge-dark rounded">#{cr}</span>
+                  return (
+                    <div key={cr} className='col-sm-3' >
+                      <LazyLoadImage 
+                        src={`${ipfsUri480}${cr}.webp`}
+                        className={viewState.selectedSkulls.includes(cr) ? 'selected div-skull ' : 'div-skull'} 
+                        onClick={() => selectSkull(cr)}
+                      />
+                      <span className="badge badge-dark rounded">#{cr}</span>
+                      <div className="bottom-actions">
                         <button 
-                          className="skull-button retire-button"
-                          onClick={ () => {
-                            dispatch(toTavern(cr))
-                          }}
-                        > 
-                          <FontAwesomeIcon icon={faRunning} /> 
-                          Retire
-                        </button>
+                            className="skull-button retire-button"
+                            onClick={ () => {
+                              dispatch(toTavern(cr))
+                            }}
+                          > 
+                            <FontAwesomeIcon icon={faRunning} /> 
+                            Retire
+                          </button>
                       </div>
-                    );
-                  }
+                    </div>
+                  );
                 })
               }
-            </div>
-            <div className="row flex-row flex-nowrap">
-              {
-                (croSkullsStaked).map((cr, index) => {
-                  if (index >= (croSkullsStaked.length / 2)) {
-                    return (
-                      <div key={cr} className='col-sm-3' >
-                        <img 
-                          src={`${ipfsUri}${cr}.png`}
-                          className={viewState.selectedSkulls.includes(cr) ? 'selected div-skull ' : 'div-skull'} 
-                          onClick={() => selectSkull(cr)}
-                        />
-                        <span class="badge badge-dark rounded">#{cr}</span>
-                        <button 
-                          className="skull-button retire-button"
-                          onClick={ () => {
-                            dispatch(toTavern(cr))
-                          }}
-                        > 
-                          <FontAwesomeIcon icon={faRunning} /> 
-                          Retire
-                        </button>
-                      </div>
-                    );
-                  }
-                })
-              }
+              </div>
             </div>
           </div>
           <div className="div-button">
@@ -243,9 +221,9 @@ const CroskullAdventure = () => {
                   <div 
                     class="progress-bar bg-danger" 
                     role="progressbar" 
-                    style={{ width: malusFee * 2 + '%' } /*sostituire con timeElapsed in % */} 
-                    aria-valuenow="10" 
-                    aria-valuemin="0" 
+                    style={{ width: malusPercent + '%' } /*sostituire con timeElapsed in % */} 
+                    aria-valuenow="10"
+                    aria-valuemin="0"
                     aria-valuemax="100"
                   > 
                     {malusFee}%

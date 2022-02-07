@@ -2,12 +2,12 @@ import {
   ethers
 } from 'ethers';
 import React, { useEffect, useState } from "react";
-import { getSkullsData, toTavern, toMission, sendNotification, refreshSkullsStories } from "../../redux/data/dataActions";
+import { getSkullsData, toTavern, toMission, sendNotification, getStakingData } from "../../redux/data/dataActions";
 import store from "../../redux/store";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDungeon, faPen, faRunning, faCoins } from '@fortawesome/free-solid-svg-icons';
+import { faDungeon, faRunning, faCoins } from '@fortawesome/free-solid-svg-icons';
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import ReactQuill from "react-quill";
 import IpfsHttpClient from "ipfs-http-client";
@@ -19,7 +19,9 @@ import redPotionDisabled from './redPotionDisabled.png';
 import "react-quill/dist/quill.snow.css";
 import './Tavern.css';
 
-
+const ipfsUri =  "https://bafybeifax734esbihweq543p5jldhwj4djszkrevo6u7tig4xlorihx53m.ipfs.infura-ipfs.io/"
+const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/"
+const ipfsUri128 = "https://croskull.mypinata.cloud/ipfs/QmZn1HvYE1o1J8LhNpxFTj5k8LQb2bWT49YvbrhB3r19Xx/"
 const Tavern = () => {
   let dispatch = useDispatch()
   let { blockchain, data } = store.getState()
@@ -60,7 +62,6 @@ const Tavern = () => {
     console.log( composed )
   }
 
-  const ipfsUri =  ""  || "https://bafybeifax734esbihweq543p5jldhwj4djszkrevo6u7tig4xlorihx53m.ipfs.infura-ipfs.io/"
   
 
   /*useEffect(() => {
@@ -167,6 +168,31 @@ const Tavern = () => {
     
   }
 
+  const setApprovalforAll = async () => {
+    let { croSkullsStaking, croSkullsContract } = blockchain
+    let approvalTx = croSkullsContract.setApprovalForAll(
+      croSkullsStaking.address,
+      true
+    )
+    await approvalTx.then( async ( tx ) => {
+      console.log( tx )
+        dispatch(sendNotification({
+          title: `Transaction Sent`,
+          message: 'Waiting for confirmation...',
+          tx,
+          type: "default"
+        }))
+        await tx.wait(2)
+        dispatch(sendNotification({
+          title: `Approved!`,
+          message: `Approved Succesful`,
+          tx,
+          type: "success"
+        }))
+        dispatch(getStakingData())
+    })
+  }
+
   const selectSkull = (e) => {
     let { selectedSkulls } = viewState;
     if ( selectedSkulls && selectedSkulls.includes(e)) {
@@ -220,7 +246,7 @@ const Tavern = () => {
 
   //quill description editor setting
 
-  let { croSkullsStaked, croSkulls, skullsStories } = data;
+  let { croSkullsStaked, croSkulls, skullsStories, approval } = data;
   let { accountAddress, accountBalance } = blockchain
   let totalSkulls = croSkullsStaked.length > 0 ? croSkullsStaked.length + croSkulls.length : 0
   let { 
@@ -245,48 +271,57 @@ const Tavern = () => {
           >
             Recent Community Stories
           </span>
-          <div className="stories-list">
-          { skullsStories ?
-            skullsStories.map( (story, tokenId) => {
-              let { ownerOf } = story
-              return (
-                <div className="story-item">
-                  <div className="story-image-container">
-                    <div 
-                      style={{ backgroundImage: `url(${ipfsUri}${tokenId}.png)`  }}
-                      className="story-image" 
-                      onClick={() => { 
-                        fetchSkullDescription( { tokenId, ownerOf } )
-                      } }
-                    />
-                    <div
-                      className="floating-badge"
-                    >
-                      <span class="token-id">
-                        {tokenId}
-                      </span>
+          <div className="stories-list-wrapper">
+            <div className="stories-list">
+            { skullsStories ?
+              skullsStories.map( (story, tokenId) => {
+                let { ownerOf } = story
+                return (
+                  <div className="story-item">
+                    <div className="story-image-container">
+                      <div 
+                        style={{ backgroundImage: `url(${ipfsUri128}${tokenId}.webp)`  }}
+                        className="story-image" 
+                        onClick={() => { 
+                          fetchSkullDescription( { tokenId, ownerOf } )
+                        } }
+                      />
+                      <div
+                        className="floating-badge"
+                      >
+                        <span class="token-id">
+                          {tokenId}
+                        </span>
+                      </div>
                     </div>
+                    <span
+                      className="story-owner"
+                    >
+                      {`${story.ownerOf.substr(0, 4)}...${story.ownerOf.substr(39, 41)}` }
+                    </span>
                   </div>
-                  <span
-                    className="story-owner"
-                  >
-                    {`${story.ownerOf.substr(0, 4)}...${story.ownerOf.substr(39, 41)}` }
-                  </span>
-                </div>
-              )
-            }) : ('')
-          }
+                )
+              }) : ('')
+            }
+            </div>
           </div>
         </div>
         <div className="items-container">
-          <img 
-            src={bluePotion} 
-            className="potion-image blue"
-          />
-          <img 
-            src={redPotionDisabled} 
-            className="potion-image red"
-          />
+          <span 
+            className="stories-heading"
+          >
+            Potions ( soon )
+          </span>
+          <div className="potions-container">
+            <img 
+              src={bluePotion} 
+              className="potion-image blue"
+            />
+            <img 
+              src={redPotion} 
+              className="potion-image red"
+            />
+          </div>
         </div>
       </div>
       { display ? (
@@ -295,7 +330,7 @@ const Tavern = () => {
               <div className="container">
               <div className="image">
                 <LazyLoadImage 
-                  src={`${ipfsUri}${tokenId}.png`}
+                  src={`${ipfsUri480}${tokenId}.webp`}
                   className='selected div-skull'
                 />
                 <label for="birthDate">Birth date</label>
@@ -392,7 +427,7 @@ const Tavern = () => {
               <div className="container">
                 <div className="image">
                   <LazyLoadImage 
-                    src={`${ipfsUri}${tokenId}.png`}
+                    src={`${ipfsUri480}${tokenId}.webp`}
                     className='selected div-skull'
                   />
                   <span>Birth Date: { birthDate ?  new Date(birthDate * 1000).toISOString().slice(0, 10) : '' }</span>
@@ -465,172 +500,165 @@ const Tavern = () => {
                     } )
                   }}
                 >
-                  Tavern { croSkulls.length > 0 ? `(${croSkulls.length})` : '' }
+                  Relaxing { croSkulls.length > 0 ? `(${croSkulls.length})` : '' }
                 </li>
-                <li
-                  className={`skull-button view-button ${ viewState.currentView == 'adventure' ? 'active' : ''}`}
-                  onClick={ () => {
-                    setViewState( {
-                      ...viewState,
-                      currentView: 'adventure'
-                    } )
-                  }}
-                >
-                  Adventure { croSkullsStaked.length > 0 ? `(${croSkullsStaked.length})` : '' }
-                </li>
-                <li
-                  className={`skull-button view-button ${ viewState.currentView == 'inventory' ? 'active' : ''}`}
-                  onClick={ () => {
-                    setViewState( {
-                      ...viewState,
-                      currentView: 'inventory'
-                    } )
-                  }}
-                >
-                  Inventory
-                </li>
+                {
+                  approval ? (
+                    <li
+                      className={`skull-button view-button ${ viewState.currentView == 'adventure' ? 'active' : ''}`}
+                      onClick={ () => {
+                        setViewState( {
+                          ...viewState,
+                          currentView: 'adventure'
+                        } )
+                      }}
+                    >
+                      Adventure { croSkullsStaked.length > 0 ? `(${croSkullsStaked.length})` : '' }
+                    </li>
+                  ) : (
+                    <li
+                      className={`skull-button view-button approve`}
+                      onClick={ () => {
+                        setApprovalforAll()
+                      }}
+                    >
+                      Approve Adventure
+                    </li>
+                  )
+                }
               </ul>
             </div>
-            { viewState.currentView == 'tavern' ? (
-              <div className="skulls-list in-tavern">
+              <div className={`skulls-list in-tavern ${ viewState.currentView == 'tavern' ? `active` : `` }`}>
+                <div className="list-head">
+                  <div className="div-button">
+                    {
+                      croSkulls.length > 0 ? 
+                      (
+                        <button className="skull-button btn-success" 
+                          onClick={() => dispatch(toMission( croSkulls ))}
+                        >
+                          Send All ({ croSkulls.length })
+                        </button> 
+                      ) : ('') 
+                    }
+                    <button 
+                      className="skull-button btn-success" 
+                      hidden={(viewState.selectedSkulls.length > 0 ? false : true)} 
+                      onClick={() => dispatch(toMission(viewState.selectedSkulls))}
+                    >
+                      Send Selected in Mission { viewState.selectedSkulls.length }
+                    </button>
+                  </div>
+                </div>
+                <div className="flex-display flex-row flex-wrap">
+                  {
+                    (croSkulls).map((cr, index) => {
+                      return (
+                        <div key={cr} className='col-sm-3' >
+                          <LazyLoadImage 
+                            src={`${ipfsUri480}${cr}.webp`}
+                            className={viewState.selectedSkulls.includes(cr) ? 'selected div-skull ' : 'div-skull'} 
+                            onClick={() => selectSkull(cr)}
+                          />
+                          <span className="badge badge-dark rounded">#{cr}</span>
+                          <div className="bottom-actions">
+                            <button 
+                              className="skull-button mission-button"
+                              onClick={ () => {
+                                dispatch(toMission(cr))
+                              }}
+                            > 
+                              <FontAwesomeIcon icon={faDungeon} /> 
+                              Mission
+                            </button>
+                            <button
+                              className="skull-button sell-button"
+                              onClick={ () => {
+                                this.sellSkull(cr)
+                              }}
+                            > 
+                              <FontAwesomeIcon icon={faCoins} /> 
+                              Sell
+                            </button>
+                            <button
+                              className="skull-button story-button"
+                              onClick={ () => {
+                                  fetchSkullDescription({ tokenId: cr, ownerOf: accountAddress })
+                              }}
+                            > 
+                              <img 
+                                className="hexagon"
+                                src={hexagon} 
+                              />
+                              <span>
+                                Story
+                              </span>
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })
+                  }
+              </div>
+            </div>
+            <div className={`skulls-list in-adventure ${ viewState.currentView == 'adventure' ? `active` : `` }`}>
               <div className="list-head">
-                <h2>Skulls in Tavern { `(${croSkulls.length}/${totalSkulls})` }</h2>
                 <div className="div-button">
                   {
-                    croSkulls.length > 0 ? 
-                    (
-                      <button className="skull-button btn-success" 
-                        onClick={() => dispatch(toMission( croSkulls ))}
-                      >
-                        Send All ({ croSkulls.length })
-                      </button> 
-                    ) : ('') 
+                    croSkullsStaked.length > 0 ? (
+                    <button className="skull-button btn-success" 
+                      onClick={() => dispatch( toTavern( croSkullsStaked ) ) }
+                    >
+                      Retire All
+                    </button>
+                    ): ( '') 
                   }
                   <button 
                     className="skull-button btn-success" 
-                    hidden={(viewState.selectedSkulls.length > 0 ? false : true)} 
-                    onClick={() => dispatch(toMission(viewState.selectedSkulls))}
+                    hidden={(viewState.selectedStakeSkulls.length > 0 ? false : true)} 
+                    onClick={() => dispatch( toTavern( viewState.selectedStakeSkulls ) ) }
                   >
-                    Send Selected in Mission { viewState.selectedSkulls.length }
+                    Retire Selected ({viewState.selectedStakeSkulls.length})
                   </button>
+                  <Link to="/adventure">
+                    <button
+                      className="skull-button"
+                    >
+                      Adventure
+                    </button>
+                  </Link>
                 </div>
               </div>
               <div className="flex-display flex-row flex-wrap">
                 {
-                  (croSkulls).map((cr, index) => {
+                  (croSkullsStaked).map((cr, index) => {
                     return (
                       <div key={cr} className='col-sm-3' >
                         <LazyLoadImage 
-                          src={`${ipfsUri}${cr}.png`}
-                          className={viewState.selectedSkulls.includes(cr) ? 'selected div-skull ' : 'div-skull'} 
-                          onClick={() => selectSkull(cr)}
+                          src={`${ipfsUri480}${cr}.webp`}
+                          className={viewState.selectedStakeSkulls.includes(cr) ? 'selected div-skull ' : 'div-skull'} 
+                          onClick={() => selectStakedSkull(cr)}
                         />
-                        <span className="badge badge-dark rounded">#{cr}</span>
-                        <div className="bottom-actions">
-                          <button 
-                            className="skull-button mission-button"
-                            onClick={ () => {
-                              dispatch(toMission(cr))
-                            }}
-                          > 
-                            <FontAwesomeIcon icon={faDungeon} /> 
-                            Mission
-                          </button>
-                          <button
-                            className="skull-button sell-button"
-                            onClick={ () => {
-                              this.sellSkull(cr)
-                            }}
-                          > 
-                            <FontAwesomeIcon icon={faCoins} /> 
-                            Sell
-                          </button>
-                          <button
-                            className="skull-button story-button"
-                            onClick={ () => {
-                                fetchSkullDescription({ tokenId: cr, ownerOf: accountAddress })
-                            }}
-                          > 
-                            <img 
-                              className="hexagon"
-                              src={hexagon} 
-                            />
-                            <span>
-                              Story
-                            </span>
-                          </button>
-                        </div>
+                        <span className="badge rounded">#{cr}</span>
+                        <button 
+                          className="skull-button retire-button"
+                          onClick={ () => {
+                            dispatch(toTavern(cr))
+                          }}
+                        > 
+                          <FontAwesomeIcon icon={faRunning} /> 
+                          Retire
+                        </button>
                       </div>
                     );
                   })
                 }
               </div>
             </div>
-          ) : viewState.currentView == 'adventure' ? (
-            <div className="skulls-list in-adventure">
-            <div className="list-head">
-              <h2>Skulls in Mission { `(${croSkullsStaked.length}/${totalSkulls})` }</h2>
-              <div className="div-button">
-                {
-                  croSkullsStaked.length > 0 ? (
-                  <button className="skull-button btn-success" 
-                    onClick={() => dispatch( toTavern( croSkullsStaked ) ) }
-                  >
-                    Retire All
-                  </button>
-                  ): ( '') 
-                }
-                <button 
-                  className="skull-button btn-success" 
-                  hidden={(viewState.selectedStakeSkulls.length > 0 ? false : true)} 
-                  onClick={() => dispatch( toTavern( viewState.selectedStakeSkulls ) ) }
-                >
-                  Retire Selected ({viewState.selectedStakeSkulls.length})
-                </button>
-                <Link to="/adventure">
-                  <button
-                    className="skull-button"
-                  >
-                    Adventure
-                  </button>
-                </Link>
-              </div>
             </div>
-            <div className="flex-display flex-row flex-wrap">
-            {
-                (croSkullsStaked).map((cr, index) => {
-                  return (
-                    <div key={cr} className='col-sm-3' >
-                      <LazyLoadImage 
-                        src={`${ipfsUri}${cr}.png`}
-                        className={viewState.selectedStakeSkulls.includes(cr) ? 'selected div-skull ' : 'div-skull'} 
-                        onClick={() => selectStakedSkull(cr)}
-                      />
-                      <span className="badge rounded">#{cr}</span>
-                      <button 
-                        className="skull-button retire-button"
-                        onClick={ () => {
-                          dispatch(toTavern(cr))
-                        }}
-                      > 
-                        <FontAwesomeIcon icon={faRunning} /> 
-                        Retire
-                      </button>
-                    </div>
-                  );
-                })
-              }
-            </div>
-          </div>
-          ) : viewState.currentView == 'inventory' ? (
-            <div className="inventory-list">
-              
-            </div>
-          ) : ('')}
           </div>
         </div>
       </div>
-    </div>
   );
 }
 
