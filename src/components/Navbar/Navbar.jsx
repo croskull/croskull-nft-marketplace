@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import React , { useEffect, useState } from "react";
 import store from "../../redux/store";
 import cryptoIcon from "./crypto-com.svg";
-import { connect } from "../../redux/blockchain/blockchainActions";
+import { connect, disconnect } from "../../redux/blockchain/blockchainActions";
 import {DeFiWeb3Connector } from 'deficonnect';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import Web3Modal from 'web3modal';
@@ -25,9 +25,13 @@ const Navbar = () => {
   }
   const [isHovered, setIsHovered] = useState(false)
 
-  if( window.ethereum.isConnected() && window.ethereum._state.accounts[0] && ! loading && ! contractDetected ){
+
+  useEffect( () => {
+    if( window.ethereum.isConnected() && window.ethereum._state.accounts[0] && ! loading && ! contractDetected ){
       dispatch( connect() ) // try default provider es metamask
-  }
+    }
+  }, [window.ethereum._state.accounts])
+  
 
   const toggleProvidersModal = async () => {
     await web3Modal._toggleModal();
@@ -43,7 +47,7 @@ const Navbar = () => {
   const handleButton = () => {
     if( isHovered ){
       if( contractDetected ){
-        provider.disconnect()
+        dispatch(disconnect())
       }else{
         toggleProvidersModal()
       }

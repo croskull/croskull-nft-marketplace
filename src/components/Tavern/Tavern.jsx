@@ -18,6 +18,7 @@ import redPotion from './redPotion.png';
 import redPotionDisabled from './redPotionDisabled.png';
 import "react-quill/dist/quill.snow.css";
 import './Tavern.css';
+import { parse } from 'dotenv';
 
 const ipfsUri =  "https://bafybeifax734esbihweq543p5jldhwj4djszkrevo6u7tig4xlorihx53m.ipfs.infura-ipfs.io/"
 const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/"
@@ -246,7 +247,7 @@ const Tavern = () => {
 
   //quill description editor setting
 
-  let { croSkullsStaked, croSkulls, skullsStories, approval } = data;
+  let { croSkullsStaked, croSkulls, skullsStories, approval, advancedMetadata } = data;
   let { accountAddress, accountBalance } = blockchain
   let totalSkulls = croSkullsStaked.length > 0 ? croSkullsStaked.length + croSkulls.length : 0
   let { 
@@ -258,7 +259,7 @@ const Tavern = () => {
     hobby,
     twitter,
     faction,
-    display 
+    display
   } = storyState
 
 
@@ -274,8 +275,8 @@ const Tavern = () => {
           <div className="stories-list-wrapper">
             <div className="stories-list">
             { skullsStories ?
-              skullsStories.map( (story, tokenId) => {
-                let { ownerOf } = story
+              skullsStories.map( (story ) => {
+                let { ownerOf, tokenId } = story
                 return (
                   <div className="story-item">
                     <div className="story-image-container">
@@ -480,7 +481,7 @@ const Tavern = () => {
             ) }
         </div>
       ) : ('')}
-      <div className="row boxed">
+      <div className="boxed">
         <div className="col-sm-12 skulls-container">
           <div 
             className="skull-viewer"
@@ -553,6 +554,8 @@ const Tavern = () => {
                 <div className="flex-display flex-row flex-wrap">
                   {
                     (croSkulls).map((cr, index) => {
+                      let data = advancedMetadata[cr-1]
+
                       return (
                         <div key={cr} className='col-sm-3' >
                           <LazyLoadImage 
@@ -560,7 +563,11 @@ const Tavern = () => {
                             className={viewState.selectedSkulls.includes(cr) ? 'selected div-skull ' : 'div-skull'} 
                             onClick={() => selectSkull(cr)}
                           />
-                          <span className="badge badge-dark rounded">#{cr}</span>
+                          <div className="floating-badges-container">
+                            <span className="badge id">#{cr}</span>
+                            <span className="badge rank">Rank: {data ? data.rank : ''}</span>
+                            <span className="badge rank">Rarity: { data ? String(data.rarityPercent).substr(0, 3) : '' }%</span>
+                          </div>
                           <div className="bottom-actions">
                             <button 
                               className="skull-button mission-button"
@@ -655,10 +662,10 @@ const Tavern = () => {
                 }
               </div>
             </div>
-            </div>
           </div>
         </div>
       </div>
+    </div>
   );
 }
 

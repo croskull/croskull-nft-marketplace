@@ -14,6 +14,7 @@ const initialState = {
     contractDetected: false,
 };
 
+const emptyState = initialState;
 const blockchainReducer = (state = initialState, action) => {
     let payload = action.payload
     switch (action.type) {
@@ -22,7 +23,7 @@ const blockchainReducer = (state = initialState, action) => {
                 ...initialState,
                 loading: true,
             };
-        case "CONNECTION_SUCCESS":
+            case "CONNECTION_SUCCESS":
             return {
                 ...state,
                 loading: false,
@@ -48,9 +49,21 @@ const blockchainReducer = (state = initialState, action) => {
                 ...state,
                 account: action.payload.account,
             };
-        case "CLEAN_BLOCKCHAIN":
+        case "DISCONNECT":
             return {
-                initialState
+                loading: false,
+                errorMsg: "",
+                provider: false,
+                ethProvider: false,
+                accountAddress: "",
+                accountBalance: "",
+                managerAddress: null,
+                croSkullsContract: false,
+                croSkullsStaking: false,
+                croSkullsGrave: false,
+                croSkullsDescription: false,
+                providerConnected: false,
+                contractDetected: false,
             }
         case "CONTRACT_NOT_DETECTED":
             return {

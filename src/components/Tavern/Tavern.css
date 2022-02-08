@@ -13,6 +13,23 @@
 };
 @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
 
+.stories-list::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3) !important;
+	border-radius: 10px;
+	background-color: #16112D;
+}
+
+.stories-list::-webkit-scrollbar
+{
+	width: 0px !important;
+	background-color: #16112D;
+  height: 0px;
+}
+
+.stories-list::-webkit-scrollbar-thumb{
+
+}
 
 .icon-container {
   margin-right: 10px;
@@ -215,6 +232,21 @@
   justify-content: center;
 }
 
+.tavern .floating-badges-container{
+  position: absolute;
+  width: 100%;
+  top: 15px;
+  display: flex;
+  font-size: 13px;
+  text-align: center;
+  font-weight: 700;
+  flex-direction: row;
+  column-gap: 6px;
+  align-content: flex-start;
+  align-items: flex-start;
+  justify-content: center;
+}
+
 .tavern .token-id{
   margin-top: 15px;
   background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
@@ -375,6 +407,7 @@ a:hover {
 
 .skulls-list .flex-display{
   overflow-y: scroll;
+  overflow-x: clip;
   max-height: 50vh;
   margin-top: 6px;
 }
@@ -428,11 +461,9 @@ a:hover {
 }
 
 .tavern .badge {
-  position: absolute;
-  top: 15px;
-  left: 15px;
   font-size: 14px;
   background-color: #4947ad;
+  border-radius: 6px;
 }
 
 .tavern .col-sm-3{

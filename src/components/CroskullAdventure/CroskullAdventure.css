@@ -38,7 +38,7 @@
   padding-bottom: 10%;
   max-height: 100vh;
   height: 100vh;
-  justify-content: center;
+  justify-content: flex-end;
 }
 
 .adventure .head {
@@ -377,13 +377,12 @@ a:hover {
   background: #9e6eff;
 }
 
-.retire-button{
-  position: absolute;
-  left: 15px;
-  bottom: 15px;
+.adventure .retire-button{
+  position: relative !important;
+  left: 0;
+  bottom: 0;
   background-color: #b6403c;
   color: #E1E9FF !important;
-
   background: #b6403c !important;
 }
 
@@ -451,6 +450,8 @@ a:hover {
   display: flex;
   flex-direction: row;
   column-gap: 6px;
+  padding: 12px !important;
+  padding-top: 0px !important;
 }
 
 .adventure .bottom-actions {
@@ -646,8 +647,8 @@ a:hover {
     row-gap: 6px;
     margin: 6px 0px;
   }
-  .div-button {
-    overflow-x: scroll !important;
+  .adventure .div-button {
+    overflow-x: clip !important;
   }
 }
 

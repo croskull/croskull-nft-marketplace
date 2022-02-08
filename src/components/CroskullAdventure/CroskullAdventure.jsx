@@ -27,7 +27,7 @@ const CroskullAdventure = () => {
 
   useEffect(() => {
     if( blockchain.contractDetected )
-      dispatch(getSkullsData())
+      return //dispatch(getSkullsData())
   }, [blockchain.contractDetected])
   
   const selectSkull = e => { //handle stake selects
@@ -139,7 +139,7 @@ const CroskullAdventure = () => {
           <div 
             className="skull-viewer"
           >
-          <div className="skulls-list in-tavern">
+          <div className="skulls-list in-adventure active">
             <div className="flex-display flex-row flex-wrap">
               {
                 (croSkullsStaked).map((cr, index) => {

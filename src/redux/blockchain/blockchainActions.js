@@ -64,6 +64,19 @@ const noAccount = () => {
     }
 }
 
+const requestDisconnect = () => {
+    return {
+        type: "DISCONNECT"
+    }
+}
+
+export const disconnect = () => {
+    return async (dispatch) => {
+        dispatch(requestDisconnect())
+        dispatch(cleanData())
+    }
+}
+
 export const connect = (_provider = false, newChainId = false) => {
     return async (dispatch) => {
         dispatch(connectRequest());

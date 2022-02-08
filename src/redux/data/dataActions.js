@@ -99,18 +99,26 @@ export const refreshSkullsStories = () => {
       )
       tempGenesis += blockLimit
     }
+    console.log( storyEvents )
     let skullsStories = []
     storyEvents.map( story => {
       let { tokenId, ownerOf, ipfsHash } = story.args;
       skullsStories[tokenId] = {
+        tokenId: tokenId.toString(),
         ownerOf: ownerOf,
-        ipfsHash: ipfsHash
+        ipfsHash: ipfsHash,
+        blocknumber: story.blockNumber
       }
-      dispatch(updateState({
-        key: 'skullsStories',
-        value: skullsStories
-      }))
     })
+
+    skullsStories.sort( (a, b) => {
+      return  b.blocknumber - a.blocknumber
+    })
+
+    dispatch(updateState({
+      key: 'skullsStories',
+      value: skullsStories
+    }))
 
     /*dispatch(
       setSkullsStories( {
@@ -209,6 +217,42 @@ export const getStakingData =  () => {
       }else{
         let malusFee = await croSkullsStaking.calculateMalusFee()
         malusFee = malusFee.toString()
+        const rawResult = await fetch( 'https://croskull.mypinata.cloud/ipfs/QmSrjCsmQ9e5m1HFYXRSYgxHi9K6u9a6DXRsWz7KWW5i6p/_metadata' );
+        let metaData = await rawResult.json();
+        let tempMetadata = metaData
+        let rarityPerTrait = []
+        let traitRariry = []
+        let totalRarity = 0;
+        metaData.map( (skullData) => {
+          let { attributes } = skullData
+          attributes.map( ( trait, i ) => {
+            totalRarity++
+            rarityPerTrait[trait.value] = rarityPerTrait[trait.value] > 0 ? rarityPerTrait[trait.value] + 1 : 1
+            traitRariry[trait.value] = 100 / totalRarity * rarityPerTrait[trait.value]
+          })
+        })
+
+        metaData.map( (skullData, skullId) => {
+          let { attributes } = skullData
+          let rarityPower = 0;
+          attributes.map( ( trait, i ) => {
+            rarityPower += rarityPerTrait[trait.value]
+          })
+          metaData[skullId].rarityPower = rarityPower
+          metaData[skullId].rarityPercent = 100 / totalRarity * rarityPower
+          metaData[skullId].rank = 0
+        })
+
+        
+        metaData.sort( (a, b ) => {
+          return a.rarityPower - b.rarityPower
+        })
+        metaData.map( (skull, i ) => {
+          metaData[i].rank = i+1
+        })
+        metaData.sort( (a,b) => {
+          return a.edition - b.edition
+        })
 
 
         let rewardPlusMalus = await croSkullsStaking.calculateRewardsPlusMalus()
@@ -244,7 +288,8 @@ export const getStakingData =  () => {
           userDetails,
           alreadyClaimed,
           soulsGenerated,
-          userGraveBalance
+          userGraveBalance,
+          advancedMetadata: metaData
         }))
       }
     }else{
@@ -267,7 +312,15 @@ export const getSkullsData = () => {
         return
       dispatch(refreshSkullsStories())
       dispatch(getStakingData())
-
+      let ownedTokensCount = await croSkullsContract.balanceOf(accountAddress)
+      ownedTokensCount = ownedTokensCount.toString()
+      let skulls = [];
+      for( let i = 0; i < ownedTokensCount; i++) {
+        let tokenId = await croSkullsContract.tokenOfOwnerByIndex(accountAddress, i)
+        skulls.push( tokenId.toString() )
+      }
+      let inStakeTokens = await croSkullsStaking.getTokensIds()
+      /*
       let receivedFilter = croSkullsContract.filters.Transfer(null, accountAddress)
       let transferedFilter = croSkullsContract.filters.Transfer(accountAddress)
       //let inStakeFilter = croSkullsStaking.filters.Stake(accountAddress)
@@ -294,7 +347,6 @@ export const getSkullsData = () => {
         tempGenesis += blockLimit
       }
 
-      let inStakeTokens = await croSkullsStaking.getTokensIds()
       let received = [];
       let transfered = [];
       receivedEvents.map(event => {
@@ -322,9 +374,10 @@ export const getSkullsData = () => {
               final.push(tokenId)
           }
       })
-      final = final.filter(x => !inStakeTokens.includes(x))
+      final = final.filter(x => !inStakeTokens.includes(x))*/
+
       dispatch(skullsSuccess( {
-          croSkulls: final,
+          croSkulls: skulls,
           croSkullsStaked: inStakeTokens
       }))
   }

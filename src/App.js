@@ -5,12 +5,13 @@ import AccountDetails from "./components/AccountDetails/AccountDetails";
 import ContractNotDeployed from "./components/ContractNotDeployed/ContractNotDeployed";
 import ConnectToMetamask from "./components/ConnectMetamask/ConnectToMetamask";
 import CroskullAdventure from "./components/CroskullAdventure/CroskullAdventure";
-import Loading from "./components/Loading/Loading";
 import Navbar from "./components/Navbar/Navbar";
 import Notifier from "./components/Notifier/Notifier";
 import Tavern from "./components/Tavern/Tavern";
+import { connect } from "./redux/blockchain/blockchainActions";
 import market from './utils/market.jpg'
 import { ethers } from 'ethers';
+import { useDispatch, useSelector } from "react-redux";
 import store from "./redux/store";
 import "./App.css";
 
@@ -723,7 +724,8 @@ class App extends Component {
       // When state will be updated(in our case, when items will be fetched), 
       // we will update local component state and force component to rerender 
       // with new data.
-  
+      
+      
       this.setState({
         blockchain: store.getState().blockchain
       });
@@ -732,12 +734,9 @@ class App extends Component {
   
 
   render() {
-    //console.log( this.props.blockchain )
-    let { blockchain } = this.state
-    console.log( blockchain )
     return (
       <div className="main container-fluid">
-        <Notifier data={store.getState().data} />
+        <Notifier />
         {  (
                 <>
             <HashRouter basename="/" >

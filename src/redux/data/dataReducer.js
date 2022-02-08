@@ -3,6 +3,7 @@ const initialState = {
     croSkullsContractOwner: null,
     croSkulls: [],
     croSkullsStaked: [],
+    advancedMetadata: [],
     croSkullsCount: 0,
     croSkullsMaxSupply: 0,
     approval: false,
@@ -18,6 +19,7 @@ const initialState = {
     cyclesLastWithdraw: 0,
     soulsGenerated: 0,
     userGraveBalance: 0,
+    rarities: [],
     title: "",
     message: "",
     type: "info", // success, danger, info, warning
@@ -81,7 +83,10 @@ const dataReducer = (state = initialState, action) => {
                 blockTimestamp: payload.blockTimestamp,
                 alreadyClaimed: payload.alreadyClaimed,
                 soulsGenerated: payload.soulsGenerated,
-                userGraveBalance: payload.userGraveBalance
+                userGraveBalance: payload.userGraveBalance,
+                rarityIndex: payload.rarityIndex,
+                rarities: payload.rarities,
+                advancedMetadata: payload.advancedMetadata
             }
         case "UPDATE_STATE": 
             return {
@@ -110,22 +115,31 @@ const dataReducer = (state = initialState, action) => {
             }
         case "CLEAN_DATA":
             return {
-                ...state,
                 loading: false,
-                approval: false,
+                croSkullsContractOwner: null,
                 croSkulls: [],
                 croSkullsStaked: [],
                 croSkullsCount: 0,
+                croSkullsMaxSupply: 0,
+                approval: false,
+                stakingStarted: false,
+                startStakeTimestamp: 0,
+                lastBlock: false,
+                blockTimestamp: false,
                 alreadyClaimed: 0,
+                owner: "",
                 malusFee: 0,
                 rewardPlusMalus: 0,
                 rewards: 0,
                 cyclesLastWithdraw: 0,
                 soulsGenerated: 0,
+                userGraveBalance: 0,
+                rarities: [],
                 title: "",
                 message: "",
                 type: "info", // success, danger, info, warning
                 tx: "",
+                skullsStories: [],
                 error: false,
                 errorMsg: "",
             }
