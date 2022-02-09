@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 const initialState = {
     loading: false,
     errorMsg: "",
@@ -10,8 +11,11 @@ const initialState = {
     croSkullsStaking: false,
     croSkullsGrave: false,
     croSkullsDescription: false,
+    croSkullsPetEggs: false,
     providerConnected: false,
     contractDetected: false,
+    ethers: ethers,
+    formatEther: val => ethers.utils.formatEther(val)
 };
 
 const emptyState = initialState;
@@ -35,6 +39,7 @@ const blockchainReducer = (state = initialState, action) => {
                 croSkullsStaking: payload.croSkullsStaking,
                 croSkullsGrave: payload.croSkullsGrave,
                 croSkullsDescription: payload.croSkullsDescription,
+                croSkullsPetEggs: payload.croSkullsPetEggs,
                 provider: payload.provider,
                 providerConnected: true,
             };
@@ -51,6 +56,7 @@ const blockchainReducer = (state = initialState, action) => {
             };
         case "DISCONNECT":
             return {
+                ...state,
                 loading: false,
                 errorMsg: "",
                 provider: false,

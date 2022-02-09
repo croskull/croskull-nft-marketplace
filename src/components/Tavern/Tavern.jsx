@@ -12,13 +12,8 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import ReactQuill from "react-quill";
 import IpfsHttpClient from "ipfs-http-client";
 import hexagon from './hexagon.svg';
-import bluePotion from './bluePotion.png';
-import bluePotionDisabled from './bluePotionDisabled.png';
-import redPotion from './redPotion.png';
-import redPotionDisabled from './redPotionDisabled.png';
 import "react-quill/dist/quill.snow.css";
-import './Tavern.css';
-import { parse } from 'dotenv';
+import './tavern.css';
 
 const ipfsUri =  "https://bafybeifax734esbihweq543p5jldhwj4djszkrevo6u7tig4xlorihx53m.ipfs.infura-ipfs.io/"
 const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/"
@@ -262,18 +257,13 @@ const Tavern = () => {
     display
   } = storyState
 
-
   return (
-    <div className="container-fluid tavern">
-      <div className="stories-container">
-        <div className="stories-wrapper"> 
-          <span 
-            className="stories-heading"
-          >
-            Recent Community Stories
-          </span>
-          <div className="stories-list-wrapper">
-            <div className="stories-list">
+    <div className= "container-fluid tavern">
+      <div className="sk-flex sk-row">
+        <div className="sk-container wd-100">
+          <div className="sk-box">
+            <span className="stories-heading">Recent Community Stories</span>
+            <div className="sk-box-content sk-row of-y-over">
             { skullsStories ?
               skullsStories.map( (story ) => {
                 let { ownerOf, tokenId } = story
@@ -307,24 +297,135 @@ const Tavern = () => {
             </div>
           </div>
         </div>
-        <div className="items-container">
-          <span 
-            className="stories-heading"
-          >
-            Potions ( soon )
-          </span>
-          <div className="potions-container">
-            <img 
-              src={bluePotion} 
-              className="potion-image blue"
-            />
-            <img 
-              src={redPotion} 
-              className="potion-image red"
-            />
+      </div>
+      <div className="sk-flex sk-row">
+        <div className="sk-container wd-100">
+          <div className="sk-box">
+            <div className="tab-head">
+              <ul className="view-list">
+                <li className={`skull-button view-button ${ viewState.currentView == 'tavern' ? 'active' : ''}`}
+                    onClick={ () => {
+                    setViewState( {
+                      ...viewState,
+                      currentView: 'tavern'
+                    } )
+                  }}
+                >
+                  Relaxing { croSkulls.length > 0 ? `(${croSkulls.length})` : '' }
+                </li>
+                {
+                  approval ? (
+                    <li
+                      className={`skull-button view-button ${ viewState.currentView == 'adventure' ? 'active' : ''}`}
+                      onClick={ () => {
+                        setViewState( {
+                          ...viewState,
+                          currentView: 'adventure'
+                        } )
+                      }}
+                    >
+                      Adventure { croSkullsStaked.length > 0 ? `(${croSkullsStaked.length})` : '' }
+                    </li>
+                  ) : (
+                    <li
+                      className={`skull-button view-button approve`}
+                      onClick={ () => {
+                        setApprovalforAll()
+                      }}
+                    >
+                      Approve Adventure
+                    </li>
+                  )
+                }
+              </ul>
+            </div>
+            <div className="sk-box-content sk-column">
+              <div className={`skulls-list in-tavern ${ viewState.currentView == 'tavern' ? `active` : `` }`}>
+                <div className="list-head">
+                  <div className="div-button">
+                    {
+                      croSkulls.length > 0 ? 
+                      (
+                      <button className="skull-button btn-success" 
+                        onClick={() => dispatch(toMission( croSkulls ))}
+                      >
+                        Send All ({ croSkulls.length })
+                      </button> 
+                      ) : ('') 
+                    }
+                    <button 
+                      className="skull-button btn-success" 
+                      hidden={(viewState.selectedSkulls.length > 0 ? false : true)} 
+                      onClick={() => dispatch(toMission(viewState.selectedSkulls))}
+                    >
+                      Send Selected in Mission { viewState.selectedSkulls.length }
+                    </button>
+                  </div>
+                </div>
+                <div className="sk-row skull-grid">
+                  {
+                  (croSkulls).map((cr, index) => {
+                    let data = advancedMetadata[cr-1]
+                    return (
+                    <div key={cr} className="skull-item" >
+                      <LazyLoadImage
+                        src={`${ipfsUri480}${cr}.webp`}
+                        className={viewState.selectedSkulls.includes(cr) ? 'selected skull-image' : 'skull-image'} 
+                        onClick={() => selectSkull(cr)}
+                      />
+                      <div className="floating-badges-container">
+                        <span className="badge id">#{cr}</span>
+                        <span className="badge rank">Rank: {data ? data.rank : ''}</span>
+                        <span className="badge rank">Rarity: { data ? String(data.rarityPercent).substr(0, 3) : '' }%</span>
+                      </div>
+                      <div className="bottom-actions">
+                        <button 
+                          className="skull-button mission-button"
+                          onClick={ () => {
+                          dispatch(toMission(cr))
+                          }}
+                        > 
+                          <FontAwesomeIcon icon={faDungeon} /> 
+                          Mission
+                        </button>
+                        <button
+                          className="skull-button sell-button"
+                          onClick={ () => {
+                          this.sellSkull(cr)
+                          }}
+                        > 
+                          <FontAwesomeIcon icon={faCoins} /> 
+                          Sell
+                        </button>
+                        <button
+                            className="skull-button story-button"
+                            onClick={ () => {
+                                fetchSkullDescription({ tokenId: cr, ownerOf: accountAddress })
+                            }}
+                        > 
+                          <img 
+                            className="hexagon"
+                            src={hexagon} 
+                          />
+                          <span>Story</span>
+                        </button>
+                      </div>
+                    </div>
+                    );
+                  })
+                  }
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+    </div>
+  )
+
+  return (
+    <div className="container-fluid tavern">
+      
       { display ? (
         <div className="story-modal">
             { editorStory.display ? (
@@ -486,15 +587,10 @@ const Tavern = () => {
           <div 
             className="skull-viewer"
           >
-            <div
-              className="tab-head"
-            >
-              <ul
-                className="view-list"              
-              >
-                <li
-                  className={`skull-button view-button ${ viewState.currentView == 'tavern' ? 'active' : ''}`}
-                  onClick={ () => {
+            <div className="tab-head">
+              <ul className="view-list">
+                <li className={`skull-button view-button ${ viewState.currentView == 'tavern' ? 'active' : ''}`}
+                    onClick={ () => {
                     setViewState( {
                       ...viewState,
                       currentView: 'tavern'

@@ -1,0 +1,30 @@
+:root {
+    --dark-violet: #16112D;
+    --violet: #221b46;
+    --light-violet: #605ee8;
+    --white: #E1E9FF;
+    --yellow: #fdc158;
+    --orange: #f0ad4e;
+    --red: #d9534f;
+    --green: #4bbf73;
+    --button-gradient: linear-gradient(117deg, rgba(255,172,26,1) 0%, rgba(237,162,54,1) 100%);
+}
+
+.merchant {
+  background-image: url(merchant.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  width: 100%;
+  max-height: 100vh;
+  height: 100vh;
+  justify-content: center;
+  padding-top: 50px !important;
+}
+.merchant .sk-row{
+    max-width: 728px;
+}
+
+.merchant-image{
+    width: 100%;
+}

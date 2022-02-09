@@ -1,4 +1,3 @@
-import { ethers } from 'ethers';
 import React , { useEffect, useState } from "react";
 import store from "../../redux/store";
 import cryptoIcon from "./crypto-com.svg";
@@ -16,7 +15,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   let { blockchain, data } = store.getState();
   let { rewardPlusMalus, malusFee, soulsGenerated, userGraveBalance, croSkulls, rewards, croSkullsStaked } = data
-  let { accountBalance, accountAddress, provider, loading, contractDetected, providerConnected } = blockchain
+  let { accountBalance, accountAddress, formatEther, loading, contractDetected, providerConnected } = blockchain
   if( providerConnected && contractDetected ){
     rewardPlusMalus = formatEther(rewardPlusMalus).slice(0, 5 )
     userGraveBalance = formatEther(userGraveBalance).slice(0, 5 )
@@ -112,6 +111,11 @@ const Navbar = () => {
               Adventure
             </Link>
           </li>
+          <li className="nav-item merchant-menu">
+            <Link to="/merchant" className="nav-link">
+              Merchant
+            </Link>
+          </li>
         </ul>
       </div>
       <div 
@@ -176,10 +180,5 @@ const web3Modal = new Web3Modal({
   cacheProvider: true, // optional
   providerOptions // required
 });
-
-
-const formatEther = (bn) => {
-  return ethers.utils.formatEther(bn)
-}
 
 export default Navbar;

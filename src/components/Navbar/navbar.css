@@ -57,15 +57,7 @@
     background: #9e6eff;
 }
 
-.navbar {
-    position: fixed !important;
-    top: 0;
-    left: 0;
-    z-index: 99999999;
-    min-width: 100vw !important;
-    width: 100%;
-    align-items: stretch !important;
-}
+
 
 @media (min-width:320px) and (max-width:640px) { 
     .navbar{

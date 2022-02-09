@@ -1,0 +1,687 @@
+@media (min-width:641px)  { 
+
+}
+@media (min-width:961px)  {
+
+}
+
+
+@font-face {
+  font-family: 'Headhunter';
+  src: url('../../utils/HeadhunterRegular-6Y1x.ttf') format('truetype');
+  font-weight: bold;
+};
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+
+.stories-list::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3) !important;
+	border-radius: 10px;
+	background-color: #16112D;
+}
+
+.stories-list::-webkit-scrollbar
+{
+	width: 0px !important;
+	background-color: #16112D;
+  height: 0px;
+}
+
+.stories-list::-webkit-scrollbar-thumb{
+
+}
+
+.icon-container {
+  margin-right: 10px;
+}
+
+.tavern .skulls-list {
+  padding: 12px;
+  background: hsl(251deg 45% 12%);
+  margin-top: 12px;
+  border-radius: 12px;
+}
+
+.flex-display{
+  display: flex;
+}
+
+.tavern {
+  background-image: url(tavern.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  width: 100%;
+  max-height: 100vh;
+  height: 100vh;
+  justify-content: center;
+  padding-top: 50px !important;
+}
+
+.tavern .head {
+  margin: 12px 0px;
+}
+
+
+/** STORY LIST */
+.tavern .stories-container{
+  margin: 12px 0px;
+  padding: 12px;
+  max-width: 1280px;
+  width: 100%;
+  background: rgb(34 27 71);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: row;
+  column-gap: 12px;
+}
+
+.tavern .stories-wrapper {
+  max-width: 85%;
+  width: 100%;
+}
+
+@media screen {
+  
+}
+
+.tavern .items-container {
+  width: 100%;
+  max-width: 15%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 6px;
+  align-items: center;
+}
+
+.tavern .potion-image{
+  width: 75px;
+  height: 75px;
+}
+
+.tavern .red::before{
+  content: "Red Potion";
+  position: absolute;
+}
+
+.tavern .blue::before{
+  content: "Blue Potion";
+}
+
+.tavern .stories-heading{
+  font-size: 14px;
+}
+
+.potions-container, .stories-list{
+  display: flex;
+  flex-direction: row;
+  border-radius: 6px;
+  padding: 12px;
+  background: #16112d;
+}
+
+.in-tavern, .in-adventure {
+  transform: scale(0);
+  opacity: 0;
+  transition: opacity .54s cubic-bezier(0,.52,.47,.98) 0s, display 0s 0.54s;
+  display: none;
+}
+.in-tavern.active, .in-adventure.active {
+  transform: scale(1);
+  opacity: 1;
+  display: block;
+}
+
+.tavern .potions-container{
+  height: 100%;
+  align-items: center;
+}
+
+.tavern .stories-list{
+  margin-top: 6px;
+  position: relative;
+  column-width: 80px;
+  column-gap: 12px;
+  overflow: visible;
+  overflow-x: overlay;
+}
+.stories-list-wrapper{
+  position: relative;
+}
+.stories-list-wrapper:before{
+  content: "";
+  position: absolute;
+  top:0;
+  left: 0;
+  background: linear-gradient(90deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0) 60%);
+  width: 20px;
+  height: 100%;
+  z-index: 1;
+  border-radius: 6px;
+}
+.stories-list-wrapper:after{
+  content: "";
+  position: absolute;
+  top:0;
+  right: 0;
+  background: linear-gradient(270deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0) 60%);
+  width: 20px;
+  height: 100%;
+  border-radius: 6px;
+}
+
+.tavern .story-item{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 3px;
+}
+
+
+.tavern .story-image-container{
+  width: 80px;
+  height: 85px;
+  display: flex;
+  position: relative;
+  padding: 3px;
+  background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
+  /*background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);*/
+	background-size: 100vw 100vh;
+  transform: scale(1);
+  transition: transform .1s 0s;
+	animation: gradient 5s ease infinite;
+  -webkit-clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  cursor: pointer;
+}
+
+.tavern .story-image-container:hover{
+  z-index: 99999;
+  transform: scale(1.20);
+}
+
+.tavern .story-image{
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: relative;
+  -webkit-clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%) ;
+}
+
+.tavern .story-image:hover{
+  border-color:#7e58ca;
+}
+
+.tavern .story-owner{
+  font-size: 12px;
+}
+
+.tavern .floating-badge {
+  position: absolute;
+  height: 100%;
+  display: flex;
+  font-size: 13px;
+  text-align: center;
+  font-weight: 700;
+  flex-direction: column;
+  align-content: flex-start;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.tavern .floating-badges-container{
+  position: absolute;
+  width: 100%;
+  top: 15px;
+  display: flex;
+  font-size: 13px;
+  text-align: center;
+  font-weight: 700;
+  flex-direction: row;
+  column-gap: 6px;
+  align-content: flex-start;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.tavern .token-id{
+  margin-top: 15px;
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+	background-size: 400% 400%;
+  color: #000;
+  display: flex;
+  padding: 2px 3px 1px 3px;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  margin-left: -3px;
+  font-size: 11px;
+}
+/** STORY MODAL */
+.story-modal {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  align-content: center;
+  z-index: 9999;
+  background: #00000065 !important;
+}
+
+.story-modal .container {
+  min-height: 30vh;
+  max-height: 80vh;
+  background: #221b47 !important;
+  border: 2px solid #E1E9FF; 
+  padding: 12px;
+  display: flex;
+  flex-direction: row;
+  max-width: 720px;
+}
+
+.story-modal .description {
+  background: #16112D;
+  border-radius: 6px;
+}
+
+.story-modal .pay-action {
+  display: flex;
+  flex-direction: row;
+  row-gap: 6px;
+  justify-content: space-between;
+}
+
+.story-modal .image {
+  max-width: 33%;
+  padding: 12px;
+  row-gap: 6px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: overlay;
+}
+
+.story-modal .description-editor{
+  background-color: #E1E9FF;
+  color: #000;
+}
+
+.story-modal .metadata {
+  position: relative;
+  max-width: 66%;
+  width: 66%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 6px;
+  padding: 12px;
+}
+
+.story-modal .description {
+  margin: 6px;
+  padding: 12px;
+  overflow-y: overlay;
+}
+
+.container .close-icon {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  padding: 2px 6px;
+  background: #605ee8;
+  border-radius: 6px;
+  transition: background .54s cubic-bezier(0,.52,.47,.98) 0s;
+}
+.container .close-icon:hover {
+  background: #4947ad;
+}
+
+.tavern .hexagon{
+  height: 14px;
+  width: 14px;
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(266deg) brightness(107%) contrast(108%);
+}
+
+.story-modal label{
+  margin-top: 12px;
+  margin-bottom: 0px;
+}
+
+.story-modal .edit-button{
+  background: #f0ad4e;
+}
+
+.story-modal .save-cro{
+  z-index: 999999;
+}
+
+/** */
+
+a:hover {
+  color: #9e6eff !important;
+}
+
+.skull-button{
+  font-size: 14px;
+  padding: 4px 12px !important;
+  border-radius: 6px !important;
+  border: none;
+  font-size: 13px;
+  text-transform: uppercase;
+  font-weight: 700;
+  transition: transform .54s cubic-bezier(0,.52,.47,.98) 0s;
+}
+
+.btn-success {
+  background-color: #309479 !important;
+  color: #fff;
+}
+
+.skull-button:hover{
+  transform: scale(0.9);
+}
+
+.skull-button svg{
+  margin-right: 6px;
+}
+
+.view-list {
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 0px;
+  column-gap: 12px;
+}
+
+.skulls-list .flex-display{
+  overflow-y: scroll;
+  overflow-x: clip;
+  max-height: 50vh;
+  margin-top: 6px;
+}
+
+.skull-button.view-button {
+  padding: 6px 12px !important;
+  background: #65587e;
+  font-size: 18px;
+}
+.skull-button.view-button.active {
+  border: 2px solid #E1E9FF;
+  background: #9e6eff;
+}
+
+.retire-button{
+  position: absolute;
+  left: 15px;
+  bottom: 15px;
+  background-color: #b6403c;
+  color: #E1E9FF !important;
+
+  background: #b6403c !important;
+}
+
+.retire-button:hover{
+  background: #b6403c !important;
+}
+
+.sell-button {
+  background: #F5E144;
+}
+
+.story-button{
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  column-gap: 6px;
+  justify-content: space-between;
+  background: #2c2ce2;
+  color: #E1E9FF;
+}
+
+.mission-button, .approve {
+  background-color: #309479 !important;
+  color: #E1E9FF !important;
+}
+
+.taver .mission-button:hover {
+  color: #E1E9FF;
+}
+
+.tavern .badge {
+  font-size: 14px;
+  background-color: #4947ad;
+  border-radius: 6px;
+}
+
+.tavern .col-sm-3{
+  padding: 6px !important;
+}
+
+.tavern .div-skull {
+  cursor: pointer;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  border: 6px solid #E1E9FF;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.tavern .list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  align-content: center;
+}
+
+.tavern .div-button {
+  display: flex;
+  flex-direction: row;
+  column-gap: 6px;
+}
+
+.tavern .bottom-actions {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  display: flex;
+  flex-direction: row;
+  column-gap: 6px;
+}
+
+.tavern h2 {
+  margin: 0px;
+}
+
+.tavern .div-skull span {
+  margin: 5%;
+}
+
+.skull-viewer{
+  height: 100%;
+  padding: 12px;
+}
+
+.tavern .selected {
+  border: #00c231 6px solid;
+  border-image: linear-gradient(var(--rotate), #805dff, #3ccfe3, #00c231);
+  animation: spin 2.5s linear infinite;
+  border-image-slice: 3;
+}
+
+@property --rotate {
+  syntax: "<angle>";
+  initial-value: 132deg;
+  inherits: false;
+}
+
+@keyframes spin {
+  0% {
+    --rotate: 0deg;
+  }
+
+  100% {
+    --rotate: 360deg;
+  }
+}
+
+.tavern .div-button button {
+}
+
+.tavern .skulls-container {
+  padding: 0px;
+  border-radius: 15px;
+  background: rgb(34 27 71);
+  width: 100vw;
+}
+
+.tavern .details-container {
+  text-align: center;
+  margin-top: 1%;
+}
+
+.tavern #dungeon-icon {
+  color: #00c231;
+}
+
+.tavern .season-container {
+  text-align: left;
+  margin-top: 1%;
+}
+
+.metrics-icon{
+  color: #C2A4FD;
+  margin-right: 12px;
+}
+
+.metrics-container {
+  padding: 6px 12px;
+  margin: 12px 0px;
+  background: #151226A3;
+  border-radius: 12px;
+}
+
+.metric-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  text-align: left;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  margin: 6px 0%;
+}
+
+.positive {
+  color:rgb(55, 146, 114);
+}
+
+.negative {
+  color: tomato;
+}
+
+.progress-info {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+  margin: 6px 0px;
+}
+
+.progress-bar, .progress {
+  border-radius: 12px;
+}
+
+.progress-container {
+  width: 100%;
+}
+
+.tavern #burn-icon {
+  color: #c20000;
+}
+
+.tavern .claim-button {
+  width: 100%;
+  border-radius: 12px;
+  color: black;
+  margin-top: 6px;
+  font-size: 18px;
+}
+
+.tavern .data-container {
+  width: 100%;
+  max-width: 500px;
+  margin: auto;
+  border-radius: 12px;
+  background: rgba(13, 16, 63, 0.562);
+  padding: 12px;
+}
+
+.tavern .container {
+  border-radius: 15px;
+  background: rgba(13, 16, 63, 0.562);
+}
+
+/** MEDIA QUERY */
+@media (min-width:320px) and (max-width:640px) { 
+  .tavern {
+    padding: 0px !important;
+  }
+  .stories-wrapper {
+    max-width: 100% !important;
+    width: 100%;
+  }
+  .items-container, .balances {
+    display: none !important;
+  }
+  h1 {
+    font-size: 22px !important;
+  }
+  h2 {
+    font-size: 18px !important;
+  }
+  .div-skull {
+    min-width: 120px;
+  }
+  .list-head {
+    flex-direction: column;
+    row-gap: 6px;
+    margin: 6px 0px;
+  }
+  .div-button {
+    overflow-x: scroll !important;
+  }
+}
+
+
+/** ANIMATIONS */
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}

@@ -7,6 +7,7 @@ import CroSkullsAmbassador from "../../abis/CroSkullsAmbassador.json";
 import StakingArtifacts from "../../abis/croSkullStaking.json";
 import Grave from "../../abis/Grave.json";
 import Description from "../../abis/nftDescription.json";
+import PetEggs from "../../abis/petEggs.json";
 import {
   sendNotification, getSkullsData, cleanData
 } from "../data/dataActions";
@@ -16,6 +17,7 @@ const stakingAddress = StakingArtifacts.networks[networkId].address;
 const graveAddress = Grave.networks[networkId].address;
 const ContractAddress = CroSkullsAmbassador.networks[networkId].address;
 const descriptionAddress = Description.networks[networkId].address;
+const petEggsAddress = PetEggs.networks[networkId].address;
 
 //const ContractAddress = CroSkulls.networks[networkId].address;
 
@@ -92,11 +94,12 @@ export const connect = (_provider = false, newChainId = false) => {
 
         let ethProvider = new ethers.providers.Web3Provider(provider, "any");
         if (provider.chainId == chainId) {
-            let signer = ethProvider.getSigner(0);
-            let croSkullsContract = new ethers.Contract(ContractAddress, CroSkullsAmbassador.abi, signer);
-            let croSkullsStaking = new ethers.Contract(stakingAddress, StakingArtifacts.abi, signer);
-            let croSkullsGrave = new ethers.Contract(graveAddress, Grave.abi, signer);
-            let croSkullsDescription = new ethers.Contract(descriptionAddress, Description.abi, signer);
+            let signer = ethProvider.getSigner(0)
+            let croSkullsContract = new ethers.Contract(ContractAddress, CroSkullsAmbassador.abi, signer)
+            let croSkullsStaking = new ethers.Contract(stakingAddress, StakingArtifacts.abi, signer)
+            let croSkullsGrave = new ethers.Contract(graveAddress, Grave.abi, signer)
+            let croSkullsDescription = new ethers.Contract(descriptionAddress, Description.abi, signer)
+            let croSkullsPetEggs = new ethers.Contract(petEggsAddress, PetEggs.abi, signer)
             let accounts = await provider.request({
                 method: 'eth_accounts',
             })
@@ -119,7 +122,8 @@ export const connect = (_provider = false, newChainId = false) => {
                     croSkullsContract,
                     croSkullsStaking,
                     croSkullsGrave,
-                    croSkullsDescription
+                    croSkullsDescription,
+                    croSkullsPetEggs
                 }))
                 dispatch(getSkullsData())
             }

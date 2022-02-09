@@ -2,16 +2,13 @@ import React, { Component } from "react";
 import { HashRouter, Route } from "react-router-dom";
 import AllCroSkulls from "./components/AllCroSkulls/AllCroSkulls";
 import AccountDetails from "./components/AccountDetails/AccountDetails";
-import ContractNotDeployed from "./components/ContractNotDeployed/ContractNotDeployed";
-import ConnectToMetamask from "./components/ConnectMetamask/ConnectToMetamask";
 import CroskullAdventure from "./components/CroskullAdventure/CroskullAdventure";
+import Merchant from "./components/Merchant/Merchant";
 import Navbar from "./components/Navbar/Navbar";
 import Notifier from "./components/Notifier/Notifier";
 import Tavern from "./components/Tavern/Tavern";
-import { connect } from "./redux/blockchain/blockchainActions";
 import market from './utils/market.jpg'
 import { ethers } from 'ethers';
-import { useDispatch, useSelector } from "react-redux";
 import store from "./redux/store";
 import "./App.css";
 
@@ -735,7 +732,7 @@ class App extends Component {
 
   render() {
     return (
-      <div className="main container-fluid">
+      <div className="main">
         <Notifier />
         {  (
                 <>
@@ -805,19 +802,16 @@ class App extends Component {
               <Route
                 path="/tavern"
                 render={() => (
-                  <Tavern
-                    accountAddress={this.state.accountAddress}
-                    croSkulls={this.state.croSkulls}
-                    totalTokensOwnedByAccount={
-                      this.state.totalTokensOwnedByAccount
-                    }
-                    provider={ethProvider}
-                    croSkullContract={contract}
-                    stakingContract={stakingContract}
-                    baseURI={this.state.baseURI}
-                  />
+                  <Tavern />
                 )}
               />
+              <Route 
+                path="/merchant"
+                render={() => (
+                  <Merchant />
+                )}
+              />
+              <div className="footer">Footer</div>
             </HashRouter>
           </>
         )}
