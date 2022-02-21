@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { HashRouter, Route } from "react-router-dom";
+import { HashRouter, Route, Switch } from "react-router-dom";
 import AllCroSkulls from "./components/AllCroSkulls/AllCroSkulls";
 import AccountDetails from "./components/AccountDetails/AccountDetails";
 import CroskullAdventure from "./components/CroskullAdventure/CroskullAdventure";
@@ -7,6 +7,7 @@ import Merchant from "./components/Merchant/Merchant";
 import Navbar from "./components/Navbar/Navbar";
 import Notifier from "./components/Notifier/Notifier";
 import Tavern from "./components/Tavern/Tavern";
+import { TransitionGroup, CSSTransition } from "react-transition-group";
 import market from './utils/market.jpg'
 import { ethers } from 'ethers';
 import store from "./redux/store";
@@ -19,7 +20,7 @@ class App extends Component {
     super(props);
     this.state = {
       blockchain: 0,
-      //reward
+      //reward©
       
       traits: [],
       traitsTypes: [],
@@ -30,7 +31,7 @@ class App extends Component {
     };
   }
 
-  componentWillMount = async () => {
+  componentDidMount = async () => {
     this.subscribe()
   };
 
@@ -733,85 +734,101 @@ class App extends Component {
   render() {
     return (
       <div className="main">
-        <Notifier />
+        <Notifier data={store.getState().data} />
         {  (
-                <>
-            <HashRouter basename="/" >
+            <>
+            <HashRouter 
+              basename="/">
               <Navbar/>
               <Route
-                path="/"
-                exact
-                render={() => (
-                  <AccountDetails
-                    accountAddress={this.state.accountAddress}
-                    accountBalance={this.state.accountBalance}
-                  />
-                )}
-              />
-              <Route
-                path="/marketplace"
-                render={() => (
-                  this.state.isMarketplace ? 
-                    <AllCroSkulls
-                      accountAddress={this.state.accountAddress}
-                      marketplaceView={this.state.marketplaceView}
-                      croSkullsCount={this.state.croSkullsCount}
-                      changeTokenPrice={this.changeTokenPrice}
-                      toggleForSale={this.toggleForSale}
-                      buyCroSkull={this.buyCroSkull}
-                      loading={this.state.loading}
-                      floorPrice={this.state.floorPrice}
-                      highPrice={this.state.highPrice}
-                      handleOrderChange={this.handleOrderChange}
-                      handleFilterBar={this.handleFilterBar}
-                      handleStatusNFTFilter={this.handleStatusNFTFilter}
-                      order={this.state.order}
-                      traits={this.state.traits}
-                      traitsTypes={this.state.traitsTypes}
-                      croSkullsMaxSupply={this.state.croSkullsMaxSupply}
-                      resetFilter={this.resetFilter}
-                      />
-                    :
-                    <div class="card">
-                       <div className="market-title">
-                        <h2>
-                        Click <a href="https://app.ebisusbay.com/collection/0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F">Here!</a> to trade CroSkull on Ebisu's bay marketplace!
-                        </h2>
-                      </div>
-                      <br></br>
-                      <img src={market} className="market" />
-                    </div>     
-                  )}
-                />
-              <Route
-                path="/adventure"
-                render={() => (
-                  <CroskullAdventure
-                    accountAddress={this.state.accountAddress}
-                    croSkulls={this.state.croSkulls}
-                    totalTokensOwnedByAccount={
-                      this.state.totalTokensOwnedByAccount
-                    }
-                    provider={ethProvider}
-                    croSkullContract={contract}
-                    stakingContract={stakingContract}
-                    baseURI={this.state.baseURI}
-                  />
-                )}
-              />
-              <Route
-                path="/tavern"
-                render={() => (
-                  <Tavern />
-                )}
-              />
-              <Route 
-                path="/merchant"
-                render={() => (
-                  <Merchant />
-                )}
-              />
-              <div className="footer">Footer</div>
+                render={({ location }) => (
+                    
+                  <TransitionGroup className={`container-fluid ${location.pathname.replace('/','')}`}>
+                    <CSSTransition
+                      key={location.pathname}
+                      classNames="fade"
+                      timeout={500}
+                    >
+                      <Switch 
+                        location={location}
+                      >
+                        <Route
+                          path="/"
+                          exact
+                          render={() => (
+                            <AccountDetails
+                              accountAddress={this.state.accountAddress}
+                              accountBalance={this.state.accountBalance}
+                            />
+                          )}
+                        />
+                        <Route
+                          path="/marketplace"
+                          render={() => (
+                            this.state.isMarketplace ? 
+                              <AllCroSkulls
+                                accountAddress={this.state.accountAddress}
+                                marketplaceView={this.state.marketplaceView}
+                                croSkullsCount={this.state.croSkullsCount}
+                                changeTokenPrice={this.changeTokenPrice}
+                                toggleForSale={this.toggleForSale}
+                                buyCroSkull={this.buyCroSkull}
+                                loading={this.state.loading}
+                                floorPrice={this.state.floorPrice}
+                                highPrice={this.state.highPrice}
+                                handleOrderChange={this.handleOrderChange}
+                                handleFilterBar={this.handleFilterBar}
+                                handleStatusNFTFilter={this.handleStatusNFTFilter}
+                                order={this.state.order}
+                                traits={this.state.traits}
+                                traitsTypes={this.state.traitsTypes}
+                                croSkullsMaxSupply={this.state.croSkullsMaxSupply}
+                                resetFilter={this.resetFilter}
+                                />
+                              :
+                              <div class="">
+                                <div className="market-title">
+                                  <h2>
+                                  Click <a href="https://app.ebisusbay.com/collection/0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F">Here!</a> to trade CroSkull on Ebisu's bay marketplace!
+                                  </h2>
+                                </div>
+                                <br></br>
+                                <img src={market} className="market" />
+                              </div>     
+                            )}
+                          />
+                        <Route
+                          path="/adventure"
+                          render={() => (
+                            <CroskullAdventure
+                              accountAddress={this.state.accountAddress}
+                              croSkulls={this.state.croSkulls}
+                              totalTokensOwnedByAccount={
+                                this.state.totalTokensOwnedByAccount
+                              }
+                              provider={ethProvider}
+                              croSkullContract={contract}
+                              stakingContract={stakingContract}
+                              baseURI={this.state.baseURI}
+                            />
+                          )}
+                        />
+                        <Route
+                          path="/tavern"
+                          render={() => (
+                            <Tavern />
+                          )}
+                        />
+                        <Route 
+                          path="/merchant"
+                          render={() => (
+                            <Merchant />
+                          )}
+                        />
+                      </Switch>
+                    </CSSTransition>
+                  </TransitionGroup> 
+              )}/>
             </HashRouter>
           </>
         )}

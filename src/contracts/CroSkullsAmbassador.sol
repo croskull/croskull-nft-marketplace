@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0;
+pragma solidity  <=0.8.0; //use 0.7.6 compiler
 pragma abicoder v2;
 
 // import ERC721 iterface
@@ -13,9 +13,11 @@ contract CroSkullsAmbassador is ERC721 {
   string public collectionNameSymbol;
   uint256 public croSkullCounter;
   address public owner;
+  uint256 public waitDuration = 1 days;
 
   mapping(uint256 => CroSkull) public allCroSkulls;
   mapping(address => uint256) public addressMintedBalance;
+  mapping(address => uint256) public lastMintTimestamps;
 
   struct CroSkull {
     uint256 tokenId;
@@ -30,7 +32,7 @@ contract CroSkullsAmbassador is ERC721 {
   }
 
   // initialize contract while deployment with contract's collection name and token
-  constructor( ) ERC721("CROSkullAmbassador", "CRA") {
+  constructor( ) ERC721("CroSkulls Test", "CST") {
     owner = msg.sender;
     collectionName = name();
     collectionNameSymbol = symbol();
@@ -41,21 +43,21 @@ contract CroSkullsAmbassador is ERC721 {
   }
 
   // mint a new crypto boy
-  function adminMintCroSkull(uint256 _mintAmount, address _to ) onlyOwner external {
-    require(_to != address(0));
-    require(_mintAmount > 0);
-
-    uint256 supply = totalSupply();
-    
-    for (uint256 i = 1; i <= _mintAmount; i++) {
+  function mintCroSkulls() public {
+    address _to = msg.sender;
+    uint256 lastMint = lastMintTimestamps[_to];
+    uint256 currentTimestamp = block.timestamp;
+    uint256 timeDiff = currentTimestamp - lastMint;
+    require(  timeDiff >= waitDuration, "ERR_LIMIT_REACHED" );
+    lastMintTimestamps[_to] = currentTimestamp;
+    for (uint256 i = 1; i <= 10; i++) {
       croSkullCounter++;
       require(!_exists(croSkullCounter));
-
       addressMintedBalance[_to]++;
       _mint(_to, croSkullCounter);
       CroSkull memory newCroSkull = CroSkull(
         croSkullCounter,
-        msg.sender,
+        _to,
         _to,
         address(0)
       );

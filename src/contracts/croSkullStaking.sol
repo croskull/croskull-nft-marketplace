@@ -15,10 +15,10 @@ contract croSkullStaking is IERC721Receiver {
     uint16 public stakedSkullsCount;
     uint16 public usersCount;
     bool public started;
-    bool public withdrawEnabled;
 
     //Contracts
     IERC20 public rewardToken;
+    IERC20 public soulToken;
     IERC721 public croSkullContract;
 
     //NFT Supply
@@ -28,16 +28,18 @@ contract croSkullStaking is IERC721Receiver {
     uint public percentOperator = 1000;
     uint public poolRewardSupply;
     uint public poolWithdrawedAmount;
+    uint public poolWithdrawedSouls;
     uint public startStakeTimestamp;
-    uint public vestingDuration = 100 days;
+    uint public endStakeTimestamp;
+    uint public vestingDuration = 10 days;// normal duration 100 days
     uint public cycleInterval = 10 seconds;
-    uint public soulsDropInterval = 30 days;
-    uint public stakeMalusDuration = 32 days;
+    uint public soulsDropInterval = 3 days;// soul drop interval 3 days - default = 30 days
+    uint public stakeMalusDuration = 3 days;// stake malus duration 3 days - default = 32 days
     uint public stakeMalusFee = 80;
 
     bool internal locked;
 
-    mapping(address => UserInfo) public userDetails;
+    mapping( address => UserInfo ) public userDetails;
 
     struct UserInfo {
         uint16 tokenCount;
@@ -48,29 +50,30 @@ contract croSkullStaking is IERC721Receiver {
         uint alreadyClaimed;
         bool enabled;
     }
-    // [tokenId] owner
-    mapping( bytes32 => bool ) public skullsOwner;
-    //[keccka256|address:owner][keccka256|uint16:tokenId]
-    //uint256[][] private skullsOwner;
 
+
+    mapping( bytes32 => bool ) public skullsOwner;
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "Admin what?");
+        require(msg.sender == owner, "ERR_NOT_OWNER");
         _;
     }
 
     modifier isApproved() {
-        require( approvalStatus(), "Approve this contract as operator" );
+        require( approvalStatus(), "ERR_APPROVE_CONTRACT" );
         _;
     }
 
     modifier isStake() {
-        require( startStakeTimestamp > 0, "Staking disabled" );
+        require( 
+            startStakeTimestamp > 0,
+            "Staking disabled" 
+        );
         _;
     }
 
     modifier noReentrant() {
-        require(!locked, "No re-entrancy");
+        require(!locked, "ERR_NO_REENTRNACY");
         locked = true;
         _;
         locked = false;
@@ -80,21 +83,15 @@ contract croSkullStaking is IERC721Receiver {
     event unStake(address indexed user, uint16 tokenId);
     event Withdraw(address indexed user, uint256 amout);
 
-    constructor ( ) 
-    {
+    constructor ( ) {
         owner = msg.sender;
         startStakeTimestamp = 0;
         usersCount = 0;
-        withdrawEnabled = false;
     }
 
     /* 
         Only owner methods
     */
-    function toggleWithdrawSouls () public onlyOwner {
-        withdrawEnabled = ! withdrawEnabled;
-    }
-
     function adminUnlock () public onlyOwner {
         require( locked );
         locked = !locked;
@@ -105,8 +102,9 @@ contract croSkullStaking is IERC721Receiver {
     }
 
     function startRewards() public onlyOwner {
-        require( startStakeTimestamp == 0, "");
+        require( startStakeTimestamp == 0, "ERR_SEASON_STARTED");
         startStakeTimestamp = block.timestamp;
+        endStakeTimestamp = startStakeTimestamp.add( vestingDuration );
         started = true;
     }
 
@@ -127,6 +125,10 @@ contract croSkullStaking is IERC721Receiver {
 
     function setTokenAddress( IERC20 _tokenAddress ) public onlyOwner {
         rewardToken = _tokenAddress;
+    }
+
+    function setSoulToken( IERC20 _soulToken ) public onlyOwner {
+        soulToken = _soulToken;
     }
 
     /* public view function */
@@ -151,7 +153,7 @@ contract croSkullStaking is IERC721Receiver {
 
     function batchUnstakeSkulls( uint16[] memory _tokenIds ) public isApproved isStake noReentrant {
         address _to = msg.sender;
-        require( _tokenIds.length > 0, "select > 0 tokens" );
+        require( _tokenIds.length > 0, "ERR_SELECT_SOME_SKULLS" );
         for( uint i = 0; i < _tokenIds.length; i++ ){
             _unstakeSkull( _to , _tokenIds[i] );
         }
@@ -166,14 +168,13 @@ contract croSkullStaking is IERC721Receiver {
         address _to = msg.sender;
         UserInfo storage currentUser = userDetails[_to];
         uint skullsAmount = currentUser.tokenCount;
-        require( skullsAmount > 0, "No skulls staked" );
+        require( skullsAmount > 0, "ERR_NO_SKULLS_STAKED" );
         if( currentUser.tokenCount > 0 ){
             _unstakeSkull(_to, _tokenId);
         }
     }
 
     function _stakeSkull(address _from, uint16 _tokenId  ) private {
-
         //[keccka256|address:owner][keccka256|uint16:tokenId]
         bytes32 tokenHash = keccak256(
             abi.encodePacked(
@@ -202,7 +203,6 @@ contract croSkullStaking is IERC721Receiver {
         stakedSkullsCount++;
         croSkullContract.transferFrom( _from, address(this), _tokenId );
         
-        //require( croSkullContract.ownerOf(_tokenId) == address(this), "Staking Failed" );
         emit Stake(_from, _tokenId);
     }
 
@@ -237,6 +237,11 @@ contract croSkullStaking is IERC721Receiver {
         uint userRewards = calculateRewardsPlusMalus();
         require( rewardToken.balanceOf( address(this) ) >= userRewards );
         require( rewardToken.transfer( _to, userRewards ) );
+        uint droppedSouls = calculateDroppedSouls();
+        if( droppedSouls > 0 ){
+            require( soulToken.transfer( _to, droppedSouls ) );
+            poolWithdrawedSouls += droppedSouls;
+        }
         poolWithdrawedAmount += userRewards;
         userDetails[_to].lastWithdrawTimestamp = block.timestamp;
         userDetails[_to].startingStake = block.timestamp;
@@ -246,24 +251,32 @@ contract croSkullStaking is IERC721Receiver {
 
     function _tenSecCyclesPassed () public view isApproved returns(uint) {
         require( startStakeTimestamp > 0 );
-        uint currentTimestamp = block.timestamp;
-        /*uint actualStakeMinutes = currentTimestamp
-            .sub(userDetails[msg.sender].startingStake)
-            .div(cycleInterval);*/
-        uint actualStakeMinutes = ( block.timestamp - userDetails[msg.sender].startingStake ) / 10 seconds;
+        uint currentTimestamp;
+        if( block.timestamp <= endStakeTimestamp ) {
+            currentTimestamp = block.timestamp;
+        }else{
+            currentTimestamp = endStakeTimestamp;
+        }
+        uint actualStakeMinutes = ( currentTimestamp - userDetails[msg.sender].startingStake ) / 10 seconds;
         return actualStakeMinutes;
     }
 
     function _tenSecCyclesPassedLastWithdraw () public view isApproved returns(uint) {
         require( startStakeTimestamp > 0 );
-        
-        uint actualStakeMinutes = ( block.timestamp - userDetails[msg.sender].lastWithdrawTimestamp ) / 10 seconds;
+        uint currentTimestamp;
+        if( block.timestamp <= endStakeTimestamp ) {
+            currentTimestamp = block.timestamp;
+        }else{
+            currentTimestamp = endStakeTimestamp;
+        }
+        uint actualStakeMinutes = ( currentTimestamp - userDetails[msg.sender].lastWithdrawTimestamp ) / 10 seconds;
         return actualStakeMinutes;
     }
 
     function calculateDroppedSouls() public view isApproved isStake returns (uint) {
         UserInfo storage tempUser = userDetails[msg.sender];
         uint16 tokenCount = tempUser.tokenCount; // total staked nfts
+
         uint totalActiveSeconds = _tenSecCyclesPassedLastWithdraw() // 1200 s
             .mul(10);
 
@@ -413,4 +426,4 @@ contract croSkullStaking is IERC721Receiver {
         }
         return index;
     }
-}
+}s

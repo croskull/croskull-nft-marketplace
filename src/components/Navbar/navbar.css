@@ -2,14 +2,24 @@
     padding: 0px !important;
     background: #221B47;
 }
+
+.navbar{
+    height: 100%;
+}
 .crLogo{
-    padding: 1em;
+    padding: 0 1em;
+    height: 100%;
     background: #16112D;
     display: flex;
     flex-direction: row;
     align-content: center;
     align-items: center;
 }
+
+.site-logo{
+    height: 80%;
+}
+
 
 @media screen and (max-width: 992px) {
     .header{
@@ -39,28 +49,117 @@
     justify-content: center;
 }
 
-.balances{
+.balances {
     background: #221b47;
     padding: 6px 12px;
-    font-size: 12px;
+    font-size: 14px;
+    letter-spacing: 0px;
+    line-height: 1.3em;
+    font-weight: 500;
     background-size: 400% 400%;
     animation: gradient 5s infinite;
     color: #fff;
+    column-gap: 12px;
+    align-items: center;
 }
 
-.season{
-    padding: 6px 12px;
+.season span{
+    display: flex;
+    align-items: center;
+    column-gap: 6px;
+}
+
+.main-balance{
+    display: flex;
+    flex-direction: row;
+    column-gap: 6px;
+    align-items: center;
+}
+
+.main-balance span{
+    display: flex;
+    flex-direction: row;
+    column-gap: 6px;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: #fff;
+    color: #000;
+    border-radius: 12px;
+    padding-right: 12px;
+    border: 2px solid var(--light-violet);
+}
+
+.skull-icon{
+    height: 24px;
+}
+
+.season {
+    position: absolute;
+    top: 100%;
+    padding: 12px 18px;
     color: #fff;
-    font-size: 12px;
+    font-weight: 400;
+    transform: scaleY(0);
+    transform-origin: top;
     background-size: 400% 400%;
     animation: gradient 5s infinite;
-    background: #9e6eff;
+    border: 2px solid var(--yellow);
+    border-radius: 6px;
+    background: #221b47;
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    z-index: 9;
+    opacity: 0;
+    min-width: 13vw;
+    transition: opacity 0.54s linear 0s, transform 0s 0.54s;
+}
+
+.season .skull-button.view-more{
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px 6px;
+}
+
+.balances-offcanvas {
+    position: relative;
+}
+
+.balances-offcanvas:hover > .season{
+    transform: scaleY(1);
+    opacity: 1;
+    transition: opacity 0.54s ease 0s;
 }
 
 
 
 @media (min-width:320px) and (max-width:640px) { 
     .navbar{
-        position: relative !important;
+        height: 100%;
+    }
+    .navbar-collapse{
+        background: var(--dark-violet);
+        z-index: 9999;
+    }
+    #navbarNav{
+        position: absolute !important;
+        left: 0;
+        top: 100%;
+        width: 100%;
+    }
+    .season{
+        left: 0;
+        width: 50vw;
+        top: -18vh;
+    }
+    .balances{
+        z-index: 9;
+        border-top: 2px solid var(--yellow);
+        display: flex;
+        width: auto;
+        flex-direction: row !important;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100vw;
     }
 }

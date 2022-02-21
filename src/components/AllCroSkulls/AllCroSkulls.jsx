@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import CroSkullList from "../CroSkullsList/CroSkullsList";
 import FilterBar from "../FilterBar/FilterBar";
 import Select from "react-select";
 import './AllCroSkulls.css';
@@ -100,16 +99,7 @@ class AllCroSkulls extends Component {
               </div>
             </div>
           </div>
-          <div className="skullContainer d-flex flex-wrap mb-2">
-            <CroSkullList
-              croSkulls={this.props.marketplaceView}
-              accountAddress={accountAddress}
-              croSkullsCount={croSkullsCount}
-              changeTokenPrice={changeTokenPrice}
-              toggleForSale={toggleForSale}
-              buyCroSkull={buyCroSkull}
-            />
-            </div>
+          <div className="skullContainer d-flex flex-wrap mb-2"></div>
       </div>
     )
   }

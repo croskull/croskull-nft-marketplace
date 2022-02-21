@@ -5,11 +5,18 @@ import { connect, disconnect } from "../../redux/blockchain/blockchainActions";
 import {DeFiWeb3Connector } from 'deficonnect';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import Web3Modal from 'web3modal';
-import Logo from "./logo-cr-skull-white.png";
+import Logo from "./logo-white.png";
+import Grave from "./grave.png";
+import GraveBurn from "./grave-burn.png";
+import Skull from "./skull.png";
+import GraveMined from "./grave-mined.png";
+import GraveAvailable from "./grave-available.png";
+import SkullAdventure from './skull-adventure.png';
 import { Link } from "react-router-dom";
 import menuIcon from "./menu-icon.svg";
 import { useDispatch, useSelector } from "react-redux";
 import './navbar.css';
+import { getSkullsData, getStakingData } from "../../redux/data/dataActions";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -17,13 +24,13 @@ const Navbar = () => {
   let { rewardPlusMalus, malusFee, soulsGenerated, userGraveBalance, croSkulls, rewards, croSkullsStaked } = data
   let { accountBalance, accountAddress, formatEther, loading, contractDetected, providerConnected } = blockchain
   if( providerConnected && contractDetected ){
-    rewardPlusMalus = formatEther(rewardPlusMalus).slice(0, 5 )
-    userGraveBalance = formatEther(userGraveBalance).slice(0, 5 )
-    accountBalance = formatEther(accountBalance).slice(0, 5 )
-    rewards = formatEther( rewards ).slice(0, 5 )
+    rewardPlusMalus = formatEther(rewardPlusMalus).split('.')[0]
+    userGraveBalance = formatEther(userGraveBalance).split('.')[0]
+    accountBalance = formatEther(accountBalance).split('.')[0]
+    rewards = formatEther( rewards ).split('.')[0]
   }
   const [isHovered, setIsHovered] = useState(false)
-
+  const [viewBalance, setViewBalance] = useState(false);
 
   useEffect( () => {
     if( window.ethereum.isConnected() && window.ethereum._state.accounts[0] && ! loading && ! contractDetected ){
@@ -54,7 +61,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="boxed navbar navbar-expand-sm header">
+    <nav className="navbar navbar-expand-sm header">
       <Link to="/" className="crLogo">
         <img src={Logo} alt="CroSkull Logo" className="site-logo"/>
       </Link>
@@ -71,22 +78,68 @@ const Navbar = () => {
         </span>
       </button>
       <div 
-        className="flex-v balances"
+        className="sk-flex sk-row balances"
       >
-        <span>Balance</span>
-        <span>{ `${ accountBalance } CRO` }</span>
-        <span>{ `${croSkulls.length ? croSkulls.length : 0} Skulls` }</span>
-        <span>{ `${ userGraveBalance } Grave` }</span>
+        <div className="main-balance">
+          <span>
+            <img 
+              className="skull-icon"
+              src={Skull}
+            />
+            { `${croSkulls.length ? croSkulls.length : 0}` }</span>
+          <span>
+            <img 
+              className="skull-icon"
+              src={Grave}
+            />
+            { `${ userGraveBalance }` }
+          </span>
+        </div>
+        <div class="balances-offcanvas">
+          <button
+            class="skull-button view-more"
+          >
+            More
+          </button>
+          <div className={`flex-v season ${viewBalance ? 'show': ''}`}>
+              <span>Season</span>
+              <span>
+                <img 
+                  className="skull-icon"
+                  src={SkullAdventure}
+                />
+                { `${ croSkullsStaked.length ? croSkullsStaked.length : 0}` }
+              </span>
+              <span>
+                <img 
+                  className="skull-icon"
+                  src={GraveMined}
+                />
+                { `${ rewards }` }
+              </span>
+              <span
+                className="positive"
+              >
+                <img 
+                  className="skull-icon"
+                  src={GraveAvailable}
+                />
+                { `${ rewardPlusMalus }` }
+              </span>
+              <span className="negative">
+                <img 
+                  className="skull-icon"
+                  src={GraveBurn}
+                />
+                { `${  String(rewards - rewardPlusMalus).split('.')[0] } -(${malusFee}%)` }
+              </span>
+          </div>
+        </div>
       </div>
       <div 
-        className="flex-v season"
+        id="navbarNav" 
+        className={`collapse navMenu navbar-collapse`}
       >
-        <span>Season Stats</span>
-        <span>{ `${ croSkullsStaked.length ? croSkullsStaked.length : 0} Skulls` }</span>
-        <span>{ `${ rewards } Grave` }</span>
-        <span>{ `${ rewardPlusMalus } -(${malusFee}%) Grave` }</span>
-      </div>
-      <div id="navbarNav" className="collapse navMenu navbar-collapse">
         <ul
           style={{ fontSize: "0.8rem", letterSpacing: "0.2rem" }}
           className="navbar-nav ml-auto"

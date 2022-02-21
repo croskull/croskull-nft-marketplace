@@ -2,6 +2,13 @@ import store from "../store";
 
 const genesisBlock = 1641340 || 1641340;
 
+const updateMerchant = (payload) => {
+  return {
+    type: "UPDATE_MERCHANT",
+    payload: payload
+  }
+}
+
 const fetchDataRequest = () => {
   return {
     type: "CHECK_DATA_REQUEST",
@@ -138,7 +145,7 @@ export const toTavern = ( skulls = false ) => { // UnStake Skull
   return async (dispatch) => {
     let { croSkullsStaking } = store.getState().blockchain
     let stakeSkullTx, skullsCount
-    if( skulls.length > 1 ){
+    if( skulls instanceof Array ){
       skullsCount = skulls.length
       stakeSkullTx =  croSkullsStaking.batchUnstakeSkulls( skulls )
     }else{
@@ -171,7 +178,7 @@ export const toMission = ( skulls = false ) => { // UnStake Skull
   return async (dispatch) => {
     let { croSkullsStaking } = store.getState().blockchain
     let stakeSkullTx, skullsCount;
-    if( skulls.length > 1 ){
+    if( skulls instanceof Array ){
       skullsCount = skulls.length
       stakeSkullTx =  croSkullsStaking.batchStakeSkulls( skulls )
     }else{
@@ -203,57 +210,41 @@ export const toMission = ( skulls = false ) => { // UnStake Skull
 export const getStakingData =  () => {
   return async (dispatch) => {
     console.log('getStakingData')
-    let {croSkullsStaking, contractDetected, croSkullsContract, croSkullsGrave, accountAddress, ethProvider} = store.getState().blockchain;
-    let initialState = store.getState().data
+    let {croSkullsStaking, contractDetected, croSkullsPetEggs, croSkullsGrave, accountAddress, ethProvider} = store.getState().blockchain;
     if( ! contractDetected || ! accountAddress)
       return
 
     let started = await croSkullsStaking.started()
     if( started ){
-      let isApproved = await croSkullsStaking.approvalStatus();
-      if( ! isApproved ){ //approved Staking contract as Operator into ERC721 Contract
-        //prevediamo una sezione dove mostrare il bottone per attivare l'approval sul contratto NFT
+      let isApproved = await croSkullsStaking.approvalStatus()
+      let petEggsLimit = await croSkullsPetEggs.eggsPerAddress()
+      let petEggsMintedByUser = await croSkullsPetEggs.minterList( accountAddress )
+      let petEggsMaxSupply = await croSkullsPetEggs.eggsLimit()
+      let petEggsSupply = await croSkullsPetEggs.eggsCounter()
+      let petEggsCost = await croSkullsPetEggs.eggCost()
+      let approvedEggs = await croSkullsGrave.allowance( accountAddress, croSkullsPetEggs.address )
+      petEggsLimit = petEggsLimit.toString()
+      petEggsMintedByUser = petEggsMintedByUser.toString()
+      petEggsMaxSupply = petEggsMaxSupply.toString()
+      petEggsSupply = petEggsSupply.toString()
+      petEggsCost = petEggsCost.toString()
+      approvedEggs = approvedEggs.toString() >= parseInt(petEggsCost)
+      console.log ( approvedEggs)
+
+      dispatch(updateMerchant({
+        petEggsLimit,
+        petEggsMintedByUser,
+        petEggsSupply,
+        petEggsMaxSupply,
+        petEggsCost,
+        approvedEggs
+      }))
+
+      if( ! isApproved ){
         dispatch(stakingDisabled())
       }else{
         let malusFee = await croSkullsStaking.calculateMalusFee()
         malusFee = malusFee.toString()
-        const rawResult = await fetch( 'https://croskull.mypinata.cloud/ipfs/QmSrjCsmQ9e5m1HFYXRSYgxHi9K6u9a6DXRsWz7KWW5i6p/_metadata' );
-        let metaData = await rawResult.json();
-        let tempMetadata = metaData
-        let rarityPerTrait = []
-        let traitRariry = []
-        let totalRarity = 0;
-        metaData.map( (skullData) => {
-          let { attributes } = skullData
-          attributes.map( ( trait, i ) => {
-            totalRarity++
-            rarityPerTrait[trait.value] = rarityPerTrait[trait.value] > 0 ? rarityPerTrait[trait.value] + 1 : 1
-            traitRariry[trait.value] = 100 / totalRarity * rarityPerTrait[trait.value]
-          })
-        })
-
-        metaData.map( (skullData, skullId) => {
-          let { attributes } = skullData
-          let rarityPower = 0;
-          attributes.map( ( trait, i ) => {
-            rarityPower += rarityPerTrait[trait.value]
-          })
-          metaData[skullId].rarityPower = rarityPower
-          metaData[skullId].rarityPercent = 100 / totalRarity * rarityPower
-          metaData[skullId].rank = 0
-        })
-
-        
-        metaData.sort( (a, b ) => {
-          return a.rarityPower - b.rarityPower
-        })
-        metaData.map( (skull, i ) => {
-          metaData[i].rank = i+1
-        })
-        metaData.sort( (a,b) => {
-          return a.edition - b.edition
-        })
-
 
         let rewardPlusMalus = await croSkullsStaking.calculateRewardsPlusMalus()
         let rewards = await croSkullsStaking.calculateRewards()
@@ -289,7 +280,6 @@ export const getStakingData =  () => {
           alreadyClaimed,
           soulsGenerated,
           userGraveBalance,
-          advancedMetadata: metaData
         }))
       }
     }else{
@@ -320,65 +310,49 @@ export const getSkullsData = () => {
         skulls.push( tokenId.toString() )
       }
       let inStakeTokens = await croSkullsStaking.getTokensIds()
-      /*
-      let receivedFilter = croSkullsContract.filters.Transfer(null, accountAddress)
-      let transferedFilter = croSkullsContract.filters.Transfer(accountAddress)
-      //let inStakeFilter = croSkullsStaking.filters.Stake(accountAddress)
+
+      const rawResult = await fetch( 'https://croskull.mypinata.cloud/ipfs/QmSrjCsmQ9e5m1HFYXRSYgxHi9K6u9a6DXRsWz7KWW5i6p/_metadata' );
+      let metaData = await rawResult.json();
+      let tempMetadata = metaData
+      let rarityPerTrait = []
+      let traitRariry = []
+      let totalRarity = 0;
+      metaData.map( (skullData) => {
+        let { attributes } = skullData
+        attributes.map( ( trait, i ) => {
+          totalRarity++
+          rarityPerTrait[trait.value] = rarityPerTrait[trait.value] > 0 ? rarityPerTrait[trait.value] + 1 : 1
+          traitRariry[trait.value] = 100 / totalRarity * rarityPerTrait[trait.value]
+        })
+      })
+
+      metaData.map( (skullData, skullId) => {
+        let { attributes } = skullData
+        let rarityPower = 0;
+        attributes.map( ( trait, i ) => {
+          rarityPower += rarityPerTrait[trait.value]
+        })
+        metaData[skullId].rarityPower = rarityPower
+        metaData[skullId].rarityPercent = 100 / totalRarity * rarityPower
+        metaData[skullId].rank = 0
+      })
+
       
-      let currentBlock = await ethProvider.getBlockNumber()
-      let blockLimit = 2000;
-      let blockDiff = currentBlock - genesisBlock
-      let receivedEvents = [], transferedEvents = [ ];
-      let tempGenesis = genesisBlock
+      metaData.sort( (a, b ) => {
+        return a.rarityPower - b.rarityPower
+      })
+      metaData.map( (skull, i ) => {
+        metaData[i].rank = i+1
+      })
+      metaData.sort( (a,b) => {
+        return a.edition - b.edition
+      })
 
-      for(let i = 1; i <= blockDiff; i += 2000){ 
-        if( currentBlock - tempGenesis  < blockLimit ) {
-          blockLimit = currentBlock - tempGenesis;
-        }
-        receivedEvents.push.apply(
-          receivedEvents, 
-          await croSkullsContract.queryFilter(receivedFilter, tempGenesis, tempGenesis + blockLimit )
-        );
-          
-        transferedEvents.push.apply( 
-          transferedEvents, 
-          await croSkullsContract.queryFilter(transferedFilter, tempGenesis, tempGenesis + blockLimit) 
-        )
-        tempGenesis += blockLimit
-      }
-
-      let received = [];
-      let transfered = [];
-      receivedEvents.map(event => {
-          let topics = event.decode(event.data, event.topics)
-          let tokenId = topics.tokenId.toString()
-          //if( ! received.includes(tokenId) )
-          if (received[tokenId]) {
-              received[tokenId]++
-          } else {
-              received[tokenId] = 1
-          }
-      })
-      transferedEvents.map(event => {
-          let topics = event.decode(event.data, event.topics)
-          let tokenId = topics.tokenId.toString()
-          if (transfered[tokenId]) {
-              transfered[tokenId]++
-          } else {
-              transfered[tokenId] = 1
-          }
-      })
-      let final = []
-      received.forEach((nTrasfer, tokenId) => {
-          if (  nTrasfer > transfered[tokenId] || nTrasfer && !transfered[tokenId]) {
-              final.push(tokenId)
-          }
-      })
-      final = final.filter(x => !inStakeTokens.includes(x))*/
 
       dispatch(skullsSuccess( {
           croSkulls: skulls,
-          croSkullsStaked: inStakeTokens
+          croSkullsStaked: inStakeTokens,
+          advancedMetadata: metaData
       }))
   }
 }

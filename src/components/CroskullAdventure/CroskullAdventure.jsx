@@ -7,7 +7,7 @@ import title from './title.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { faDungeon, faBeer, faFireAlt, faGhost, faSkull, faSkullCrossbones, faRunning, faLocationArrow } from '@fortawesome/free-solid-svg-icons';
-import './CroskullAdventure.css';
+import './adventure.css';
 import season1Banner from './season-1-banner.png';
 
 
@@ -101,7 +101,7 @@ const CroskullAdventure = () => {
 
 
   const DAY_IN_SEC = 60 * 60 * 24;
-  const HUNDRED_DAYS_IN_SEC = 100 * DAY_IN_SEC;
+  const HUNDRED_DAYS_IN_SEC = 10 * DAY_IN_SEC//100 * DAY_IN_SEC;
 
   const formatDate = ( timestamp ) => {
     let tsHours = timestamp / 60 / 60
@@ -117,7 +117,7 @@ const CroskullAdventure = () => {
     }
   }
 
-  let { approval, blockTimestamp, rewardPlusMalus, malusFee, startStakeTimestamp, rewards, rewardPerCycle, croSkullsStaked, croSkulls, cyclesLastWithdraw, alreadyClaimed, soulsGenerated } = data;
+  let { approval, blockTimestamp, rewardPlusMalus, malusFee, startStakeTimestamp, rewards, advancedMetadata, croSkullsStaked, croSkulls, cyclesLastWithdraw, alreadyClaimed, soulsGenerated } = data;
   let totalSkulls = croSkullsStaked.length > 0 ? croSkullsStaked.length + croSkulls.length : 0
   let globalStartTimestamp = startStakeTimestamp;
   let finishStake = parseInt(globalStartTimestamp) + HUNDRED_DAYS_IN_SEC;
@@ -127,162 +127,197 @@ const CroskullAdventure = () => {
   let seasonRemainingDate = formatDate( diffStake )
   let seasonDurationDate = formatDate( blockTimestamp - globalStartTimestamp )
   let seasonProgress = parseInt( 100 / HUNDRED_DAYS_IN_SEC *  (blockTimestamp - globalStartTimestamp ) )
+  
   return (
-    <div className="container-fluid adventure">
-      <div className="row boxed">
-        <div className="col-8 skulls-container">
-          <div className="head">
-            <div className="col-sm-10">
-              <h1>Adventure CroSkulls: {  totalSkulls > 0 ?  `(${croSkullsStaked.length}/${totalSkulls})` : `Loading` } </h1>
+    <>
+      <div className="sk-flex sk-row">
+        <div className="sk-container wd-66">
+          <div className="sk-box">
+            <div className="tab-head">
+              <h2>Skulls in Adventure {  totalSkulls > 0 ?  `(${croSkullsStaked.length}/${totalSkulls})` : `Loading` } </h2>
             </div>
-          </div>
-          <div 
-            className="skull-viewer"
-          >
-          <div className="skulls-list in-adventure active">
-            <div className="flex-display flex-row flex-wrap">
-              {
-                (croSkullsStaked).map((cr, index) => {
-                  return (
-                    <div key={cr} className='col-sm-3' >
-                      <LazyLoadImage 
-                        src={`${ipfsUri480}${cr}.webp`}
-                        className={viewState.selectedSkulls.includes(cr) ? 'selected div-skull ' : 'div-skull'} 
+            <div className="sk-box-content sk-column">
+              <div className={`skulls-list in-adventure active`}>
+                <div className="list-head">
+                  <div className="div-button">
+                    {
+                      croSkullsStaked.length > 0 ? 
+                      (
+                      <button className="skull-button retire-button" 
+                        onClick={() => dispatch(toTavern( croSkullsStaked ))}
+                      >
+                        Retire All ({ croSkullsStaked.length })
+                      </button> 
+                      ) : ('')
+                    }
+                    <button 
+                      className="skull-button retire-button" 
+                      hidden={(viewState.selectedSkulls.length > 0 ? false : true)} 
+                      onClick={() => dispatch(toTavern(viewState.selectedSkulls))}
+                    >
+                      Retire Selected { viewState.selectedSkulls.length }
+                    </button>
+                  </div>
+                </div>
+                <div className="sk-row skull-grid">
+                  {
+                  (croSkullsStaked).map((cr, index) => {
+                    let data = advancedMetadata[cr-1]
+                    return (
+                    <div key={cr} className="skull-item" >
+                      <div 
+                        className={viewState.selectedSkulls.includes(cr) ? 'selected card' : 'card'} 
                         onClick={() => selectSkull(cr)}
-                      />
-                      <span className="badge badge-dark rounded">#{cr}</span>
-                      <div className="bottom-actions">
-                        <button 
+                      >
+                        <LazyLoadImage
+                          src={`${ipfsUri480}${cr}.webp`}
+                        />
+                        <div className="floating-badges-container">
+                          <span className="badge id">#{cr}</span>
+                          <span className="badge rank">Rank: {data ? data.rank : ''}</span>
+                        </div>
+                        <div className="bottom-actions">
+                          <button 
                             className="skull-button retire-button"
                             onClick={ () => {
                               dispatch(toTavern(cr))
+                              setViewState({
+                                ...viewState,
+                                selectedSkulls: []
+                              })
                             }}
                           > 
                             <FontAwesomeIcon icon={faRunning} /> 
                             Retire
                           </button>
+                        </div>
                       </div>
                     </div>
-                  );
-                })
-              }
+                    );
+                  })
+                  }
+                </div>
               </div>
             </div>
-          </div>
-          <div className="div-button">
-            <button className="skull-button retire-button" 
-              onClick={() => dispatch( toTavern( croSkullsStaked ) )}
-            >Retire All</button>
-            <button 
-              className="skull-button retire-button" 
-              hidden={(viewState.selectedSkulls.length > 0 ? false : true)} 
-              onClick={() => dispatch( toTavern( viewState.selectedSkulls ) ) }
-            >Retire Selected ({viewState.selectedSkulls.length})</button>
           </div>
         </div>
-        <div className="col-4 details-container">
-          <img src={season1Banner} width={'75%'} />
-          <h1>Chilling Reign</h1>
-          <p>{ `Season 1 ends in ${seasonRemainingDate.days}d ${seasonRemainingDate.hours}h ${seasonRemainingDate.minutes}m` }</p>
-          <div className="data-container">
-            <div className="progress-info season-container">
-              <FontAwesomeIcon 
-                icon={faDungeon} 
-                id="dungeon-icon" 
-                size="2x"
-                className="icon-container"
-              />
-              <div class="progress-container">
-              Season Progress: <small>{seasonProgress < 50 ? ` ${seasonDurationDate.days}d ${seasonDurationDate.hours}h ${seasonDurationDate.minutes}m` : ``}</small>
-                <div class="progress">
-                  <div 
-                    class="progress-bar bg-success" 
-                    role="progressbar" 
-                    style={{ width: seasonProgress + '%' } /*sostituire con timeElapsed in % */} 
-                    aria-valuenow="10" 
-                    aria-valuemin="0" 
-                    aria-valuemax="100"
-                  > 
-                    { seasonProgress >= 50 ? `${seasonProgress}% - ${seasonDurationDate.days}d ${seasonDurationDate.hours}h ${seasonDurationDate.minutes}m` : `${seasonProgress}%` }
+        <div className="sk-container wd-33">
+          <div className="sk-flex sk-column">
+            <img 
+              src={season1Banner}  
+              className="adventure-image"
+            />
+            <div className="sk-box sk-flex sk-column">
+              <div className="progress-info season-container">
+                <FontAwesomeIcon 
+                  icon={faDungeon} 
+                  id="dungeon-icon" 
+                  size="2x"
+                  className="icon-container"
+                />
+                <div className="progress-container">
+                Season Progress: <small>{seasonProgress < 50 ? ` ${seasonDurationDate.days}d ${seasonDurationDate.hours}h ${seasonDurationDate.minutes}m` : ``}</small>
+                  <div className="progress">
+                    <div 
+                      className="progress-bar bg-success" 
+                      role="progressbar" 
+                      style={{ width: seasonProgress + '%' } /*sostituire con timeElapsed in % */} 
+                      aria-valuenow="10" 
+                      aria-valuemin="0" 
+                      aria-valuemax="100"
+                    > 
+                      { seasonProgress >= 50 ? `${seasonProgress}% - ${seasonDurationDate.days}d ${seasonDurationDate.hours}h ${seasonDurationDate.minutes}m` : `${seasonProgress}%` }
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="progress-info malus-container">
-              <FontAwesomeIcon 
-                icon={faFireAlt} 
-                id="burn-icon" 
-                size="2x"
-                className="icon-container"
-              />
-              <div class="progress-container">
-              Burn Malus:
-                <div class="progress">
-                  <div 
-                    class="progress-bar bg-danger" 
-                    role="progressbar" 
-                    style={{ width: malusPercent + '%' } /*sostituire con timeElapsed in % */} 
-                    aria-valuenow="10"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  > 
-                    {malusFee}%
+              <div className="progress-info malus-container">
+                <FontAwesomeIcon 
+                  icon={faFireAlt} 
+                  id="burn-icon" 
+                  size="2x"
+                  className="icon-container"
+                />
+                <div className="progress-container">
+                Burn Malus:
+                  <div className="progress">
+                    <div 
+                      className="progress-bar bg-danger" 
+                      role="progressbar" 
+                      style={{ width: malusPercent + '%' } /*sostituire con timeElapsed in % */} 
+                      aria-valuenow="10"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                    > 
+                      { String( malusFee ).split('.')[0] }%
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="metrics-container">
-              <div className="metric-container">
-                Generated Rewards
-                <span>
-                  {  formatEther(rewards).slice(0, 5 ) } 
-                  <span class="positive">
-                    {` (100%)`}
+              <div className="sk-box-content sk-column">
+                <div className="metric-container">
+                  Generated Rewards
+                  <span>
+                    {  formatEther(rewards).split('.')[0] } 
+                    <span className="positive">
+                      {` (100%)`}
+                    </span>
                   </span>
-                </span>
-              </div>
-              <div className="metric-container">
-                <span>
-                    Withdrawable Rewards
-                </span>
-                <span>
-                  {  formatEther(rewardPlusMalus).slice(0, 5 ) }
-                  <span class="negative">
-                    {` (-${malusFee}%)`}
+                </div>
+                <div className="metric-container">
+                  <span>
+                      Withdrawable Rewards
                   </span>
-                </span>
+                  <span>
+                    {  formatEther(rewardPlusMalus).split('.')[0] }
+                    <span className="negative">
+                      {` (-${malusFee}%)`}
+                    </span>
+                  </span>
+                </div>
+                <div className="metric-container">
+                  Graves Already Claimed
+                  <span>
+                    { formatEther(alreadyClaimed).split('.')[0] }
+                  </span>
+                </div>
+                <div className="metric-container">
+                  Souls Generated
+                  <span>
+                    { soulsGenerated }
+                  </span>
+                </div>
+                <span>{ `Season 1 ends in ${seasonRemainingDate.days}d ${seasonRemainingDate.hours}h ${seasonRemainingDate.minutes}m` }</span>
               </div>
-              <div className="metric-container">
-                Graves Already Claimed
-                <span>
-                  { formatEther(alreadyClaimed).slice(0, 5 ) }
-                </span>
-              </div>
-              <div className="metric-container">
-                Souls Generated
-                <span>
-                  { soulsGenerated }
-                </span>
-              </div>
-            </div>
-            <button 
-              className="btn btn-sm btn-warning claim-button"
-              onClick={ () => {
-                approval ? 
-                withdrawRewards() :
-                setApprovalforAll()
-              }}
-            >
-              { approval ?
-                'Claim Rewards' :
-                'Approve Mission'
+              {
+                ! approval ?
+                (
+                <button 
+                  className="sk-claim-btn"
+                  onClick={ () => {
+                    setApprovalforAll()
+                  }}
+                >
+                  Approve Mission
+                </button>
+                ):(
+                <button 
+                  className="sk-claim-btn"
+                  onClick={ () => {
+                    withdrawRewards()
+                  }}
+                  disabled={ rewardPlusMalus > 0 ? false : true }
+                >
+                  {rewardPlusMalus > 0 ? `Claim GRAVE` : 'Generate GRAVE First'}
+                </button>
+                )
               }
-            </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </>
+  )
 }
 
 const formatEther = bn => ethers.utils.formatEther(bn)

@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import  ReactNotification, {store} from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css'
-import internalState from "../../redux/store";
-const Notifier = () => {
-
-    const { data } = internalState.getState()
+const Notifier = ({ data }) => {
 
     const [ state, setNotifier ] = useState({
         message: "",

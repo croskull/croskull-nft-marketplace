@@ -4,14 +4,17 @@ import {
 import React, { useEffect, useState } from "react";
 import { getSkullsData, toTavern, toMission, sendNotification, getStakingData } from "../../redux/data/dataActions";
 import store from "../../redux/store";
-import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDungeon, faRunning, faCoins } from '@fortawesome/free-solid-svg-icons';
+import { faDungeon, faRunning, faCoins, faSkullCrossbones  } from '@fortawesome/free-solid-svg-icons';
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import ReactQuill from "react-quill";
 import IpfsHttpClient from "ipfs-http-client";
 import hexagon from './hexagon.svg';
+import inventoryIcon from './inventory.svg';
+import eggImage from './egg.png';
+import bluePotionImage from './bluePotionImage.png';
+import redPotionImage from './redPotionImage.png';
 import "react-quill/dist/quill.snow.css";
 import './tavern.css';
 
@@ -21,6 +24,9 @@ const ipfsUri128 = "https://croskull.mypinata.cloud/ipfs/QmZn1HvYE1o1J8LhNpxFTj5
 const Tavern = () => {
   let dispatch = useDispatch()
   let { blockchain, data } = store.getState()
+
+  const [viewStories, toggleStories] = useState( false )
+  const [viewInventory, toggleInventory] = useState( false )
 
   const [viewState, setViewState] = useState( {
     currentView: 'tavern', //tavern or adventure
@@ -38,8 +44,10 @@ const Tavern = () => {
     hobby: "",
     twitter: "",
     faction: "",
-    ownerOf: ""
-  } )
+    ownerOf: "",
+    x: 0,
+    y: 0
+  })
 
   const [editorStory, setEditorStory] = useState( {
     display: false,
@@ -53,23 +61,43 @@ const Tavern = () => {
     faction: ""
   } )
 
-  const composeJson = () => {
-    let composed = JSON.parse( editorStory )
-    console.log( composed )
-  }
-
+  const [mousePos, setMousePos] = useState({ 
+    x: 0, 
+    y: 0 
+  })
   
+  useEffect(
+    () => {
+      const update = (e) => {
+        setMousePos({
+          x: e.x,
+          y: e.y
+        })
+      }
+      window.addEventListener('mousemove', update)
+      window.addEventListener('touchmove', update)
+      return () => {
+        window.removeEventListener('mousemove', update)
+        window.removeEventListener('touchmove', update)
+      }
+    }, [mousePos])
 
-  /*useEffect(() => {
-    if( blockchain.contractDetected && ! data.croSkulls.length ){
-      dispatch(getSkullsData())
-      dispatch(refreshSkullsStories())
-    }
-  }, [blockchain.contractDetected])*/
+  useEffect(() => {
+    if( viewStories )
+      toggleStories( false )
+    if( viewInventory )
+      toggleInventory( false )
+  }, [viewState])
 
-  useEffect( () => { 
-    console.log( storyState )
-  }, [storyState] )
+  useEffect(() => {
+    if( viewInventory && viewStories )
+      toggleInventory( false )
+  }, [viewStories])
+
+  useEffect(() => {
+    if( viewStories  && viewInventory )
+      toggleStories( false )
+  }, [viewInventory])
 
   useEffect( () => {
     setEditorStory( { 
@@ -78,12 +106,7 @@ const Tavern = () => {
     })
   }, [storyState.tokenId])
   
-  useEffect( () => {
-    console.log( editorStory )
-  }, [editorStory] )
-  
   const fetchSkullDescription = async ( { tokenId, ownerOf } ) => {
-    console.log( tokenId, ownerOf )
     let { croSkullsDescription, accountAddress } = blockchain
     let ipfsHash = await croSkullsDescription.descriptionHashes( tokenId )
     ipfsHash = ipfsHash.toString()
@@ -91,7 +114,7 @@ const Tavern = () => {
       ipfsHash = ipfsHash.replace('ipfs://', 'https://ipfs.infura.io/ipfs/')
       let hashMetadata = await fetch( ipfsHash );
       let { name, description, birthDate, deathDate, hobby, twitter, faction} = await hashMetadata.json();
-      console.log( ipfsHash )
+      
       setStoryState( {
         ...storyState,
         name,
@@ -103,8 +126,11 @@ const Tavern = () => {
         faction,
         display: true,
         tokenId,
-        ownerOf: ownerOf ? ownerOf : storyState.ownerOf
+        ownerOf: ownerOf ? ownerOf : storyState.ownerOf,
+        x: mousePos.x,
+        y: mousePos.y
       } )
+      console.log(storyState)
     } else {
       setStoryState( {
         tokenId,
@@ -162,6 +188,28 @@ const Tavern = () => {
       console.log(error.message);
     }
     
+  }
+
+  const mintSkulls = async () => {
+    let { croSkullsContract } = blockchain
+    let mintTx = croSkullsContract.mintCroSkulls()
+    await mintTx.then( async ( tx ) => {
+      console.log( tx )
+        dispatch(sendNotification({
+          title: `Transaction Sent`,
+          message: 'Minting your skulls...',
+          tx,
+          type: "default"
+        }))
+        await tx.wait(2)
+        dispatch(sendNotification({
+          title: `Minting Success!`,
+          message: `Skulls minted succesful`,
+          tx,
+          type: "success"
+        }))
+        dispatch(getSkullsData())
+    })
   }
 
   const setApprovalforAll = async () => {
@@ -228,7 +276,7 @@ const Tavern = () => {
     let name = event.target ? event.target.id : "description"
     let type = event.target ? event.target.type : "description"
     if( type == 'date' ){
-      value = new Date( value ).getTime() / 1000
+      value = parseInt( new Date( value ).getTime() / 1000 )
     }
     setEditorStory( {
       ...editorStory,
@@ -236,14 +284,11 @@ const Tavern = () => {
     } )
   }
 
-  useEffect( () => {
-    console.log( viewState )
-  }, [viewState])
-
   //quill description editor setting
 
-  let { croSkullsStaked, croSkulls, skullsStories, approval, advancedMetadata } = data;
-  let { accountAddress, accountBalance } = blockchain
+  let { croSkullsStaked, croSkulls, skullsStories, approval, advancedMetadata, loading, croSkullsContractOwner, petEggsMintedByUser } = data;
+  let { accountAddress, accountBalance, contractDetected } = blockchain
+  let blockchainLoading = blockchain.loading
   let totalSkulls = croSkullsStaked.length > 0 ? croSkullsStaked.length + croSkulls.length : 0
   let { 
     tokenId,
@@ -258,21 +303,23 @@ const Tavern = () => {
   } = storyState
 
   return (
-    <div className= "container-fluid tavern">
+    <>
       <div className="sk-flex sk-row">
         <div className="sk-container wd-100">
-          <div className="sk-box">
+          <div className={`sk-box stories ${ viewStories ? 'show' : '' }`}>
             <span className="stories-heading">Recent Community Stories</span>
             <div className="sk-box-content sk-row of-y-over">
-            { skullsStories ?
-              skullsStories.map( (story ) => {
+            { skullsStories.length > 0 ?
+              skullsStories.map( (story, i ) => {
+                if( i > 9 )
+                  return
                 let { ownerOf, tokenId } = story
                 return (
-                  <div className="story-item">
-                    <div className="story-image-container">
+                  <div className="story-item" key={i}>
+                    <div className="item-image-container">
                       <div 
                         style={{ backgroundImage: `url(${ipfsUri128}${tokenId}.webp)`  }}
-                        className="story-image" 
+                        className="item-image" 
                         onClick={() => { 
                           fetchSkullDescription( { tokenId, ownerOf } )
                         } }
@@ -280,7 +327,7 @@ const Tavern = () => {
                       <div
                         className="floating-badge"
                       >
-                        <span class="token-id">
+                        <span className="token-id">
                           {tokenId}
                         </span>
                       </div>
@@ -292,17 +339,76 @@ const Tavern = () => {
                     </span>
                   </div>
                 )
-              }) : ('')
+              }) : (
+                <span>Loading amazing stories...</span>
+              )
             }
             </div>
           </div>
-        </div>
-      </div>
-      <div className="sk-flex sk-row">
-        <div className="sk-container wd-100">
+
+          <div className={`sk-box inventory ${ viewInventory ? 'show' : '' }`}>
+            <span className="stories-heading">Inventory</span>
+            <div className="sk-box-content sk-row of-y-over">
+              <div 
+                className="item-image-container"
+                style={{ width: `85px` }}
+              >
+                <div 
+                  style={{ backgroundImage: `url(${eggImage})` }}
+                  className={`item-image ${ ! petEggsMintedByUser ? 'disabled' : ''}`}
+                >
+                  <span className="item-count">{ petEggsMintedByUser }</span>
+                </div>
+              </div>
+              <div 
+                className="item-image-container"
+                style={{ width: `85px` }}
+              >
+                <div 
+                  style={{ backgroundImage: `url(${bluePotionImage})` }}
+                  className={`item-image ${ 'disabled'}`}
+                >
+                  <span className="item-count">{ '0' }</span>
+                </div>
+              </div>
+              <div 
+                className="item-image-container"
+                style={{ width: `85px` }}
+              >
+                <div 
+                  style={{ backgroundImage: `url(${redPotionImage})` }}
+                  className={`item-image disabled`}
+                >
+                  <span className="item-count">{ '0' }</span>
+                </div>
+              </div>
+            </div>
+          </div>
           <div className="sk-box">
             <div className="tab-head">
-              <ul className="view-list">
+              <ul className="sk-row view-list">
+                <li 
+                  className={`icon-menu ${ viewStories ? 'active' : ''}`}
+                  onClick={ () => {
+                    toggleStories( ! viewStories )
+                  }}
+                >
+                  <FontAwesomeIcon 
+                    className="btn-toggle-stories"
+                    icon={faSkullCrossbones}
+                  />
+                </li>
+                <li
+                  className={`icon-menu inventory-menu ${ viewInventory ? `active` : ``}`}
+                  onClick={ () => {
+                    toggleInventory( ! viewInventory )
+                  }}
+                >
+                  <img 
+                    src={inventoryIcon}
+                    className="svg-icon btn-toggle-stories"
+                  />
+                </li>
                 <li className={`skull-button view-button ${ viewState.currentView == 'tavern' ? 'active' : ''}`}
                     onClick={ () => {
                     setViewState( {
@@ -311,7 +417,13 @@ const Tavern = () => {
                     } )
                   }}
                 >
-                  Relaxing { croSkulls.length > 0 ? `(${croSkulls.length})` : '' }
+                  { 
+                    croSkulls.length > 0 ? (
+                    <span className="floating-counter">{croSkulls.length}</span>
+                    ) : 
+                    '' 
+                  }
+                  Relaxing 
                 </li>
                 {
                   approval ? (
@@ -324,7 +436,13 @@ const Tavern = () => {
                         } )
                       }}
                     >
-                      Adventure { croSkullsStaked.length > 0 ? `(${croSkullsStaked.length})` : '' }
+                      { 
+                        croSkullsStaked.length > 0 ? (
+                        <span className="floating-counter">{croSkullsStaked.length}</span>
+                        ) : 
+                        '' 
+                      }
+                      Adventure
                     </li>
                   ) : (
                     <li
@@ -333,7 +451,7 @@ const Tavern = () => {
                         setApprovalforAll()
                       }}
                     >
-                      Approve Adventure
+                      Approve
                     </li>
                   )
                 }
@@ -348,6 +466,7 @@ const Tavern = () => {
                       (
                       <button className="skull-button btn-success" 
                         onClick={() => dispatch(toMission( croSkulls ))}
+                        disabled={ approval ? false : true}
                       >
                         Send All ({ croSkulls.length })
                       </button> 
@@ -357,6 +476,7 @@ const Tavern = () => {
                       className="skull-button btn-success" 
                       hidden={(viewState.selectedSkulls.length > 0 ? false : true)} 
                       onClick={() => dispatch(toMission(viewState.selectedSkulls))}
+                      disabled={ approval ? false : true}
                     >
                       Send Selected in Mission { viewState.selectedSkulls.length }
                     </button>
@@ -364,55 +484,135 @@ const Tavern = () => {
                 </div>
                 <div className="sk-row skull-grid">
                   {
-                  (croSkulls).map((cr, index) => {
-                    let data = advancedMetadata[cr-1]
-                    return (
-                    <div key={cr} className="skull-item" >
-                      <LazyLoadImage
-                        src={`${ipfsUri480}${cr}.webp`}
-                        className={viewState.selectedSkulls.includes(cr) ? 'selected skull-image' : 'skull-image'} 
-                        onClick={() => selectSkull(cr)}
-                      />
-                      <div className="floating-badges-container">
-                        <span className="badge id">#{cr}</span>
-                        <span className="badge rank">Rank: {data ? data.rank : ''}</span>
-                        <span className="badge rank">Rarity: { data ? String(data.rarityPercent).substr(0, 3) : '' }%</span>
-                      </div>
-                      <div className="bottom-actions">
-                        <button 
-                          className="skull-button mission-button"
-                          onClick={ () => {
-                          dispatch(toMission(cr))
-                          }}
-                        > 
-                          <FontAwesomeIcon icon={faDungeon} /> 
-                          Mission
-                        </button>
-                        <button
-                          className="skull-button sell-button"
-                          onClick={ () => {
-                          this.sellSkull(cr)
-                          }}
-                        > 
-                          <FontAwesomeIcon icon={faCoins} /> 
-                          Sell
-                        </button>
-                        <button
-                            className="skull-button story-button"
+                    croSkulls.length > 0 ?
+                    (croSkulls).map((cr, index) => {
+                      let data = advancedMetadata[cr-1]
+                      return (
+                      <div key={cr} className="skull-item" >
+                        <div 
+                          className={viewState.selectedSkulls.includes(cr) ? 'selected card' : 'card'} 
+                          onClick={() => selectSkull(cr)}
+                        >
+                        <LazyLoadImage
+                          src={`${ipfsUri480}${cr}.webp`}
+                        />
+                        <div className="floating-badges-container">
+                          <span className="badge id">#{cr}</span>
+                          <span className="badge rank">Rank: {data ? data.rank : ''}</span>
+                          <span className="badge rank">Rarity: { data ? String(data.rarityPercent).substr(0, 3) : '' }%</span>
+                        </div>
+                        <div className="bottom-actions">
+                          <button 
+                            className="skull-button mission-button"
                             onClick={ () => {
-                                fetchSkullDescription({ tokenId: cr, ownerOf: accountAddress })
+                              dispatch(toMission(cr))
                             }}
-                        > 
-                          <img 
-                            className="hexagon"
-                            src={hexagon} 
-                          />
-                          <span>Story</span>
-                        </button>
+                          > 
+                            <FontAwesomeIcon icon={faDungeon} /> 
+                            Mission
+                          </button>
+                          <button
+                            className="skull-button sell-button"
+                            onClick={ () => {
+                              this.sellSkull(cr)
+                            }}
+                          > 
+                            <FontAwesomeIcon icon={faCoins} /> 
+                            Sell
+                          </button>
+                          <button
+                              className="skull-button story-button"
+                              onClick={ () => {
+                                fetchSkullDescription({ tokenId: cr, ownerOf: accountAddress })
+                              }}
+                          > 
+                            <img 
+                              className="hexagon"
+                              src={hexagon} 
+                            />
+                            <span>Story</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
-                    );
-                  })
+                      );
+                    })
+                    : (
+                      <div className="sk-flex sk-column">
+                      <span>{ loading && !croSkullsContractOwner ? `Loading...` : ! croSkullsContractOwner && !loading && croSkulls.length == 0 ? `You dont have any skull...`  : `You don't have any skull :c`  }</span>
+                      <button 
+                        className="skull-button"
+                        onClick={ () => {
+                          mintSkulls()
+                        }}
+                      >
+                        Mint 10 Skulls
+                      </button>
+                      <span>Once per day!</span>
+                      </div>
+                    )
+                  }
+                </div>
+              </div>
+              <div className={`skulls-list in-adventure ${ viewState.currentView == 'adventure' ? `active` : `` }`}>
+                <div className="list-head">
+                  <div className="div-button">
+                    {
+                      croSkullsStaked.length > 0 ? 
+                      (
+                      <button className="skull-button retire-button" 
+                        onClick={() => dispatch(toTavern( croSkullsStaked ))}
+                      >
+                        Retire All ({ croSkullsStaked.length })
+                      </button> 
+                      ) : ('') 
+                    }
+                    <button 
+                      className="skull-button retire-button" 
+                      hidden={(viewState.selectedStakeSkulls.length > 0 ? false : true)} 
+                      onClick={() => dispatch(toTavern(viewState.selectedStakeSkulls))}
+                    >
+                      Retire Selected { viewState.selectedStakeSkulls.length }
+                    </button>
+                  </div>
+                </div>
+                <div className="sk-row skull-grid">
+                  {
+                    croSkullsStaked.length > 0 ?
+                    (croSkullsStaked).map((cr, index) => {
+                      let data = advancedMetadata[cr-1]
+                      return (
+                        <div key={cr} className="skull-item" >
+                          <div 
+                            className={viewState.selectedStakeSkulls.includes(cr) ? 'selected card' : 'card'} 
+                            onClick={() => selectStakedSkull(cr)}
+                          >
+                            <LazyLoadImage
+                              src={`${ipfsUri480}${cr}.webp`}
+                            />
+                            <div className="floating-badges-container">
+                              <span className="badge id">#{cr}</span>
+                              <span className="badge rank">Rank: {data ? data.rank : ''}</span>
+                            </div>
+                            <div className="bottom-actions">
+                              <button 
+                                className="skull-button retire-button"
+                                onClick={ (e) => {
+                                  e.preventDefault()
+                                  dispatch(toTavern(cr))
+                                }}
+                              > 
+                                <FontAwesomeIcon icon={faRunning} /> 
+                                Retire
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })
+                    : (
+                      <span>{ ! croSkullsStaked.length && contractDetected ? `There're no skulls in adventure, you're not Generating Grave` : `Loading...` }</span>
+                    )
                   }
                 </div>
               </div>
@@ -420,16 +620,13 @@ const Tavern = () => {
           </div>
         </div>
       </div>
-    </div>
-  )
-
-  return (
-    <div className="container-fluid tavern">
-      
       { display ? (
         <div className="story-modal">
             { editorStory.display ? (
-              <div className="container">
+              <div 
+                className="sk-box container" 
+                style={{ left: `${storyState.x}px`, top: `${storyState.y}px` }}
+              >
               <div className="image">
                 <LazyLoadImage 
                   src={`${ipfsUri480}${tokenId}.webp`}
@@ -526,14 +723,14 @@ const Tavern = () => {
               </div>
             </div>
             ) : (
-              <div className="container">
+              <div className="sk-box container">
                 <div className="image">
                   <LazyLoadImage 
                     src={`${ipfsUri480}${tokenId}.webp`}
-                    className='selected div-skull'
+                    className='card div-skull'
                   />
-                  <span>Birth Date: { birthDate ?  new Date(birthDate * 1000).toISOString().slice(0, 10) : '' }</span>
-                  <span>Death Date: { deathDate ? new Date(deathDate * 1000).toISOString().slice(0, 10) : '' }</span>
+                  <span>Birth Date: {  birthDate > 0 ?  new Date(birthDate * 1000).toISOString().slice(0, 10) : '' }</span>
+                  <span>Death Date: { deathDate > 0 ? new Date(deathDate * 1000).toISOString().slice(0, 10) : '' }</span>
                   <span>Faction: { faction }</span>
                   <span>Twitter: { twitter }</span>
                   {
@@ -582,187 +779,8 @@ const Tavern = () => {
             ) }
         </div>
       ) : ('')}
-      <div className="boxed">
-        <div className="col-sm-12 skulls-container">
-          <div 
-            className="skull-viewer"
-          >
-            <div className="tab-head">
-              <ul className="view-list">
-                <li className={`skull-button view-button ${ viewState.currentView == 'tavern' ? 'active' : ''}`}
-                    onClick={ () => {
-                    setViewState( {
-                      ...viewState,
-                      currentView: 'tavern'
-                    } )
-                  }}
-                >
-                  Relaxing { croSkulls.length > 0 ? `(${croSkulls.length})` : '' }
-                </li>
-                {
-                  approval ? (
-                    <li
-                      className={`skull-button view-button ${ viewState.currentView == 'adventure' ? 'active' : ''}`}
-                      onClick={ () => {
-                        setViewState( {
-                          ...viewState,
-                          currentView: 'adventure'
-                        } )
-                      }}
-                    >
-                      Adventure { croSkullsStaked.length > 0 ? `(${croSkullsStaked.length})` : '' }
-                    </li>
-                  ) : (
-                    <li
-                      className={`skull-button view-button approve`}
-                      onClick={ () => {
-                        setApprovalforAll()
-                      }}
-                    >
-                      Approve Adventure
-                    </li>
-                  )
-                }
-              </ul>
-            </div>
-              <div className={`skulls-list in-tavern ${ viewState.currentView == 'tavern' ? `active` : `` }`}>
-                <div className="list-head">
-                  <div className="div-button">
-                    {
-                      croSkulls.length > 0 ? 
-                      (
-                        <button className="skull-button btn-success" 
-                          onClick={() => dispatch(toMission( croSkulls ))}
-                        >
-                          Send All ({ croSkulls.length })
-                        </button> 
-                      ) : ('') 
-                    }
-                    <button 
-                      className="skull-button btn-success" 
-                      hidden={(viewState.selectedSkulls.length > 0 ? false : true)} 
-                      onClick={() => dispatch(toMission(viewState.selectedSkulls))}
-                    >
-                      Send Selected in Mission { viewState.selectedSkulls.length }
-                    </button>
-                  </div>
-                </div>
-                <div className="flex-display flex-row flex-wrap">
-                  {
-                    (croSkulls).map((cr, index) => {
-                      let data = advancedMetadata[cr-1]
-
-                      return (
-                        <div key={cr} className='col-sm-3' >
-                          <LazyLoadImage 
-                            src={`${ipfsUri480}${cr}.webp`}
-                            className={viewState.selectedSkulls.includes(cr) ? 'selected div-skull ' : 'div-skull'} 
-                            onClick={() => selectSkull(cr)}
-                          />
-                          <div className="floating-badges-container">
-                            <span className="badge id">#{cr}</span>
-                            <span className="badge rank">Rank: {data ? data.rank : ''}</span>
-                            <span className="badge rank">Rarity: { data ? String(data.rarityPercent).substr(0, 3) : '' }%</span>
-                          </div>
-                          <div className="bottom-actions">
-                            <button 
-                              className="skull-button mission-button"
-                              onClick={ () => {
-                                dispatch(toMission(cr))
-                              }}
-                            > 
-                              <FontAwesomeIcon icon={faDungeon} /> 
-                              Mission
-                            </button>
-                            <button
-                              className="skull-button sell-button"
-                              onClick={ () => {
-                                this.sellSkull(cr)
-                              }}
-                            > 
-                              <FontAwesomeIcon icon={faCoins} /> 
-                              Sell
-                            </button>
-                            <button
-                              className="skull-button story-button"
-                              onClick={ () => {
-                                  fetchSkullDescription({ tokenId: cr, ownerOf: accountAddress })
-                              }}
-                            > 
-                              <img 
-                                className="hexagon"
-                                src={hexagon} 
-                              />
-                              <span>
-                                Story
-                              </span>
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })
-                  }
-              </div>
-            </div>
-            <div className={`skulls-list in-adventure ${ viewState.currentView == 'adventure' ? `active` : `` }`}>
-              <div className="list-head">
-                <div className="div-button">
-                  {
-                    croSkullsStaked.length > 0 ? (
-                    <button className="skull-button btn-success" 
-                      onClick={() => dispatch( toTavern( croSkullsStaked ) ) }
-                    >
-                      Retire All
-                    </button>
-                    ): ( '') 
-                  }
-                  <button 
-                    className="skull-button btn-success" 
-                    hidden={(viewState.selectedStakeSkulls.length > 0 ? false : true)} 
-                    onClick={() => dispatch( toTavern( viewState.selectedStakeSkulls ) ) }
-                  >
-                    Retire Selected ({viewState.selectedStakeSkulls.length})
-                  </button>
-                  <Link to="/adventure">
-                    <button
-                      className="skull-button"
-                    >
-                      Adventure
-                    </button>
-                  </Link>
-                </div>
-              </div>
-              <div className="flex-display flex-row flex-wrap">
-                {
-                  (croSkullsStaked).map((cr, index) => {
-                    return (
-                      <div key={cr} className='col-sm-3' >
-                        <LazyLoadImage 
-                          src={`${ipfsUri480}${cr}.webp`}
-                          className={viewState.selectedStakeSkulls.includes(cr) ? 'selected div-skull ' : 'div-skull'} 
-                          onClick={() => selectStakedSkull(cr)}
-                        />
-                        <span className="badge rounded">#{cr}</span>
-                        <button 
-                          className="skull-button retire-button"
-                          onClick={ () => {
-                            dispatch(toTavern(cr))
-                          }}
-                        > 
-                          <FontAwesomeIcon icon={faRunning} /> 
-                          Retire
-                        </button>
-                      </div>
-                    );
-                  })
-                }
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+    </ >
+  )
 }
 
 let modules = {

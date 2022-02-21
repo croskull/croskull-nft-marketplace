@@ -1,0 +1,87 @@
+@media (min-width:320px) and (max-width:640px) {
+    .adventure-image{
+        width: 100%;
+    }
+    .adventure .sk-flex.sk-row{
+        flex-direction: column-reverse !important;
+    }
+}
+.adventure{
+    background-image: url(cave.png);
+}
+.metrics-icon {
+    color: #C2A4FD;
+    margin-right: 12px;
+}
+
+.metrics-container {
+    padding: 6px 12px;
+    margin: 12px 0px;
+    background: #16112d;
+    border-radius: 12px;
+}
+
+.metric-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    text-align: left;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    margin: 6px 0%;
+}
+
+.positive {
+    color: var(--green);
+}
+
+.negative {
+    color: var(--red);
+}
+
+.progress-info {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+    margin: 6px 0px;
+    column-gap: 12px;
+}
+
+.progress-bar,
+.progress {
+    border-radius: 12px;
+}
+
+.progress-container {
+    width: 100%;
+}
+
+.adventure #burn-icon {
+    color: #c20000;
+}
+
+.adventure .claim-button {
+    width: 100%;
+    border-radius: 12px;
+    color: black;
+    margin-top: 6px;
+    font-size: 18px;
+}
+
+.adventure .data-container {
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+    border-radius: 12px;
+    background: rgb(34 27 71);
+    padding: 12px;
+}
+
+.adventure .container {
+    border-radius: 15px;
+    background: rgba(13, 16, 63, 0.562);
+}
