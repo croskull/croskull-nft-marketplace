@@ -1,8 +1,9 @@
-const CroSkulls = artifacts.require("Croskulls");
+/*const CroSkulls = artifacts.require("Croskulls");
 const CroSkullsAmbassador = artifacts.require("CroSkullsAmbassador");
 const CroSkullsStaking = artifacts.require("croSkullStaking");
 const Grave = artifacts.require("Grave");
-const nftDescription = artifacts.require("nftDescription");
+const nftDescription = artifacts.require("nftDescription");*/
+const souls = artifacts.require("Souls");
 const fs = require('fs');
 const readline = require('readline');
 
@@ -18,6 +19,13 @@ const toWei = web3.utils.toWei;
 module.exports = async function (deployer, network, accounts) {
 
   let owner = accounts[0] || "0x297b0eC2EF5EB41b724DB54c0555b2E3Ae348701";
+  let Souls;
+
+  await deployer.deploy(souls, {
+    from: owner
+  }).then( async () => {
+    Souls = await souls.deployed();
+  })
   /*
   let grave, croSkullsAmbassador, croSkullsStaking;
   await deployer.deploy(CroSkullsAmbassador, {
@@ -56,9 +64,4 @@ module.exports = async function (deployer, network, accounts) {
   }).then( async () => {
     description = await nftDescription.deployed();
   })*/
-  await deployer.deploy(CroSkullsStaking, {
-    from: owner
-  }).then( async () => {
-    croSkullsStaking = await CroSkullsStaking.deployed();
-  })
 };

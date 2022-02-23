@@ -86,13 +86,16 @@ const Navbar = () => {
               className="skull-icon"
               src={Skull}
             />
-            { `${croSkulls.length ? croSkulls.length : 0}` }</span>
+            { `${croSkulls.length ? croSkulls.length : 0}` }
+            <span className="sk-tooltip">Free skulls</span>
+          </span>
           <span>
             <img 
               className="skull-icon"
               src={Grave}
             />
             { `${ userGraveBalance }` }
+            <span className="sk-tooltip">Owned Grave</span>
           </span>
         </div>
         <div class="balances-offcanvas">
@@ -109,6 +112,7 @@ const Navbar = () => {
                   src={SkullAdventure}
                 />
                 { `${ croSkullsStaked.length ? croSkullsStaked.length : 0}` }
+                <span className="sk-tooltip">Skulls in adventure</span>
               </span>
               <span>
                 <img 
@@ -116,6 +120,7 @@ const Navbar = () => {
                   src={GraveMined}
                 />
                 { `${ rewards }` }
+                <span className="sk-tooltip">Generated Graves</span>
               </span>
               <span
                 className="positive"
@@ -125,6 +130,7 @@ const Navbar = () => {
                   src={GraveAvailable}
                 />
                 { `${ rewardPlusMalus }` }
+                <span className="sk-tooltip">Withdrawable Graves</span>
               </span>
               <span className="negative">
                 <img 
@@ -132,6 +138,7 @@ const Navbar = () => {
                   src={GraveBurn}
                 />
                 { `${  String(rewards - rewardPlusMalus).split('.')[0] } -(${malusFee}%)` }
+                <span className="sk-tooltip">Burned Graves</span>
               </span>
           </div>
         </div>

@@ -423,6 +423,32 @@ button[disabled], .disabled{
   }
 }
 
+/** TOOLTIP */
+
+span {
+  position: relative;
+}
+
+.sk-tooltip {
+  transform: scale(0);
+  position: absolute;
+  top: 100%;
+  background-color: var(--dark-violet) !important;
+  color: #fff !important;
+  opacity: 0;
+  font-weight: 400 !important;
+  text-transform: capitalize;
+  border: none !important;
+  font-size: 12px !important;
+  padding: 2px 6px;
+  transition: opacity 0.2s linear;
+  z-index: 99;
+}
+
+.skull-icon:hover + .sk-tooltip{
+  transform: scale(1);
+  opacity: 1;
+}
 
 /** END GLOBAL */
 

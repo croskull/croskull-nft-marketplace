@@ -1,7 +1,7 @@
 {
-  "name": "croskull",
-  "version": "0.1.7",
-  "description": "CROSkull NFT Marketplace",
+  "name": "croskull-repo",
+  "version": "0.1.8",
+  "description": "CROSkull",
   "author": "hiutaky",
   "homepage": "https://app.croskull.com",
   "dependencies": {

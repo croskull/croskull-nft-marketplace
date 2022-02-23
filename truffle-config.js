@@ -4,7 +4,6 @@ require('dotenv').config()
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 
 const MNEMONIC = process.env.MNEMONIC;
-console.log(MNEMONIC)
 module.exports = {
   networks: {
     development: { //ganache
@@ -27,7 +26,7 @@ module.exports = {
   contracts_build_directory: "./src/abis/",
   compilers: {
     solc: {
-      version: "<=0.8.0",
+      version: "<0.8.2",
       optimizer: {
         enabled: true,
         runs: 200,
