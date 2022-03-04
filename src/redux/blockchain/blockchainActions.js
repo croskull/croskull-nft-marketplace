@@ -4,20 +4,27 @@ import {
 } from 'ethers';
 // log
 import CroSkullsAmbassador from "../../abis/CroSkullsAmbassador.json";
+import CroSkulls from "../../abis/CroSkulls.json";
 import StakingArtifacts from "../../abis/croSkullStaking.json";
 import Grave from "../../abis/Grave.json";
 import Description from "../../abis/nftDescription.json";
+import BluePotion from "../../abis/CroSkullsBluePotions.json";
+import RedPotion from "../../abis/CroSkullsRedPotions.json";
 import PetEggs from "../../abis/petEggs.json";
+import Souls from "../../abis/Souls.json";
 import {
   sendNotification, getSkullsData, cleanData
 } from "../data/dataActions";
-const chainId = "0x152"; //testnet - 3
-const networkId =  338 || 5777; //25 production, 339 cassini, 5777 ganache local env
+const chainId =  "0x19" || "0x152"; //testnet - 3
+const networkId =  25; //338 || 5777; //25 production, 339 cassini, 5777 ganache local env
 const stakingAddress = StakingArtifacts.networks[networkId].address;
 const graveAddress = Grave.networks[networkId].address;
-const ContractAddress = CroSkullsAmbassador.networks[networkId].address;
+const ContractAddress = CroSkulls.networks[networkId].address;
 const descriptionAddress = Description.networks[networkId].address;
 const petEggsAddress = PetEggs.networks[networkId].address;
+const soulsAddress = Souls.networks[networkId].address;
+const blueAddress = BluePotion.networks[networkId].address;
+const redAddress = RedPotion.networks[networkId].address;
 
 //const ContractAddress = CroSkulls.networks[networkId].address;
 
@@ -86,20 +93,24 @@ export const connect = (_provider = false, newChainId = false) => {
 
         if (_provider) {
             provider = _provider;
-        } else if (!provider) {
+        } else if (!_provider) {
             provider = window.ethereum
             dispatch(handleProviderChanges(provider))
         }
 
-
         let ethProvider = new ethers.providers.Web3Provider(provider, "any");
-        if (provider.chainId == chainId) {
+        console.log( ethProvider )
+        if (provider.chainId == chainId || provider.chainId == networkId ) {
             let signer = ethProvider.getSigner(0)
-            let croSkullsContract = new ethers.Contract(ContractAddress, CroSkullsAmbassador.abi, signer)
+            let croSkullsContract = new ethers.Contract(ContractAddress, CroSkulls.abi, signer)
             let croSkullsStaking = new ethers.Contract(stakingAddress, StakingArtifacts.abi, signer)
             let croSkullsGrave = new ethers.Contract(graveAddress, Grave.abi, signer)
+            let croPotionBlue = new ethers.Contract(blueAddress, BluePotion.abi, signer)
+            let croPotionRed = new ethers.Contract(redAddress, RedPotion.abi, signer)
+            //let croSkullsDescription = ''
             let croSkullsDescription = new ethers.Contract(descriptionAddress, Description.abi, signer)
             let croSkullsPetEggs = new ethers.Contract(petEggsAddress, PetEggs.abi, signer)
+            let croSkullsSouls = new ethers.Contract(soulsAddress, Souls.abi, signer)
             let accounts = await provider.request({
                 method: 'eth_accounts',
             })
@@ -123,7 +134,10 @@ export const connect = (_provider = false, newChainId = false) => {
                     croSkullsStaking,
                     croSkullsGrave,
                     croSkullsDescription,
-                    croSkullsPetEggs
+                    croSkullsPetEggs,
+                    croSkullsSouls,
+                    croPotionBlue,
+                    croPotionRed
                 }))
                 dispatch(getSkullsData())
             }

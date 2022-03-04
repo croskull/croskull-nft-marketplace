@@ -9,15 +9,12 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
 contract Grave is ERC20, ERC20Burnable, AccessControl, ERC20Permit, ERC20Votes {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    uint public burnedAmount = 0;
 
     constructor() ERC20("Grave", "GRVE") ERC20Permit("Grave") {
         _mint(msg.sender, 45990000 * 10 ** decimals());
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
-    }
-
-    function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
-        _mint(to, amount);
     }
 
     // The following functions are overrides required by Solidity.
@@ -41,5 +38,6 @@ contract Grave is ERC20, ERC20Burnable, AccessControl, ERC20Permit, ERC20Votes {
         override(ERC20, ERC20Votes)
     {
         super._burn(account, amount);
+        burnedAmount += amount;
     }
 }

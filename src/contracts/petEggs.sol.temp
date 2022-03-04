@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MITev
-pragma solidity <=0.8.0;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./ERC721.sol";
@@ -47,6 +47,10 @@ contract petEggs is ERC721 {
     /**
         admin functions 
      */
+
+    function tokenURI(uint256 tokenId) override view returns (string memory) {
+        return baseURI;
+    }
     
     function setBaseURI( string memory baseURI ) public onlyOwner {
         _setBaseURI(baseURI);

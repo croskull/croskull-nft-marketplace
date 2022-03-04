@@ -14,29 +14,26 @@ import GraveAvailable from "./grave-available.png";
 import SkullAdventure from './skull-adventure.png';
 import { Link } from "react-router-dom";
 import menuIcon from "./menu-icon.svg";
-import { useDispatch, useSelector } from "react-redux";
+import Soul from "./soul.png";
+import { useDispatch } from "react-redux";
 import './navbar.css';
-import { getSkullsData, getStakingData } from "../../redux/data/dataActions";
 
 const Navbar = () => {
   const dispatch = useDispatch();
   let { blockchain, data } = store.getState();
-  let { rewardPlusMalus, malusFee, soulsGenerated, userGraveBalance, croSkulls, rewards, croSkullsStaked } = data
+  let { rewardPlusMalus, malusFee, soulsBalance, userGraveBalance, croSkulls, rewards, croSkullsStaked, daysLastWithdraw } = data
   let { accountBalance, accountAddress, formatEther, loading, contractDetected, providerConnected } = blockchain
-  if( providerConnected && contractDetected ){
-    rewardPlusMalus = formatEther(rewardPlusMalus).split('.')[0]
-    userGraveBalance = formatEther(userGraveBalance).split('.')[0]
-    accountBalance = formatEther(accountBalance).split('.')[0]
-    rewards = formatEther( rewards ).split('.')[0]
-  }
   const [isHovered, setIsHovered] = useState(false)
   const [viewBalance, setViewBalance] = useState(false);
+  let malusPercent = ( 800 - ( 25 * daysLastWithdraw ) ) / 10
 
-  useEffect( () => {
-    if( window.ethereum.isConnected() && window.ethereum._state.accounts[0] && ! loading && ! contractDetected ){
-      dispatch( connect() ) // try default provider es metamask
-    }
-  }, [window.ethereum._state.accounts])
+  /*
+    useEffect( () => {
+      if(  window.ethereum._state.accounts[0] && ! loading && ! contractDetected ){
+        dispatch( connect() )
+      }
+    }, [window.ethereum.selectedAddress])
+*/
   
 
   const toggleProvidersModal = async () => {
@@ -94,13 +91,21 @@ const Navbar = () => {
               className="skull-icon"
               src={Grave}
             />
-            { `${ userGraveBalance }` }
+            { `${formatEther(userGraveBalance).split('.')[0]},${formatEther(userGraveBalance).split('.')[1].substr(0, 2)}` }
             <span className="sk-tooltip">Owned Grave</span>
           </span>
+          <span>
+            <img 
+              className="skull-icon"
+              src={Soul}
+            />
+            { `${ soulsBalance }` }
+            <span className="sk-tooltip">Owned Soul</span>
+          </span>
         </div>
-        <div class="balances-offcanvas">
+        <div className="balances-offcanvas">
           <button
-            class="skull-button view-more"
+            className="skull-button view-more"
           >
             More
           </button>
@@ -119,7 +124,7 @@ const Navbar = () => {
                   className="skull-icon"
                   src={GraveMined}
                 />
-                { `${ rewards }` }
+                { `${formatEther(rewards).split('.')[0]},${formatEther(rewards).split('.')[1].substr(0, 4)}` }
                 <span className="sk-tooltip">Generated Graves</span>
               </span>
               <span
@@ -129,7 +134,7 @@ const Navbar = () => {
                   className="skull-icon"
                   src={GraveAvailable}
                 />
-                { `${ rewardPlusMalus }` }
+                { `${formatEther(rewardPlusMalus).split('.')[0]},${formatEther(rewardPlusMalus).split('.')[1].substr(0, 4)}` }
                 <span className="sk-tooltip">Withdrawable Graves</span>
               </span>
               <span className="negative">
@@ -137,7 +142,7 @@ const Navbar = () => {
                   className="skull-icon"
                   src={GraveBurn}
                 />
-                { `${  String(rewards - rewardPlusMalus).split('.')[0] } -(${malusFee}%)` }
+                { `${  formatEther(String(rewards - rewardPlusMalus)).split('.')[0] },${ formatEther(String(rewards - rewardPlusMalus)).split('.')[1].substr(0,4)} -(${malusPercent}%)` }
                 <span className="sk-tooltip">Burned Graves</span>
               </span>
           </div>
@@ -221,7 +226,7 @@ const providerOptions = {
       connector: async (ProviderPackage, options) =>  {
           const connector = new DeFiWeb3Connector({
               supportedChainIds: [25],
-              rpc: {25: 'https://evm-cronos.crypto.org'},
+              rpc: {25: 'https://gateway.nebkas.ro'},
               pollingInterval: 15000,
               metadata: {
                   icons: ['https://ebisusbay.com/vector%20-%20face.svg'],
@@ -237,7 +242,7 @@ const providerOptions = {
 }
 
 const web3Modal = new Web3Modal({
-  cacheProvider: true, // optional
+  cacheProvider: false, // optional
   providerOptions // required
 });
 

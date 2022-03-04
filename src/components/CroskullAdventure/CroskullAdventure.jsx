@@ -6,7 +6,14 @@ import { useDispatch } from "react-redux";
 import title from './title.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { faDungeon, faBeer, faFireAlt, faGhost, faSkull, faSkullCrossbones, faRunning, faLocationArrow } from '@fortawesome/free-solid-svg-icons';
+import Grave from "../Navbar/grave.png";
+import GraveBurn from "../Navbar/grave-burn.png";
+import Skull from "../Navbar/skull.png";
+import GraveMined from "../Navbar/grave-mined.png";
+import GraveAvailable from "../Navbar/grave-available.png";
+import SkullAdventure from '../Navbar/skull-adventure.png';
+import Soul from "../Navbar/soul.png";
+import { faDungeon, faFireAlt, faRunning } from '@fortawesome/free-solid-svg-icons';
 import './adventure.css';
 import season1Banner from './season-1-banner.png';
 
@@ -101,7 +108,7 @@ const CroskullAdventure = () => {
 
 
   const DAY_IN_SEC = 60 * 60 * 24;
-  const HUNDRED_DAYS_IN_SEC = 10 * DAY_IN_SEC//100 * DAY_IN_SEC;
+  const HUNDRED_DAYS_IN_SEC = 100 * DAY_IN_SEC//100 * DAY_IN_SEC;
 
   const formatDate = ( timestamp ) => {
     let tsHours = timestamp / 60 / 60
@@ -117,17 +124,36 @@ const CroskullAdventure = () => {
     }
   }
 
-  let { approval, blockTimestamp, rewardPlusMalus, malusFee, startStakeTimestamp, rewards, advancedMetadata, croSkullsStaked, croSkulls, cyclesLastWithdraw, alreadyClaimed, soulsGenerated } = data;
+  let { 
+    approval, 
+    blockTimestamp, 
+    rewardPlusMalus, 
+    malusFee, 
+    startStakeTimestamp, 
+    rewards, 
+    advancedMetadata, 
+    croSkullsStaked, 
+    croSkulls, 
+    cyclesLastWithdraw, 
+    alreadyClaimed, 
+    soulsGenerated,
+    totalSkullsStaked,
+    totalWithdrawedGraves,
+    totalWithdrawedSouls,
+    daysLastWithdraw,
+    burnedGraves
+  } = data
+
   let totalSkulls = croSkullsStaked.length > 0 ? croSkullsStaked.length + croSkulls.length : 0
   let globalStartTimestamp = startStakeTimestamp;
   let finishStake = parseInt(globalStartTimestamp) + HUNDRED_DAYS_IN_SEC;
   let diffStake = finishStake - blockTimestamp;
-  let malusPercent =  malusFee * 125 / 100  
+  let malusPercent = ( 800 - ( 25 * daysLastWithdraw ) ) / 10
   let userStakeDate = formatDate( cyclesLastWithdraw * 10 )
   let seasonRemainingDate = formatDate( diffStake )
   let seasonDurationDate = formatDate( blockTimestamp - globalStartTimestamp )
   let seasonProgress = parseInt( 100 / HUNDRED_DAYS_IN_SEC *  (blockTimestamp - globalStartTimestamp ) )
-  
+  burnedGraves = burnedGraves ?  burnedGraves : 0
   return (
     <>
       <div className="sk-flex sk-row">
@@ -173,8 +199,8 @@ const CroskullAdventure = () => {
                           src={`${ipfsUri480}${cr}.webp`}
                         />
                         <div className="floating-badges-container">
-                          <span className="badge id">#{cr}</span>
-                          <span className="badge rank">Rank: {data ? data.rank : ''}</span>
+                          <span className="badge id">{cr}</span>
+                          <span className="badge rank">Rank {data ? data.rank : ''}</span>
                         </div>
                         <div className="bottom-actions">
                           <button 
@@ -216,7 +242,8 @@ const CroskullAdventure = () => {
                   className="icon-container"
                 />
                 <div className="progress-container">
-                Season Progress: <small>{seasonProgress < 50 ? ` ${seasonDurationDate.days}d ${seasonDurationDate.hours}h ${seasonDurationDate.minutes}m` : ``}</small>
+                Season Progress
+                <small>{seasonProgress < 50 ? ` ${seasonDurationDate.days}d ${seasonDurationDate.hours}h ${seasonDurationDate.minutes}m` : ``}</small>
                   <div className="progress">
                     <div 
                       className="progress-bar bg-success" 
@@ -239,7 +266,7 @@ const CroskullAdventure = () => {
                   className="icon-container"
                 />
                 <div className="progress-container">
-                Burn Malus:
+                  Burn Malus:
                   <div className="progress">
                     <div 
                       className="progress-bar bg-danger" 
@@ -247,47 +274,98 @@ const CroskullAdventure = () => {
                       style={{ width: malusPercent + '%' } /*sostituire con timeElapsed in % */} 
                       aria-valuenow="10"
                       aria-valuemin="0"
-                      aria-valuemax="100"
+                      aria-valuemax="80"
                     > 
-                      { String( malusFee ).split('.')[0] }%
+                      { malusPercent }%
                     </div>
                   </div>
                 </div>
               </div>
               <div className="sk-box-content sk-column">
                 <div className="metric-container">
-                  Generated Rewards
+                  Your Stats
                   <span>
-                    {  formatEther(rewards).split('.')[0] } 
+                    {  `${formatEther(rewards)}` } 
                     <span className="positive">
                       {` (100%)`}
                     </span>
                   </span>
-                </div>
-                <div className="metric-container">
                   <span>
-                      Withdrawable Rewards
-                  </span>
-                  <span>
-                    {  formatEther(rewardPlusMalus).split('.')[0] }
+                    {  `${formatEther(rewardPlusMalus)}` }
                     <span className="negative">
-                      {` (-${malusFee}%)`}
+                      {` (-${malusPercent}%)`}
                     </span>
                   </span>
                 </div>
                 <div className="metric-container">
-                  Graves Already Claimed
                   <span>
-                    { formatEther(alreadyClaimed).split('.')[0] }
+                    Your Stats
+                  </span>
+                  
+                </div>
+                <div className="metric-container">
+                  Graves Already Claimed
+                  <span className="metric-icon">
+                    { `${formatEther(alreadyClaimed)}`  }
+                    <img 
+                      className="skull-icon"
+                      src={Grave} 
+                    />
                   </span>
                 </div>
                 <div className="metric-container">
                   Souls Generated
-                  <span>
+                  <span className="metric-icon">
                     { soulsGenerated }
+                    <img 
+                      className="skull-icon"
+                      src={Soul} 
+                    />
                   </span>
                 </div>
-                <span>{ `Season 1 ends in ${seasonRemainingDate.days}d ${seasonRemainingDate.hours}h ${seasonRemainingDate.minutes}m` }</span>
+                <div className="metric-container">
+                  <span>Total Skulls Staked</span>
+                  <span className="metric-icon">
+                    { totalSkullsStaked }
+                    <img 
+                      className="skull-icon"
+                      src={SkullAdventure}
+                    />
+                  </span>
+                </div>
+                <div className="metric-container">
+                  <span>
+                    Total Grave Mined</span>
+                  <span className="metric-icon">
+                    { formatEther(totalWithdrawedGraves) }
+                    <img
+                      className="skull-icon"
+                      src={GraveMined}
+                    />
+                  </span>
+                </div>
+                <div className="metric-container">
+                  <span>
+                    Total Grave Burned
+                  </span>
+                  <span className="metric-icon">
+                    { formatEther(burnedGraves) }
+                    <img
+                      className="skull-icon"
+                      src={GraveBurn}
+                    />
+                  </span>
+                </div>
+                <div className="metric-container">
+                  Total Souls Mined
+                  <span className="metric-icon">
+                    { totalWithdrawedSouls }
+                    <img 
+                      className="skull-icon"
+                      src={Soul} 
+                    />
+                  </span>
+                </div>
               </div>
               {
                 ! approval ?
@@ -320,6 +398,6 @@ const CroskullAdventure = () => {
   )
 }
 
-const formatEther = bn => ethers.utils.formatEther(bn)
+const formatEther = bn => parseFloat(ethers.utils.formatEther(bn)).toFixed(2)
 
 export default CroskullAdventure;

@@ -9,20 +9,27 @@ const initialState = {
     rarities: [],
     //grave
     userGraveBalance: 0,
+    //soul
+    soulsBalance: 0,
     //staking
-    croSkullsStaked: [],
     approval: false,
-    stakingStarted: false,
-    startStakeTimestamp: 0,
-    blockTimestamp: false,
     alreadyClaimed: 0,
-    malusFee: 0,
-    rewardPlusMalus: 0,
-    rewards: 0,
+    blockTimestamp: false,
     cyclesLastWithdraw: 0,
-    soulsGenerated: 0,
+    croSkullsStaked: [],
     lastBlock: false,
+    malusFee: 0,
+    daysLastWithdraw: 0,
     owner: "",
+    rewards: 0,
+    rewardPlusMalus: 0,
+    soulsGenerated: 0,
+    startStakeTimestamp: 0,
+    stakingStarted: false,
+    totalSkullsStaked: 0,
+    totalWithdrawedGraves: 0,
+    totalWithdrawedSouls: 0,
+    lastWithdrawTimestamp: 0,
     //pets
     petEggsLimit: 0,
     petEggsMintedByUser: 0,
@@ -30,7 +37,12 @@ const initialState = {
     petEggsMaxSupply: 0,
     petEggsCost: 0,
     approvedEggs: false,
+    //blue potion
+    blueCount: 0,
+    //red potion
+    redCount: 0,
     //stories
+    storyAllowance: false,
     skullsStories: [],
     //notifier
     title: "",
@@ -60,6 +72,13 @@ const dataReducer = (state = initialState, action) => {
                 error: false,
                 errorMsg: "",
             };
+        case "SET_STORY_ALLOWANCE": {
+            return {
+                ...state,
+                loading: false,
+                storyAllowance: payload.storyAllowance
+            }
+        }
         case "CHECK_DATA_FAILED":
             return {
                 ...initialState,
@@ -96,11 +115,18 @@ const dataReducer = (state = initialState, action) => {
                 blockTimestamp: payload.blockTimestamp,
                 alreadyClaimed: payload.alreadyClaimed,
                 soulsGenerated: payload.soulsGenerated,
-                userGraveBalance: payload.userGraveBalance,
                 rarityIndex: payload.rarityIndex,
                 rarities: payload.rarities,
+                totalSkullsStaked: payload.totalSkullsStaked,
+                totalWithdrawedGraves: payload.totalWithdrawedGraves,
+                totalWithdrawedSouls: payload.totalWithdrawedSouls,
+                lastWithdrawTimestamp: payload.lastWithdrawTimestamp,
+                soulsBalance: payload.soulsBalance,
+                daysLastWithdraw: payload.daysLastWithdraw,
+                burnedGraves: payload.burnedGraves
             }
-        case "UPDATE_STATE": 
+        case "UPDATE_STATE":
+            console.log( payload )
             return {
                 ...state,
                 [payload.key]: payload.value
@@ -124,6 +150,12 @@ const dataReducer = (state = initialState, action) => {
             return {
                 ...state,
                 skullsStories: payload.skullsStories
+            }
+        case "SET_POTIONS":
+            return {
+                ...state,
+                redCount: payload.redCount,
+                blueCount: payload.blueCount
             }
         case "CLEAN_DATA":
             return {
@@ -160,6 +192,15 @@ const dataReducer = (state = initialState, action) => {
                 petEggsMaxSupply: 0,
                 petEggsCost: 0,
                 approvedEggs: false,
+                totalSkullsStaked: 0,
+                totalWithdrawedGraves: 0,
+                totalWithdrawedSouls: 0,
+                lastWithdrawTimestamp: 0,
+                soulsBalance: 0,
+                redCount: 0,
+                blueCount: 0,
+                storyAllowance: false,
+                daysLastWithdraw: 0
             }
         case "UPDATE_MERCHANT":
             return {
@@ -170,6 +211,7 @@ const dataReducer = (state = initialState, action) => {
                 petEggsMaxSupply: payload.petEggsMaxSupply, 
                 petEggsCost: payload.petEggsCost,
                 approvedEggs: payload.approvedEggs,
+                userGraveBalance: payload.userGraveBalance,
             }
         default:
             return state;

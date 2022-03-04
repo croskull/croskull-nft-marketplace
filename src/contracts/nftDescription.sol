@@ -1,6 +1,7 @@
-pragma solidity >0.8.0;
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./interface/IERC20Burnable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -18,25 +19,16 @@ contract nftDescription {
     address public owner;
     mapping (uint => string) public descriptionHashes;
 
-    IERC20 public IGrave;
+    IERC20Burnable public IGrave;
     IERC721 public ICroSkull;
 
-    uint private graveCost = 200;
-    uint private croCost = 50;
+    uint private graveCost = 10;
     uint private decimals = 10 ** 18;
 
     modifier isOwner() {
         require(
             owner == msg.sender,
             "ERR_NOT_OWNER"
-        );
-        _;
-    }
-
-    modifier isApprovedCRO( ) {
-        require( 
-            _getcostInCRO() == msg.value,
-            "ERR_INSUFFICIENT_CRO" 
         );
         _;
     }
@@ -66,25 +58,14 @@ contract nftDescription {
     /** 
         public functions
     */
-    function updateUsingCRO( uint skullId, string memory ipfsHash ) public payable isSkullOwner( skullId ) isApprovedCRO( ) {
-        _updateSkullDescription( msg.sender, skullId, ipfsHash );
-    }
 
     function updateUsingGrave( uint skullId, string memory ipfsHash ) public isSkullOwner( skullId ) isApprovedGrave( ) {
-        require( 
-            IGrave.transferFrom( msg.sender, address(this), _getCostInGrave() ),
-            "ERR_GRAVE_PAYMENT_FAILED"
-        );
+        IGrave.burnFrom( msg.sender, _getCostInGrave() );
         _updateSkullDescription( msg.sender, skullId, ipfsHash );
     }
 
     function _getCostInGrave() public view returns( uint ) {
         return graveCost
-            .mul(decimals);
-    }
-
-    function _getcostInCRO() public view returns(uint) {
-        return croCost
             .mul(decimals);
     }
 
@@ -96,46 +77,20 @@ contract nftDescription {
         _updateSkullDescription( ownerOf, tokenId, ipfsHash );
     }
 
-    function AdminUpdateCost( uint CROCost, uint GraveCost ) public isOwner() {
-        if( CROCost > 0 ){
-            croCost = CROCost;
-        }
+    function AdminUpdateCost( uint GraveCost ) public isOwner() {
 
         if( GraveCost > 0 ){
             graveCost = GraveCost;
         }
     }
 
-    function AdminSetContracts( IERC20 graveContract, IERC721 croSkullContract ) public isOwner() {
-        if( IERC20(address(0)) != graveContract ){
+    function AdminSetContracts( IERC20Burnable graveContract, IERC721 croSkullContract ) public isOwner() {
+        if( IERC20Burnable(address(0)) != graveContract ){
             IGrave = graveContract;
         }
 
         if( IERC721(address(0)) != croSkullContract ){
             ICroSkull = croSkullContract;
-        }
-    }
-
-    function AdminWithdraw( address payable _reciever ) public isOwner() {
-        AdminWithdrawCRO( _reciever );
-        AdminWithdrawGraves( _reciever );
-    }
-
-    function AdminWithdrawCRO( address payable _reciever ) public isOwner() {
-        uint balance = address(this).balance;
-        if( balance > 0 ) {
-            _reciever.transfer( balance );
-        }
-    }
-
-    function AdminWithdrawGraves( address _reciever ) public isOwner() {
-        uint balance = IGrave.balanceOf( address( this ) );
-        if( balance > 0 ){
-            IGrave.transferFrom( 
-                address(this), 
-                _reciever,
-                balance
-            );
         }
     }
 

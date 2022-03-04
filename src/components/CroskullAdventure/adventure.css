@@ -29,7 +29,14 @@
     flex-wrap: nowrap;
     justify-content: space-between;
     align-items: center;
-    margin: 6px 0%;
+    margin: 3px 0%;
+    position: relative;
+}
+
+.metric-icon{
+    display: flex;
+    column-gap: 6px;
+    flex-direction: row;
 }
 
 .positive {

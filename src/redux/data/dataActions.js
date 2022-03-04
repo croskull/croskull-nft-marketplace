@@ -1,6 +1,6 @@
 import store from "../store";
 
-const genesisBlock = 1641340 || 1641340;
+const genesisBlock = 1738447;
 
 const updateMerchant = (payload) => {
   return {
@@ -25,6 +25,13 @@ const fetchDataSuccess = (payload) => {
 const updateState = ( payload ) => {
   return {
     type: "UPDATE_STATE",
+    payload: payload
+  }
+}
+
+const setPotions = ( payload ) => {
+  return {
+    type: "SET_POTIONS",
     payload: payload
   }
 }
@@ -84,11 +91,20 @@ const notificationRequest = (payload) => {
 
 export const refreshSkullsStories = () => {
   return async (dispatch) => {
-    let { croSkullsDescription, contractDetected,accountAddress, ethProvider } = store.getState().blockchain
+    let { croSkullsDescription, croSkullsGrave, contractDetected, accountAddress, ethProvider } = store.getState().blockchain
 
     if( ! contractDetected || ! accountAddress)
       return
-    
+
+    if ( ! croSkullsDescription ) return
+
+    let storyAllowance = await croSkullsGrave.allowance( accountAddress, croSkullsDescription.address )
+    storyAllowance = storyAllowance.toString()
+    let storyCost = await croSkullsDescription._getCostInGrave()
+    storyCost = storyCost.toString()
+    dispatch( 
+      updateState( { key: "storyAllowance", value: storyAllowance >= storyCost ? true : false } 
+    ))
     let storiesFilter = croSkullsDescription.filters.DescriptionUpdate()
 
     let currentBlock = await ethProvider.getBlockNumber()
@@ -106,7 +122,6 @@ export const refreshSkullsStories = () => {
       )
       tempGenesis += blockLimit
     }
-    console.log( storyEvents )
     let skullsStories = []
     storyEvents.map( story => {
       let { tokenId, ownerOf, ipfsHash } = story.args;
@@ -126,12 +141,6 @@ export const refreshSkullsStories = () => {
       key: 'skullsStories',
       value: skullsStories
     }))
-
-    /*dispatch(
-      setSkullsStories( {
-        skullsStories
-      })
-    )*/
   }
 }
 
@@ -174,6 +183,35 @@ export const toTavern = ( skulls = false ) => { // UnStake Skull
   }
 }
 
+export const approveStories = () => {
+  return async ( dispatch ) => {
+    let { croSkullsDescription, croSkullsGrave } = store.getState().blockchain
+    let costInGrave = await croSkullsDescription._getCostInGrave()
+    costInGrave = (costInGrave * 10).toString()
+    let approveTx = croSkullsGrave.approve( croSkullsDescription.address, costInGrave )
+    await approveTx.then(
+      async (tx) => {
+        dispatch(sendNotification({
+          title: `Transaction Sent`,
+          message: 'Waiting for confirmations',
+          tx,
+          type: "info"
+        }))
+        await tx.wait(2)
+        dispatch(sendNotification({
+          title: `Success!`,
+          tx,
+          type: "success"
+        }))
+        dispatch( updateState( {
+          key: "storyAllowance",
+          value: true
+        }))
+      }
+    )
+  }
+}
+
 export const toMission = ( skulls = false ) => { // UnStake Skull
   return async (dispatch) => {
     let { croSkullsStaking } = store.getState().blockchain
@@ -210,12 +248,21 @@ export const toMission = ( skulls = false ) => { // UnStake Skull
 export const getStakingData =  () => {
   return async (dispatch) => {
     console.log('getStakingData')
-    let {croSkullsStaking, contractDetected, croSkullsPetEggs, croSkullsGrave, accountAddress, ethProvider} = store.getState().blockchain;
+    let {
+      croSkullsStaking, 
+      contractDetected, 
+      croSkullsPetEggs, 
+      croSkullsGrave, 
+      croSkullsSouls,
+      accountAddress,
+      ethProvider
+    } = store.getState().blockchain;
     if( ! contractDetected || ! accountAddress)
       return
 
     let started = await croSkullsStaking.started()
     if( started ){
+      
       let isApproved = await croSkullsStaking.approvalStatus()
       let petEggsLimit = await croSkullsPetEggs.eggsPerAddress()
       let petEggsMintedByUser = await croSkullsPetEggs.minterList( accountAddress )
@@ -229,7 +276,10 @@ export const getStakingData =  () => {
       petEggsSupply = petEggsSupply.toString()
       petEggsCost = petEggsCost.toString()
       approvedEggs = approvedEggs.toString() >= parseInt(petEggsCost)
-      console.log ( approvedEggs)
+
+
+      let userGraveBalance = await croSkullsGrave.balanceOf(accountAddress)
+      userGraveBalance = userGraveBalance.toString()
 
       dispatch(updateMerchant({
         petEggsLimit,
@@ -237,7 +287,8 @@ export const getStakingData =  () => {
         petEggsSupply,
         petEggsMaxSupply,
         petEggsCost,
-        approvedEggs
+        approvedEggs,
+        userGraveBalance
       }))
 
       if( ! isApproved ){
@@ -247,17 +298,29 @@ export const getStakingData =  () => {
         malusFee = malusFee.toString()
 
         let rewardPlusMalus = await croSkullsStaking.calculateRewardsPlusMalus()
+        rewardPlusMalus = rewardPlusMalus[0]
         let rewards = await croSkullsStaking.calculateRewards()
         let rewardPerCycle = await croSkullsStaking._rewardPerCycles()
         let cyclesLastWithdraw = await croSkullsStaking._tenSecCyclesPassedLastWithdraw()
         let startStakeTimestamp = await croSkullsStaking.startStakeTimestamp()
         let userDetails = await croSkullsStaking.userDetails( accountAddress )
         let soulsGenerated = await croSkullsStaking.calculateDroppedSouls();
-        let alreadyClaimed = userDetails.alreadyClaimed;
-        let userGraveBalance = await croSkullsGrave.balanceOf(accountAddress)
+        let alreadyClaimed = userDetails.alreadyClaimed
+        let totalSkullsStaked = await croSkullsStaking.stakedSkullsCount()
+        let totalWithdrawedGraves = await croSkullsStaking.poolWithdrawedAmount()
+        let totalWithdrawedSouls = await croSkullsStaking.poolWithdrawedSouls()
+        let soulsBalance = await croSkullsSouls.balanceOf(accountAddress)
+        let daysLastWithdraw = await croSkullsStaking.daysSinceLastWithdraw()
+        let burnedGraves = await croSkullsGrave.burnedAmount()
+        burnedGraves = burnedGraves.toString()
+
+        daysLastWithdraw = daysLastWithdraw[0].toString()
+
+        let lastWithdrawTimestamp = userDetails.lastWithdrawTimestamp.toString()
         
         let lastBlock =  await ethProvider.getBlock()
         let blockTimestamp = lastBlock.timestamp;
+        
         rewardPlusMalus = rewardPlusMalus.toString()
         rewards = rewards.toString()
         rewardPerCycle = rewardPerCycle.toString()
@@ -265,7 +328,10 @@ export const getStakingData =  () => {
         startStakeTimestamp = startStakeTimestamp.toString()
         soulsGenerated = soulsGenerated.toString()
         alreadyClaimed = alreadyClaimed.toString()
-        userGraveBalance = userGraveBalance.toString()
+        totalSkullsStaked = totalSkullsStaked.toString()
+        totalWithdrawedGraves = totalWithdrawedGraves.toString()
+        totalWithdrawedSouls = totalWithdrawedSouls.toString()
+        soulsBalance = soulsBalance.toString()
         
         dispatch(fetchStakingSuccess({
           malusFee,
@@ -279,7 +345,13 @@ export const getStakingData =  () => {
           userDetails,
           alreadyClaimed,
           soulsGenerated,
-          userGraveBalance,
+          totalSkullsStaked,
+          totalWithdrawedGraves,
+          totalWithdrawedSouls,
+          lastWithdrawTimestamp,
+          soulsBalance,
+          daysLastWithdraw,
+          burnedGraves
         }))
       }
     }else{
@@ -296,11 +368,21 @@ export const getSkullsData = () => {
           croSkullsContract,
           croSkullsStaking,
           accountAddress,
+          croPotionBlue,
+          croPotionRed,
           ethProvider
       } = store.getState().blockchain
       if( ! croSkullsContract )
         return
       dispatch(refreshSkullsStories())
+      let redCount = await croPotionRed.balanceOf(accountAddress)
+      let blueCount = await croPotionBlue.balanceOf(accountAddress)
+      redCount = redCount.toString()
+      blueCount = blueCount.toString()
+      dispatch( setPotions({
+          redCount,
+          blueCount
+        }) )
       dispatch(getStakingData())
       let ownedTokensCount = await croSkullsContract.balanceOf(accountAddress)
       ownedTokensCount = ownedTokensCount.toString()

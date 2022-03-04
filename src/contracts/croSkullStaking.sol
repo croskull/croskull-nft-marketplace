@@ -2,6 +2,7 @@
 pragma solidity >=0.4.22 <0.9.0;
 pragma abicoder v2;
 
+import "./interface/IERC20Burnable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
@@ -13,11 +14,10 @@ contract croSkullStaking is IERC721Receiver {
     //Mutable Main settings
     address public owner;
     uint16 public stakedSkullsCount;
-    uint16 public usersCount;
     bool public started;
 
     //Contracts
-    IERC20 public rewardToken;
+    IERC20Burnable public rewardToken;
     IERC20 public soulToken;
     IERC721 public croSkullContract;
 
@@ -31,11 +31,12 @@ contract croSkullStaking is IERC721Receiver {
     uint public poolWithdrawedSouls;
     uint public startStakeTimestamp;
     uint public endStakeTimestamp;
-    uint public vestingDuration = 10 days;// normal duration 100 days
+    uint public vestingDuration = 100 days;
     uint public cycleInterval = 10 seconds;
-    uint public soulsDropInterval = 3 days;// soul drop interval 3 days - default = 30 days
-    uint public stakeMalusDuration = 3 days;// stake malus duration 3 days - default = 32 days
+    uint public soulsDropInterval = 30 days;
+    uint public stakeMalusDuration = 32 days;
     uint public stakeMalusFee = 80;
+    uint public safeMaxUnstake = 50;
 
     bool internal locked;
 
@@ -55,30 +56,54 @@ contract croSkullStaking is IERC721Receiver {
     mapping( bytes32 => bool ) public skullsOwner;
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "ERR_NOT_OWNER");
+        require(
+            msg.sender == owner, 
+            "ERR_NOT_OWNER"
+        );
         _;
     }
 
     modifier isApproved() {
-        require( approvalStatus(), "ERR_APPROVE_CONTRACT" );
+        require( 
+            approvalStatus(),
+            "ERR_APPROVE_CONTRACT" 
+        );
         _;
     }
 
     modifier isStake() {
         require( 
             startStakeTimestamp > 0,
-            "Staking disabled" 
+            "ERR_STAKING_DISABLED" 
         );
         _;
     }
 
     modifier noReentrant() {
-        require(!locked, "ERR_NO_REENTRNACY");
+        require(
+            !locked, 
+            "ERR_NO_REENTRNACY"
+        );
         locked = true;
         _;
         locked = false;
     }
 
+    modifier isSafeStake( uint _length ) {
+        require( 
+            _length <= safeMaxUnstake,
+            "ERR_50_STAKE_LIMIT" 
+        );
+        _;
+    }
+
+    modifier notEnded() {
+        require(
+            block.timestamp <= endStakeTimestamp,
+            "ERR_STAKE_ENDED"
+        );
+        _;
+    }
     event Stake(address indexed user, uint16 tokenId);
     event unStake(address indexed user, uint16 tokenId);
     event Withdraw(address indexed user, uint256 amout);
@@ -86,7 +111,6 @@ contract croSkullStaking is IERC721Receiver {
     constructor ( ) {
         owner = msg.sender;
         startStakeTimestamp = 0;
-        usersCount = 0;
     }
 
     /* 
@@ -95,6 +119,15 @@ contract croSkullStaking is IERC721Receiver {
     function adminUnlock () public onlyOwner {
         require( locked );
         locked = !locked;
+    }
+
+    function adminLock () public onlyOwner {
+        require( !locked );
+        locked = true;
+    }
+
+    function adminEndStake() public onlyOwner {
+        endStakeTimestamp = block.timestamp;
     }
 
     function adminUnstake (uint16 _tokenId, address _ownerOf ) public onlyOwner {
@@ -123,7 +156,7 @@ contract croSkullStaking is IERC721Receiver {
         croSkullContract = _nftContract;
     }
 
-    function setTokenAddress( IERC20 _tokenAddress ) public onlyOwner {
+    function setTokenAddress( IERC20Burnable _tokenAddress ) public onlyOwner {
         rewardToken = _tokenAddress;
     }
 
@@ -143,7 +176,7 @@ contract croSkullStaking is IERC721Receiver {
        Modifier: isApproved || isWithdraw || isStake for stakeholders public methods 
      */
 
-    function batchStakeSkulls( uint16[] memory _tokenIds ) public isApproved isStake noReentrant {
+    function batchStakeSkulls( uint16[] memory _tokenIds ) public isApproved isStake notEnded isSafeStake( _tokenIds.length ) noReentrant {
         address _from = msg.sender;
         require( _tokenIds.length > 0 );
         for( uint i = 0; i < _tokenIds.length; i++ ){
@@ -151,7 +184,7 @@ contract croSkullStaking is IERC721Receiver {
         }
     }
 
-    function batchUnstakeSkulls( uint16[] memory _tokenIds ) public isApproved isStake noReentrant {
+    function batchUnstakeSkulls( uint16[] memory _tokenIds ) public isApproved isStake isSafeStake( _tokenIds.length ) noReentrant {
         address _to = msg.sender;
         require( _tokenIds.length > 0, "ERR_SELECT_SOME_SKULLS" );
         for( uint i = 0; i < _tokenIds.length; i++ ){
@@ -159,7 +192,8 @@ contract croSkullStaking is IERC721Receiver {
         }
     }
 
-    function stakeSkull ( uint16 _tokenId ) public isApproved isStake noReentrant {
+
+    function stakeSkull ( uint16 _tokenId ) public isApproved isStake notEnded noReentrant {
         address _from = msg.sender;
         _stakeSkull(_from, _tokenId);
     }
@@ -187,15 +221,15 @@ contract croSkullStaking is IERC721Receiver {
 
         UserInfo storage currentUser = userDetails[_from];
         if( currentUser.tokenCount == 0 && currentUser.lastWithdrawTimestamp == 0 ) {
-            currentUser.lastWithdrawTimestamp = block.timestamp;
+            currentUser.lastWithdrawTimestamp = _currentTimestamp();
             currentUser.availableBalance = 0;
             currentUser.enabled = true;
-            usersCount++;
         }else{
             uint userRewards = calculateRewards();
             currentUser.availableBalance = userRewards;
         }
-        currentUser.startingStake = block.timestamp;
+
+        currentUser.startingStake = _currentTimestamp();
         currentUser.tokensIds.push(_tokenId);
         currentUser.tokenCount++;
         userDetails[_from] = currentUser;
@@ -206,6 +240,14 @@ contract croSkullStaking is IERC721Receiver {
         emit Stake(_from, _tokenId);
     }
 
+    function _currentTimestamp() internal view returns(uint) {
+        if( block.timestamp <= endStakeTimestamp ) {
+            return block.timestamp;
+        }else{
+            return endStakeTimestamp;
+        }
+    }
+
     function _unstakeSkull(address _to, uint16 _tokenId ) private {
         bytes32 tokenHash = keccak256(
             abi.encodePacked(
@@ -213,20 +255,15 @@ contract croSkullStaking is IERC721Receiver {
                 _tokenId
             )
         );
-        //check previous owner and check if == _to
         if( skullsOwner[tokenHash] ) {
             uint userRewards = calculateRewards();
             userDetails[_to].availableBalance = userRewards;
             userDetails[_to].tokenCount--;
-            userDetails[_to].startingStake = block.timestamp;
+            userDetails[_to].startingStake = _currentTimestamp();
             croSkullContract.transferFrom(address(this), _to, _tokenId);
             skullsOwner[tokenHash] = false;
             stakedSkullsCount--;
-            if( userDetails[_to].tokenCount == 0 ) {
-                usersCount--;
-            }
             _removeTokenId(_tokenId, _to);
-            //require( croSkullContract.ownerOf(_tokenId) == _to, "Unstake Failed" );
             emit unStake(_to, _tokenId);
         }
     }
@@ -234,42 +271,55 @@ contract croSkullStaking is IERC721Receiver {
     function withdraw () public isApproved noReentrant {
         address _to = msg.sender;
         require( userDetails[_to].startingStake > 0 );
-        uint userRewards = calculateRewardsPlusMalus();
-        require( rewardToken.balanceOf( address(this) ) >= userRewards );
-        require( rewardToken.transfer( _to, userRewards ) );
-        uint droppedSouls = calculateDroppedSouls();
-        if( droppedSouls > 0 ){
-            require( soulToken.transfer( _to, droppedSouls ) );
-            poolWithdrawedSouls += droppedSouls;
+        (uint userRewards, uint calculatedMalus ) = calculateRewardsPlusMalus();
+        if( userRewards > 0 ){
+            require( rewardToken.balanceOf( address(this) ) >= userRewards );
+            require( rewardToken.transfer( _to, userRewards ) );
+            rewardToken.burn( calculatedMalus );
+            uint droppedSouls = calculateDroppedSouls();
+            if( droppedSouls > 0 ){
+                require( soulToken.balanceOf( address(this) ) >= droppedSouls );
+                require( soulToken.transfer( _to, droppedSouls ) );
+                poolWithdrawedSouls += droppedSouls;
+            }
+            poolWithdrawedAmount += userRewards;
+            uint currentTimestamp = _currentTimestamp();
+            userDetails[_to].lastWithdrawTimestamp = currentTimestamp;
+            userDetails[_to].startingStake = currentTimestamp;
+            userDetails[_to].alreadyClaimed += userRewards;
+            userDetails[_to].availableBalance = 0;
         }
-        poolWithdrawedAmount += userRewards;
-        userDetails[_to].lastWithdrawTimestamp = block.timestamp;
-        userDetails[_to].startingStake = block.timestamp;
-        userDetails[_to].alreadyClaimed += userRewards;
-        userDetails[_to].availableBalance = 0;
     }
 
     function _tenSecCyclesPassed () public view isApproved returns(uint) {
         require( startStakeTimestamp > 0 );
-        uint currentTimestamp;
-        if( block.timestamp <= endStakeTimestamp ) {
-            currentTimestamp = block.timestamp;
+        uint currentTimestamp = _currentTimestamp();
+        uint actualStakeMinutes = currentTimestamp
+            .sub(userDetails[msg.sender].startingStake);
+
+        if( actualStakeMinutes >= 10 ){
+            actualStakeMinutes = actualStakeMinutes
+                .div( 10 seconds );
         }else{
-            currentTimestamp = endStakeTimestamp;
+            actualStakeMinutes = 0;
         }
-        uint actualStakeMinutes = ( currentTimestamp - userDetails[msg.sender].startingStake ) / 10 seconds;
+        //( _currentTimestamp() - userDetails[msg.sender].startingStake ) / 10 seconds;
         return actualStakeMinutes;
     }
 
     function _tenSecCyclesPassedLastWithdraw () public view isApproved returns(uint) {
         require( startStakeTimestamp > 0 );
-        uint currentTimestamp;
-        if( block.timestamp <= endStakeTimestamp ) {
-            currentTimestamp = block.timestamp;
+        uint currentTimestamp = _currentTimestamp();
+        uint actualStakeMinutes = currentTimestamp
+            .sub(userDetails[msg.sender].lastWithdrawTimestamp);
+
+        if( actualStakeMinutes >= 10 ){
+            actualStakeMinutes = actualStakeMinutes
+                .div( 10 seconds );
         }else{
-            currentTimestamp = endStakeTimestamp;
+            actualStakeMinutes = 0;
         }
-        uint actualStakeMinutes = ( currentTimestamp - userDetails[msg.sender].lastWithdrawTimestamp ) / 10 seconds;
+        //( currentTimestamp - userDetails[msg.sender].lastWithdrawTimestamp ) / 10 seconds;
         return actualStakeMinutes;
     }
 
@@ -289,8 +339,8 @@ contract croSkullStaking is IERC721Receiver {
 
     function daysSinceLastWithdraw() public view isApproved isStake returns( uint, uint ) {
         uint userActiveCycles = _tenSecCyclesPassedLastWithdraw(); 
-        uint totalSecondsPassed = userActiveCycles // if 1728 userActive cicles
-            .mul(cycleInterval);// 1728 * 10 = 17280 s passed
+        uint totalSecondsPassed = userActiveCycles
+            .mul(cycleInterval);
 
         uint nDaysPassed;
         
@@ -298,7 +348,7 @@ contract croSkullStaking is IERC721Receiver {
             nDaysPassed = 0;
         }else{
             nDaysPassed = totalSecondsPassed
-            .div(1 days);// 17280 / 86480 = 2 days
+                .div(1 days);
         }
         return (
             nDaysPassed,
@@ -310,62 +360,57 @@ contract croSkullStaking is IERC721Receiver {
         ( uint nDaysPassed, uint totalSecondsPassed ) = daysSinceLastWithdraw();
         uint MalusFee = 0;
         
-        if( totalSecondsPassed < stakeMalusDuration ){ // 1700 <
+        if( totalSecondsPassed < stakeMalusDuration ){
             uint stakeMalusInDays = stakeMalusDuration
                 .div(1 days);
 
-            uint malusDays = stakeMalusInDays
-                .sub(nDaysPassed); //2
-            //18
-            uint malusCoef = malusDays// 18
+            uint malusDays = stakeMalusInDays // 32 - 1
+                .sub(nDaysPassed); // 31
+
+            uint malusCoef = malusDays
                 .mul(percentOperator)
-                .div(stakeMalusInDays)// 18 / 20 = 0,9
-                .mul(100)// 90
+                .div(stakeMalusInDays)
+                .mul(100)
                 .div(percentOperator);
 
-            MalusFee = stakeMalusFee // 50
-                .mul(percentOperator)
-                .div(100)// 50 / 100 = 0,5
-                .mul(malusCoef) // 0,5 * 90 = 45
+            MalusFee = stakeMalusFee // 80
+                .mul(percentOperator) // 80 000
+                .div(100)// 800
+                .mul(malusCoef)//
                 .div(percentOperator);
         }
         return MalusFee;
     }
 
-    function calculateRewardsPlusMalus() public view isApproved isStake returns( uint ) {
+    function calculateRewardsPlusMalus() public view isApproved isStake returns( uint, uint ) {
         uint calulcatedMalusFee = calculateMalusFee();
         uint rewardAmount = calculateRewards();
-        uint calculatedMalus = rewardAmount // 10 000
-                .div(100) // 100
-                .mul(calulcatedMalusFee); // 5 500
+        uint calculatedMalus = rewardAmount
+                .div(100)
+                .mul(calulcatedMalusFee);
 
-        uint userRewardsPlusMalus = rewardAmount // 10 000
-            .sub(calculatedMalus); // 10 000 - 5 500 = 4 500
+        uint userRewardsPlusMalus = rewardAmount
+            .sub(calculatedMalus);
 
-        return userRewardsPlusMalus;
+        return (userRewardsPlusMalus, calculatedMalus );
     }
 
     function calculateRewards() public view isApproved isStake returns(uint) {
         UserInfo storage tempUser = userDetails[msg.sender];
-        uint16 tokenCount = tempUser.tokenCount; // total staked nfts
+        uint16 tokenCount = tempUser.tokenCount;
 
         uint availableBalance = tempUser.availableBalance;
         uint userActiveCycles = _tenSecCyclesPassed();
 
-        // calculate time diff and retrieve days
         uint rewardPerCycles = _rewardPerCycles();
-        // rewardPerCycles / croSkullContractMaxSupply
         uint rewardPerSkull = rewardPerCycles
             .div(croSkullContractMaxSupply);
 
-        // rewardPerSkull * tokenCount
         uint userRewardPerCycle = rewardPerSkull
             .mul(tokenCount);
 
-        // userRewardPerSkulls * userActiveCycles
         uint generatedRewards = userRewardPerCycle
             .mul(userActiveCycles);
-
 
         uint totalBalance = generatedRewards
             .add(availableBalance);
@@ -376,8 +421,14 @@ contract croSkullStaking is IERC721Receiver {
     /* Token utils */
     function getTokensIds() public view returns( uint16[] memory ) {
         UserInfo memory currentUser = userDetails[msg.sender];
-        return currentUser.tokensIds;//tempUeser.tokensIds;
+        return currentUser.tokensIds;
     }
+
+    function getUserTokensIds( address _ownerOf ) public view returns( uint16[] memory ) {
+        UserInfo memory currentUser = userDetails[_ownerOf];
+        return currentUser.tokensIds;
+    }
+
 
     function checkOwnership( uint16 _tokenId ) public view returns( bool ) {
         bytes32 tokenHash = keccak256(
@@ -404,6 +455,7 @@ contract croSkullStaking is IERC721Receiver {
         if( tokens.length == 1 && tokens[0] == _tokenId ){
             uint16[] memory emptyArray;
             userDetails[_from].tokensIds = emptyArray;
+            return;
         }
         uint index = getTokenIndex(_tokenId, _from);
         //remove

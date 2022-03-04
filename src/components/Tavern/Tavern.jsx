@@ -2,7 +2,7 @@ import {
   ethers
 } from 'ethers';
 import React, { useEffect, useState } from "react";
-import { getSkullsData, toTavern, toMission, sendNotification, getStakingData } from "../../redux/data/dataActions";
+import { getSkullsData, toTavern, toMission, sendNotification, getStakingData, approveStories } from "../../redux/data/dataActions";
 import store from "../../redux/store";
 import { useDispatch } from "react-redux";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -130,7 +130,19 @@ const Tavern = () => {
         x: mousePos.x,
         y: mousePos.y
       } )
-      console.log(storyState)
+      setEditorStory( {
+        ...editorStory,
+        name,
+        description,
+        birthDate,
+        deathDate,
+        hobby,
+        twitter,
+        faction,
+        display: false,
+        tokenId,
+        ownerOf: ownerOf ? ownerOf : storyState.ownerOf,
+      } )
     } else {
       setStoryState( {
         tokenId,
@@ -141,21 +153,17 @@ const Tavern = () => {
   }
 
   const saveSkullStory = async ( ) => {
-    let { croSkullsDescription, ethProvider, accountBalance } = blockchain
+    let { croSkullsDescription, croSkullsGrave, ethProvider, accountBalance, accountAddress } = blockchain
     let storyfied = JSON.stringify(editorStory)
     let descriptionBuffer = Buffer.from(storyfied)
     try {
       const client = IpfsHttpClient(new URL('https://ipfs.infura.io:5001/api/v0'));
       const ipfsResponse = await client.add(descriptionBuffer);
       if( ipfsResponse.path != "" ){
-        let costInCRO = await croSkullsDescription._getcostInCRO()
-        costInCRO = costInCRO.toString()
-        if( accountBalance >= costInCRO ){
           let path = `ipfs://${ipfsResponse.path}`
-          let skullStoryTx = croSkullsDescription.updateUsingCRO( 
+          let skullStoryTx = croSkullsDescription.updateUsingGrave( 
             editorStory.tokenId.toString(), //tokenId
             path, // ipfs string hash with prefix
-            { value: costInCRO } // sending some cro == costInCRO or revert
           )
 
            await skullStoryTx.then(
@@ -182,34 +190,10 @@ const Tavern = () => {
               dispatch(getSkullsData())
             }
           )
-        }
       }
     } catch (error) {
       console.log(error.message);
     }
-    
-  }
-
-  const mintSkulls = async () => {
-    let { croSkullsContract } = blockchain
-    let mintTx = croSkullsContract.mintCroSkulls()
-    await mintTx.then( async ( tx ) => {
-      console.log( tx )
-        dispatch(sendNotification({
-          title: `Transaction Sent`,
-          message: 'Minting your skulls...',
-          tx,
-          type: "default"
-        }))
-        await tx.wait(2)
-        dispatch(sendNotification({
-          title: `Minting Success!`,
-          message: `Skulls minted succesful`,
-          tx,
-          type: "success"
-        }))
-        dispatch(getSkullsData())
-    })
   }
 
   const setApprovalforAll = async () => {
@@ -275,6 +259,7 @@ const Tavern = () => {
     let value = event.target ? event.target.value.replace(/</g, "&lt;").replace(/>/g, "&gt;") : event
     let name = event.target ? event.target.id : "description"
     let type = event.target ? event.target.type : "description"
+    console.log( value, name, type )
     if( type == 'date' ){
       value = parseInt( new Date( value ).getTime() / 1000 )
     }
@@ -286,7 +271,7 @@ const Tavern = () => {
 
   //quill description editor setting
 
-  let { croSkullsStaked, croSkulls, skullsStories, approval, advancedMetadata, loading, croSkullsContractOwner, petEggsMintedByUser } = data;
+  let { redCount, blueCount, croSkullsStaked, croSkulls, skullsStories, approval, advancedMetadata, loading, croSkullsContractOwner, petEggsMintedByUser, storyAllowance } = data;
   let { accountAddress, accountBalance, contractDetected } = blockchain
   let blockchainLoading = blockchain.loading
   let totalSkulls = croSkullsStaked.length > 0 ? croSkullsStaked.length + croSkulls.length : 0
@@ -301,7 +286,6 @@ const Tavern = () => {
     faction,
     display
   } = storyState
-
   return (
     <>
       <div className="sk-flex sk-row">
@@ -311,8 +295,6 @@ const Tavern = () => {
             <div className="sk-box-content sk-row of-y-over">
             { skullsStories.length > 0 ?
               skullsStories.map( (story, i ) => {
-                if( i > 9 )
-                  return
                 let { ownerOf, tokenId } = story
                 return (
                   <div className="story-item" key={i}>
@@ -366,9 +348,9 @@ const Tavern = () => {
               >
                 <div 
                   style={{ backgroundImage: `url(${bluePotionImage})` }}
-                  className={`item-image ${ 'disabled'}`}
+                  className={`item-image ${ !blueCount ? 'disabled' : ''}`}
                 >
-                  <span className="item-count">{ '0' }</span>
+                  <span className="item-count">{ `${blueCount}` }</span>
                 </div>
               </div>
               <div 
@@ -377,9 +359,9 @@ const Tavern = () => {
               >
                 <div 
                   style={{ backgroundImage: `url(${redPotionImage})` }}
-                  className={`item-image disabled`}
+                  className={`item-image ${ !redCount ? 'disabled' : ''}`}
                 >
-                  <span className="item-count">{ '0' }</span>
+                  <span className={"item-count"}>{ `${redCount}` }</span>
                 </div>
               </div>
             </div>
@@ -464,22 +446,24 @@ const Tavern = () => {
                     {
                       croSkulls.length > 0 ? 
                       (
-                      <button className="skull-button btn-success" 
-                        onClick={() => dispatch(toMission( croSkulls ))}
-                        disabled={ approval ? false : true}
-                      >
-                        Send All ({ croSkulls.length })
-                      </button> 
-                      ) : ('') 
-                    }
-                    <button 
-                      className="skull-button btn-success" 
-                      hidden={(viewState.selectedSkulls.length > 0 ? false : true)} 
-                      onClick={() => dispatch(toMission(viewState.selectedSkulls))}
-                      disabled={ approval ? false : true}
-                    >
-                      Send Selected in Mission { viewState.selectedSkulls.length }
-                    </button>
+                        <>
+                        <button className="skull-button btn-success" 
+                          onClick={() => dispatch(toMission( croSkulls ))}
+                          disabled={ approval ? false : true}
+                        >
+                          Send All ({ croSkulls.length })
+                        </button>
+                        <button
+                          className="skull-button btn-success" 
+                          hidden={(viewState.selectedSkulls.length > 0 ? false : true)} 
+                          onClick={() => dispatch(toMission(viewState.selectedSkulls))}
+                          disabled={ approval ? false : true}
+                        >
+                          Send Selected in Mission { viewState.selectedSkulls.length }
+                        </button>
+                      </>
+                    ) : ('') 
+                  }
                   </div>
                 </div>
                 <div className="sk-row skull-grid">
@@ -497,9 +481,9 @@ const Tavern = () => {
                           src={`${ipfsUri480}${cr}.webp`}
                         />
                         <div className="floating-badges-container">
-                          <span className="badge id">#{cr}</span>
-                          <span className="badge rank">Rank: {data ? data.rank : ''}</span>
-                          <span className="badge rank">Rarity: { data ? String(data.rarityPercent).substr(0, 3) : '' }%</span>
+                          <span className="badge id">{cr}</span>
+                          <span className="badge rank">Rank {data ? data.rank : ''}</span>
+                          <span className="badge rank">Rarity { data ? String(data.rarityPercent).substr(0, 3) : '' }%</span>
                         </div>
                         <div className="bottom-actions">
                           <button 
@@ -513,10 +497,10 @@ const Tavern = () => {
                           </button>
                           <button
                             className="skull-button sell-button"
-                            onClick={ () => {
-                              this.sellSkull(cr)
+                            onClick={ () => {                       
+                              window.location.replace("https://app.ebisusbay.com/collection/croskull");
                             }}
-                          > 
+                          >
                             <FontAwesomeIcon icon={faCoins} /> 
                             Sell
                           </button>
@@ -539,16 +523,13 @@ const Tavern = () => {
                     })
                     : (
                       <div className="sk-flex sk-column">
-                      <span>{ loading && !croSkullsContractOwner ? `Loading...` : ! croSkullsContractOwner && !loading && croSkulls.length == 0 ? `You dont have any skull...`  : `You don't have any skull :c`  }</span>
-                      <button 
-                        className="skull-button"
-                        onClick={ () => {
-                          mintSkulls()
-                        }}
-                      >
-                        Mint 10 Skulls
-                      </button>
-                      <span>Once per day!</span>
+                        <span>{ loading && !croSkullsContractOwner ? `Loading...` : ! croSkullsContractOwner && !loading && croSkulls.length == 0 ? `You don't have any skull...`  : `You don't have any skull :c`  }</span>
+                        <button 
+                          onClick= { () => { window.open("https://app.ebisusbay.com/collection/croskull").focus() } } 
+                          className="skull-button"
+                        >
+                          Buy Skull
+                        </button>
                       </div>
                     )
                   }
@@ -591,8 +572,8 @@ const Tavern = () => {
                               src={`${ipfsUri480}${cr}.webp`}
                             />
                             <div className="floating-badges-container">
-                              <span className="badge id">#{cr}</span>
-                              <span className="badge rank">Rank: {data ? data.rank : ''}</span>
+                              <span className="badge id">{cr}</span>
+                              <span className="badge rank">Rank {data ? data.rank : ''}</span>
                             </div>
                             <div className="bottom-actions">
                               <button 
@@ -611,7 +592,9 @@ const Tavern = () => {
                       )
                     })
                     : (
-                      <span>{ ! croSkullsStaked.length && contractDetected ? `There're no skulls in adventure, you're not Generating Grave` : `Loading...` }</span>
+                      <span>
+                        { ! croSkullsStaked.length && contractDetected ? `There're no skulls in adventure, you're not Generating Grave` : `Loading...` }
+                      </span>
                     )
                   }
                 </div>
@@ -649,13 +632,16 @@ const Tavern = () => {
                 <label for="faction">Faction</label>
                 <select
                   name="faction"
+                  id="faction"
                   onChange={handleFieldChange}
                 >
-                  <option>none</option>
-                  <option>Skulattoni</option>
-                  <option>Dragopodi</option>
+                  <option value="none">None</option>
+                  <option value="lowlights">Lowlight’s</option>
+                  <option value="shadowrats">ShadowRats</option>
+                  <option value="acquafall">Acquafall</option>
+                  <option value="solarcry">Solarcry</option>
                 </select>
-                <label for="twitter">Twitter Handle ( with @ )</label>
+                <label htmlFor="twitter">Twitter Handle ( with @ )</label>
                 <input
                   id="twitter"
                   type="text"
@@ -707,18 +693,23 @@ const Tavern = () => {
                 <div
                   className="pay-action"
                 >
-                  <button
-                    className="skull-button save-cro"
-                    onClick={ () => saveSkullStory() }
-                  >
-                    { accountBalance >= 0 ? `Update using (1) CRO` : `Insufficient CRO Balance`}
-                  </button>
-                  <button
-                    className="skull-button save-grave"
-                    disabled="disabled"
-                  >
-                    Update using (5) Grave
-                  </button>
+                  {
+                    storyAllowance > 0 ? (
+                      <button
+                        className="skull-button save-grave"
+                        onClick={ () => saveSkullStory() }
+                      >
+                        Update using (10) Grave
+                      </button>
+                    ) : (
+                      <button
+                        className="skull-button save-grave"
+                        onClick={ () => dispatch( approveStories() ) }
+                      >
+                        Approve Story
+                      </button>
+                    )
+                  }
                 </div>
               </div>
             </div>
@@ -732,7 +723,9 @@ const Tavern = () => {
                   <span>Birth Date: {  birthDate > 0 ?  new Date(birthDate * 1000).toISOString().slice(0, 10) : '' }</span>
                   <span>Death Date: { deathDate > 0 ? new Date(deathDate * 1000).toISOString().slice(0, 10) : '' }</span>
                   <span>Faction: { faction }</span>
-                  <span>Twitter: { twitter }</span>
+                  <span>Twitter: { twitter != '' ? (
+                    <a href={ twitter ? `https://twitter.com/${twitter.replace('@', '')}` : ''} target="_blank">{twitter}</a>
+                  ) : ('') }</span>
                   {
                     storyState.ownerOf && ethers.utils.getAddress(storyState.ownerOf) == ethers.utils.getAddress(accountAddress) ? (
                       <button 
