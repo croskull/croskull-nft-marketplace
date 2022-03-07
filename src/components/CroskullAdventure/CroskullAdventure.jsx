@@ -29,6 +29,8 @@ const CroskullAdventure = () => {
     selectedSkulls: []
   })
 
+  const [detailsView, setDetailsView] = useState(false)
+
   let dispatch = useDispatch()
   const ipfsUri =  ""  || "https://bafybeifax734esbihweq543p5jldhwj4djszkrevo6u7tig4xlorihx53m.ipfs.infura-ipfs.io/"
 
@@ -154,6 +156,7 @@ const CroskullAdventure = () => {
   let seasonDurationDate = formatDate( blockTimestamp - globalStartTimestamp )
   let seasonProgress = parseInt( 100 / HUNDRED_DAYS_IN_SEC *  (blockTimestamp - globalStartTimestamp ) )
   burnedGraves = burnedGraves ?  burnedGraves : 0
+  let burnedPercent = burnedGraves ? parseFloat(100 / 45990000 * formatEther(burnedGraves)).toFixed(3) : 0
   return (
     <>
       <div className="sk-flex sk-row">
@@ -266,7 +269,7 @@ const CroskullAdventure = () => {
                   className="icon-container"
                 />
                 <div className="progress-container">
-                  Burn Malus:
+                  Burn Malus
                   <div className="progress">
                     <div 
                       className="progress-bar bg-danger" 
@@ -281,14 +284,47 @@ const CroskullAdventure = () => {
                   </div>
                 </div>
               </div>
-              <div className="sk-box-content sk-column">
+              <div className="sk-box-content switcher-wrapper">
+                  <button
+                    className={`skull-button view-button ${ detailsView ? '' : 'active'}`}
+                    onClick={
+                      () => setDetailsView(false)
+                    }
+                  >
+                    Your Stats
+                  </button>
+                  <button
+                    className={`skull-button view-button ${ ! detailsView ? '' : 'active'}`}
+                    onClick={
+                      () => setDetailsView(true)
+                    }
+                  >
+                    Global Stats
+                  </button>
+              </div>
+              <div className={`sk-box-content sk-column ${ ! detailsView ? 'show' : 'hide'}`}>
                 <div className="metric-container">
-                  Your Stats
+                  <span>Your Skulls</span>
+                  <span className="metric-icon">
+                    { croSkulls.length }
+                    <img 
+                      className="skull-icon"
+                      src={SkullAdventure}
+                    />
+                  </span>
+                </div>
+                <div className="metric-container">
+                  Mined Grave
                   <span>
                     {  `${formatEther(rewards)}` } 
                     <span className="positive">
                       {` (100%)`}
                     </span>
+                  </span>
+                </div>
+                <div className="metric-container">
+                  <span>
+                    Current Malus
                   </span>
                   <span>
                     {  `${formatEther(rewardPlusMalus)}` }
@@ -298,13 +334,7 @@ const CroskullAdventure = () => {
                   </span>
                 </div>
                 <div className="metric-container">
-                  <span>
-                    Your Stats
-                  </span>
-                  
-                </div>
-                <div className="metric-container">
-                  Graves Already Claimed
+                  Claimed Graves
                   <span className="metric-icon">
                     { `${formatEther(alreadyClaimed)}`  }
                     <img 
@@ -314,7 +344,7 @@ const CroskullAdventure = () => {
                   </span>
                 </div>
                 <div className="metric-container">
-                  Souls Generated
+                  Mined Souls
                   <span className="metric-icon">
                     { soulsGenerated }
                     <img 
@@ -323,8 +353,10 @@ const CroskullAdventure = () => {
                     />
                   </span>
                 </div>
+              </div>
+              <div className={`sk-box-content sk-column ${ detailsView ? 'show' : 'hide'}`}>
                 <div className="metric-container">
-                  <span>Total Skulls Staked</span>
+                  <span>Skulls Staked</span>
                   <span className="metric-icon">
                     { totalSkullsStaked }
                     <img 
@@ -335,7 +367,8 @@ const CroskullAdventure = () => {
                 </div>
                 <div className="metric-container">
                   <span>
-                    Total Grave Mined</span>
+                    Mined Grave
+                  </span>
                   <span className="metric-icon">
                     { formatEther(totalWithdrawedGraves) }
                     <img
@@ -346,10 +379,11 @@ const CroskullAdventure = () => {
                 </div>
                 <div className="metric-container">
                   <span>
-                    Total Grave Burned
+                    Burned Grave
                   </span>
                   <span className="metric-icon">
                     { formatEther(burnedGraves) }
+                    {` (${burnedPercent}%)`}
                     <img
                       className="skull-icon"
                       src={GraveBurn}
@@ -357,7 +391,7 @@ const CroskullAdventure = () => {
                   </span>
                 </div>
                 <div className="metric-container">
-                  Total Souls Mined
+                  Mined Souls
                   <span className="metric-icon">
                     { totalWithdrawedSouls }
                     <img 

@@ -92,3 +92,17 @@
     border-radius: 15px;
     background: rgba(13, 16, 63, 0.562);
 }
+
+.adventure .sk-box-content.hide{
+    display: none;
+}
+
+.adventure .switcher-wrapper{
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    align-items: center;
+}
+.adventure .view-button{
+    color: #fff;
+}

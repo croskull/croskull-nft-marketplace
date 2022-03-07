@@ -1,4 +1,4 @@
-import React , { useEffect, useState } from "react";
+import React , { useState } from "react";
 import store from "../../redux/store";
 import cryptoIcon from "./crypto-com.svg";
 import { connect, disconnect } from "../../redux/blockchain/blockchainActions";
@@ -21,10 +21,9 @@ import './navbar.css';
 const Navbar = () => {
   const dispatch = useDispatch();
   let { blockchain, data } = store.getState();
-  let { rewardPlusMalus, malusFee, soulsBalance, userGraveBalance, croSkulls, rewards, croSkullsStaked, daysLastWithdraw } = data
-  let { accountBalance, accountAddress, formatEther, loading, contractDetected, providerConnected } = blockchain
+  let { rewardPlusMalus, soulsBalance, userGraveBalance, croSkulls, rewards, croSkullsStaked, daysLastWithdraw } = data
+  let { accountAddress, formatEther, contractDetected } = blockchain
   const [isHovered, setIsHovered] = useState(false)
-  const [viewBalance, setViewBalance] = useState(false);
   let malusPercent = ( 800 - ( 25 * daysLastWithdraw ) ) / 10
 
   /*
@@ -56,6 +55,8 @@ const Navbar = () => {
       }
     }
   }
+
+  let malusAmount = rewards > rewardPlusMalus ? formatEther( rewards , true) - formatEther( rewardPlusMalus, true) : 0
 
   return (
     <nav className="navbar navbar-expand-sm header">
@@ -91,7 +92,7 @@ const Navbar = () => {
               className="skull-icon"
               src={Grave}
             />
-            { `${formatEther(userGraveBalance).split('.')[0]},${formatEther(userGraveBalance).split('.')[1].substr(0, 2)}` }
+            { `${formatEther(userGraveBalance, true)}` }
             <span className="sk-tooltip">Owned Grave</span>
           </span>
           <span>
@@ -109,7 +110,7 @@ const Navbar = () => {
           >
             More
           </button>
-          <div className={`flex-v season ${viewBalance ? 'show': ''}`}>
+          <div className={`flex-v season`}>
               <span>Season</span>
               <span>
                 <img 
@@ -124,8 +125,8 @@ const Navbar = () => {
                   className="skull-icon"
                   src={GraveMined}
                 />
-                { `${formatEther(rewards).split('.')[0]},${formatEther(rewards).split('.')[1].substr(0, 4)}` }
-                <span className="sk-tooltip">Generated Graves</span>
+                { `${formatEther(rewards, true)}` }
+                <span className="sk-tooltip">Generated Grave</span>
               </span>
               <span
                 className="positive"
@@ -134,16 +135,16 @@ const Navbar = () => {
                   className="skull-icon"
                   src={GraveAvailable}
                 />
-                { `${formatEther(rewardPlusMalus).split('.')[0]},${formatEther(rewardPlusMalus).split('.')[1].substr(0, 4)}` }
-                <span className="sk-tooltip">Withdrawable Graves</span>
+                { `${formatEther(rewardPlusMalus, true)}` }
+                <span className="sk-tooltip">Withdrawable Grave</span>
               </span>
               <span className="negative">
                 <img 
                   className="skull-icon"
                   src={GraveBurn}
                 />
-                { `${  formatEther(String(rewards - rewardPlusMalus)).split('.')[0] },${ formatEther(String(rewards - rewardPlusMalus)).split('.')[1].substr(0,4)} -(${malusPercent}%)` }
-                <span className="sk-tooltip">Burned Graves</span>
+                { `${ malusAmount } -(${malusPercent}%)` }
+                <span className="sk-tooltip">Burned Grave</span>
               </span>
           </div>
         </div>
@@ -202,9 +203,8 @@ const Navbar = () => {
         </button>
       </div>
     </nav>
-  );
-};
-
+  )
+}
 
 const providerOptions = {
   injected: {
@@ -226,7 +226,8 @@ const providerOptions = {
       connector: async (ProviderPackage, options) =>  {
           const connector = new DeFiWeb3Connector({
               supportedChainIds: [25],
-              rpc: {25: 'https://gateway.nebkas.ro'},
+              //rpc: {25: 'https://gateway.nebkas.ro'},
+              rpc: {25: 'https://evm.cronos.org'},
               pollingInterval: 15000,
               metadata: {
                   icons: ['https://ebisusbay.com/vector%20-%20face.svg'],

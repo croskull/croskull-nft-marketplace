@@ -1,4 +1,4 @@
-import React , { useEffect, useState } from "react";
+import React  from "react";
 import { useDispatch } from "react-redux";
 import store from "../../redux/store";
 import './merchant.css';
@@ -13,9 +13,7 @@ const Merchant = () => {
     let { petEggsSupply, petEggsMaxSupply, petEggsLimit, petEggsMintedByUser, petEggsCost, userGraveBalance, approvedEggs } = data
     let { croSkullsGrave, croSkullsPetEggs, accountAddress, formatEther } = blockchain
 
-    let [minted, setMinted] = useState(false)
     const purchaseEgg = async () => {
-        //setMinted(true)
         let purchaseTx = croSkullsPetEggs.purchaseEgg(
             accountAddress
         )
@@ -35,7 +33,6 @@ const Merchant = () => {
             }))
             dispatch(getStakingData())
         })
-        //setMinted(false)
     }
 
     const approveEggs = async () => {
@@ -67,16 +64,15 @@ const Merchant = () => {
         <>
             <div className="sk-flex sk-row">
                 <div className="sk-container">
-                    <div className={`sk-box ${minted ? 'card' : ''}`}>
+                    <div className={`sk-box`}>
                         <h2>Merchant</h2>
                         <div className="sk-box-content sk-column">
                             <span>Minted</span>
                             <span className="highlight">{petEggsSupply} of {petEggsMaxSupply}</span>
                         </div>
-                        <h3></h3>
-                        <span>Burn your $<b>GRAVE</b> to recieve a limited and super-rare Pet's Egg.</span>
+                        <span>Burn your <b>GRAVE</b> to recieve a limited and super-rare Pet's Egg.</span>
                         <div className="sk-box-content sk-column">
-                            <span>Cost: { formatEther(petEggsCost) } $<b>GRAVE</b></span>
+                            <span>Cost: { formatEther(petEggsCost) } <b>GRAVE</b></span>
                             <span>Limit: Max 2 Eggs per Address</span>
                             <span>Max Supply: {petEggsMaxSupply} EGGS</span>
                             <span>{ `Your Limit: ${petEggsMintedByUser}/${petEggsLimit}` }</span>
@@ -108,7 +104,7 @@ const Merchant = () => {
                                         ! canMint ?
                                         'Limit Reached' : 
                                             ! hasBalance ?
-                                            'Not Enough  GRAVE' :
+                                            'You need more Grave' :
                                         'Purchase'
                                     }
                                 </button>
@@ -120,7 +116,7 @@ const Merchant = () => {
                     <img 
                         src={ petEggsMintedByUser ? MerchantAvatar : MerchantEmpty }
                         className={ `${approvedEggs ? `merchant-egg` : `merchant-egg trip`}` }
-                        
+                        alt="Pet's Egg"
                     />
                 </div>
             </div>

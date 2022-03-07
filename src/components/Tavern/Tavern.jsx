@@ -18,7 +18,6 @@ import redPotionImage from './redPotionImage.png';
 import "react-quill/dist/quill.snow.css";
 import './tavern.css';
 
-const ipfsUri =  "https://bafybeifax734esbihweq543p5jldhwj4djszkrevo6u7tig4xlorihx53m.ipfs.infura-ipfs.io/"
 const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/"
 const ipfsUri128 = "https://croskull.mypinata.cloud/ipfs/QmZn1HvYE1o1J8LhNpxFTj5k8LQb2bWT49YvbrhB3r19Xx/"
 const Tavern = () => {
@@ -153,13 +152,13 @@ const Tavern = () => {
   }
 
   const saveSkullStory = async ( ) => {
-    let { croSkullsDescription, croSkullsGrave, ethProvider, accountBalance, accountAddress } = blockchain
+    let { croSkullsDescription } = blockchain
     let storyfied = JSON.stringify(editorStory)
     let descriptionBuffer = Buffer.from(storyfied)
     try {
       const client = IpfsHttpClient(new URL('https://ipfs.infura.io:5001/api/v0'));
       const ipfsResponse = await client.add(descriptionBuffer);
-      if( ipfsResponse.path != "" ){
+      if( ipfsResponse.path !== "" ){
           let path = `ipfs://${ipfsResponse.path}`
           let skullStoryTx = croSkullsDescription.updateUsingGrave( 
             editorStory.tokenId.toString(), //tokenId
@@ -225,7 +224,7 @@ const Tavern = () => {
     let { selectedSkulls } = viewState;
     if ( selectedSkulls && selectedSkulls.includes(e)) {
       for( let i = 0; i < selectedSkulls.length; i++){
-        if (selectedSkulls[i] == e) {
+        if (selectedSkulls[i] === e) {
           selectedSkulls.splice(i, 1);
         }
       }
@@ -242,7 +241,7 @@ const Tavern = () => {
     let { selectedStakeSkulls } = viewState;
     if ( selectedStakeSkulls && selectedStakeSkulls.includes(e)) {
       for( let i = 0; i < selectedStakeSkulls.length; i++){
-        if (selectedStakeSkulls[i] == e) {
+        if (selectedStakeSkulls[i] === e) {
           selectedStakeSkulls.splice(i, 1);
         }
       }
@@ -260,7 +259,7 @@ const Tavern = () => {
     let name = event.target ? event.target.id : "description"
     let type = event.target ? event.target.type : "description"
     console.log( value, name, type )
-    if( type == 'date' ){
+    if( type === 'date' ){
       value = parseInt( new Date( value ).getTime() / 1000 )
     }
     setEditorStory( {
@@ -272,9 +271,7 @@ const Tavern = () => {
   //quill description editor setting
 
   let { redCount, blueCount, croSkullsStaked, croSkulls, skullsStories, approval, advancedMetadata, loading, croSkullsContractOwner, petEggsMintedByUser, storyAllowance } = data;
-  let { accountAddress, accountBalance, contractDetected } = blockchain
-  let blockchainLoading = blockchain.loading
-  let totalSkulls = croSkullsStaked.length > 0 ? croSkullsStaked.length + croSkulls.length : 0
+  let { accountAddress, contractDetected } = blockchain
   let { 
     tokenId,
     name,
@@ -389,9 +386,10 @@ const Tavern = () => {
                   <img 
                     src={inventoryIcon}
                     className="svg-icon btn-toggle-stories"
+                    alt="Inventory"
                   />
                 </li>
-                <li className={`skull-button view-button ${ viewState.currentView == 'tavern' ? 'active' : ''}`}
+                <li className={`skull-button view-button ${ viewState.currentView === 'tavern' ? 'active' : ''}`}
                     onClick={ () => {
                     setViewState( {
                       ...viewState,
@@ -410,7 +408,7 @@ const Tavern = () => {
                 {
                   approval ? (
                     <li
-                      className={`skull-button view-button ${ viewState.currentView == 'adventure' ? 'active' : ''}`}
+                      className={`skull-button view-button ${ viewState.currentView === 'adventure' ? 'active' : ''}`}
                       onClick={ () => {
                         setViewState( {
                           ...viewState,
@@ -440,7 +438,7 @@ const Tavern = () => {
               </ul>
             </div>
             <div className="sk-box-content sk-column">
-              <div className={`skulls-list in-tavern ${ viewState.currentView == 'tavern' ? `active` : `` }`}>
+              <div className={`skulls-list in-tavern ${ viewState.currentView === 'tavern' ? `active` : `` }`}>
                 <div className="list-head">
                   <div className="div-button">
                     {
@@ -498,7 +496,7 @@ const Tavern = () => {
                           <button
                             className="skull-button sell-button"
                             onClick={ () => {                       
-                              window.location.replace("https://app.ebisusbay.com/collection/croskull");
+                              window.open("https://app.ebisusbay.com/collection/croskull").focus()
                             }}
                           >
                             <FontAwesomeIcon icon={faCoins} /> 
@@ -512,7 +510,8 @@ const Tavern = () => {
                           > 
                             <img 
                               className="hexagon"
-                              src={hexagon} 
+                              src={hexagon}
+                              alt=""
                             />
                             <span>Story</span>
                           </button>
@@ -523,7 +522,7 @@ const Tavern = () => {
                     })
                     : (
                       <div className="sk-flex sk-column">
-                        <span>{ loading && !croSkullsContractOwner ? `Loading...` : ! croSkullsContractOwner && !loading && croSkulls.length == 0 ? `You don't have any skull...`  : `You don't have any skull :c`  }</span>
+                        <span>{ loading && !croSkullsContractOwner ? `Loading...` : ! croSkullsContractOwner && !loading && croSkulls.length === 0 ? `You don't have any skull...`  : `You don't have any skull :c`  }</span>
                         <button 
                           onClick= { () => { window.open("https://app.ebisusbay.com/collection/croskull").focus() } } 
                           className="skull-button"
@@ -535,7 +534,7 @@ const Tavern = () => {
                   }
                 </div>
               </div>
-              <div className={`skulls-list in-adventure ${ viewState.currentView == 'adventure' ? `active` : `` }`}>
+              <div className={`skulls-list in-adventure ${ viewState.currentView === 'adventure' ? `active` : `` }`}>
                 <div className="list-head">
                   <div className="div-button">
                     {
@@ -723,11 +722,11 @@ const Tavern = () => {
                   <span>Birth Date: {  birthDate > 0 ?  new Date(birthDate * 1000).toISOString().slice(0, 10) : '' }</span>
                   <span>Death Date: { deathDate > 0 ? new Date(deathDate * 1000).toISOString().slice(0, 10) : '' }</span>
                   <span>Faction: { faction }</span>
-                  <span>Twitter: { twitter != '' ? (
-                    <a href={ twitter ? `https://twitter.com/${twitter.replace('@', '')}` : ''} target="_blank">{twitter}</a>
+                  <span>Twitter: { twitter !== '' ? (
+                    <a href={ twitter ? `https://twitter.com/${twitter.replace('@', '')}` : ''} target="_blank" rel="noopener noreferrer">{twitter}</a>
                   ) : ('') }</span>
                   {
-                    storyState.ownerOf && ethers.utils.getAddress(storyState.ownerOf) == ethers.utils.getAddress(accountAddress) ? (
+                    storyState.ownerOf && ethers.utils.getAddress(storyState.ownerOf) === ethers.utils.getAddress(accountAddress) ? (
                       <button 
                         className="skull-button edit-button"
                         onClick={ () => {

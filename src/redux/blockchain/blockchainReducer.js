@@ -18,10 +18,9 @@ const initialState = {
     providerConnected: false,
     contractDetected: false,
     ethers: ethers,
-    formatEther: val => ethers.utils.formatEther(val)
-};
+    formatEther: (bn, fixed = false) => fixed ? parseFloat(ethers.utils.formatEther(bn)).toFixed(2) : ethers.utils.formatEther(bn)
+}
 
-const emptyState = initialState;
 const blockchainReducer = (state = initialState, action) => {
     let payload = action.payload
     switch (action.type) {

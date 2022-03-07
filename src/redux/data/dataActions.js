@@ -15,13 +15,6 @@ const fetchDataRequest = () => {
   };
 };
 
-const fetchDataSuccess = (payload) => {
-  return {
-    type: "CHECK_DATA_SUCCESS",
-    payload: payload,
-  };
-};
-
 const updateState = ( payload ) => {
   return {
     type: "UPDATE_STATE",
@@ -33,26 +26,6 @@ const setPotions = ( payload ) => {
   return {
     type: "SET_POTIONS",
     payload: payload
-  }
-}
-
-const fetchDataFailed = (payload) => {
-  return {
-    type: "CHECK_DATA_FAILED",
-    payload: payload,
-  };
-};
-
-const setSkullsStories = (payload) => {
-  return {
-    type: "SET_SKULLS_STORIES",
-    payload: payload,
-  };
-};
-
-const skullsRequest = () => {
-  return {
-      type: "SKULLS_REQUEST"
   }
 }
 
@@ -395,7 +368,6 @@ export const getSkullsData = () => {
 
       const rawResult = await fetch( 'https://croskull.mypinata.cloud/ipfs/QmSrjCsmQ9e5m1HFYXRSYgxHi9K6u9a6DXRsWz7KWW5i6p/_metadata' );
       let metaData = await rawResult.json();
-      let tempMetadata = metaData
       let rarityPerTrait = []
       let traitRariry = []
       let totalRarity = 0;
