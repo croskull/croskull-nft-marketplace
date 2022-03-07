@@ -56,8 +56,7 @@ const Navbar = () => {
     }
   }
 
-  let malusAmount = rewards > rewardPlusMalus ? formatEther( rewards , true) - formatEther( rewardPlusMalus, true) : 0
-
+  let malusAmount = rewards > 0 ? formatEther( rewards , true) - formatEther( rewardPlusMalus, true) : 0
   return (
     <nav className="navbar navbar-expand-sm header">
       <Link to="/" className="crLogo">

@@ -269,6 +269,7 @@ export const getStakingData =  () => {
       }else{
         let malusFee = await croSkullsStaking.calculateMalusFee()
         malusFee = malusFee.toString()
+        console.log(malusFee)
 
         let rewardPlusMalus = await croSkullsStaking.calculateRewardsPlusMalus()
         rewardPlusMalus = rewardPlusMalus[0]

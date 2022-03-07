@@ -719,8 +719,8 @@ const Tavern = () => {
                     src={`${ipfsUri480}${tokenId}.webp`}
                     className='card div-skull'
                   />
-                  <span>Birth Date: {  birthDate > 0 ?  new Date(birthDate * 1000).toISOString().slice(0, 10) : '' }</span>
-                  <span>Death Date: { deathDate > 0 ? new Date(deathDate * 1000).toISOString().slice(0, 10) : '' }</span>
+                  <span>Birth Date: {  birthDate != 0 ?  new Date(birthDate * 1000).toISOString().slice(0, 10) : '' }</span>
+                  <span>Death Date: { deathDate != 0 ? new Date(deathDate * 1000).toISOString().slice(0, 10) : '' }</span>
                   <span>Faction: { faction }</span>
                   <span>Twitter: { twitter !== '' ? (
                     <a href={ twitter ? `https://twitter.com/${twitter.replace('@', '')}` : ''} target="_blank" rel="noopener noreferrer">{twitter}</a>

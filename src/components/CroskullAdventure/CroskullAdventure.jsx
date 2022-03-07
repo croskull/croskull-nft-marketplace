@@ -334,7 +334,7 @@ const CroskullAdventure = () => {
                   </span>
                 </div>
                 <div className="metric-container">
-                  Claimed Graves
+                  Claimed Grave
                   <span className="metric-icon">
                     { `${formatEther(alreadyClaimed)}`  }
                     <img 
@@ -344,7 +344,7 @@ const CroskullAdventure = () => {
                   </span>
                 </div>
                 <div className="metric-container">
-                  Mined Souls
+                  Mined Soul
                   <span className="metric-icon">
                     { soulsGenerated }
                     <img 
@@ -391,7 +391,7 @@ const CroskullAdventure = () => {
                   </span>
                 </div>
                 <div className="metric-container">
-                  Mined Souls
+                  Mined Soul
                   <span className="metric-icon">
                     { totalWithdrawedSouls }
                     <img 
@@ -410,7 +410,7 @@ const CroskullAdventure = () => {
                     setApprovalforAll()
                   }}
                 >
-                  Approve Mission
+                  Approve Adventure
                 </button>
                 ):(
                 <button 
