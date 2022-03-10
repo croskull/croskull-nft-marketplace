@@ -2,11 +2,11 @@ import {
   ethers
 } from 'ethers';
 import React, { useEffect, useState } from "react";
-import { getSkullsData, toTavern, toMission, sendNotification, getStakingData, approveStories } from "../../redux/data/dataActions";
+import { getSkullsData, toTavern, toMission, sendNotification, getStakingData, approveStories, refreshSkullsStories } from "../../redux/data/dataActions";
 import store from "../../redux/store";
 import { useDispatch } from "react-redux";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDungeon, faRunning, faCoins, faSkullCrossbones  } from '@fortawesome/free-solid-svg-icons';
+import { faDungeon, faRunning, faCoins, faSkullCrossbones, faSpinner, faRedoAlt  } from '@fortawesome/free-solid-svg-icons';
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import ReactQuill from "react-quill";
 import IpfsHttpClient from "ipfs-http-client";
@@ -65,21 +65,7 @@ const Tavern = () => {
     y: 0 
   })
   
-  useEffect(
-    () => {
-      const update = (e) => {
-        setMousePos({
-          x: e.x,
-          y: e.y
-        })
-      }
-      window.addEventListener('mousemove', update)
-      window.addEventListener('touchmove', update)
-      return () => {
-        window.removeEventListener('mousemove', update)
-        window.removeEventListener('touchmove', update)
-      }
-    }, [mousePos])
+
 
   useEffect(() => {
     if( viewStories )
@@ -107,6 +93,7 @@ const Tavern = () => {
   
   const fetchSkullDescription = async ( { tokenId, ownerOf } ) => {
     let { croSkullsDescription, accountAddress } = blockchain
+    console.log( tokenId )
     let ipfsHash = await croSkullsDescription.descriptionHashes( tokenId )
     ipfsHash = ipfsHash.toString()
     if( ipfsHash ) {
@@ -270,7 +257,7 @@ const Tavern = () => {
 
   //quill description editor setting
 
-  let { redCount, blueCount, croSkullsStaked, croSkulls, skullsStories, approval, advancedMetadata, loading, croSkullsContractOwner, petEggsMintedByUser, storyAllowance } = data;
+  let { storiesLoading, redCount, blueCount, croSkullsStaked, croSkulls, skullsStories, approval, advancedMetadata, loading, croSkullsContractOwner, petEggsMintedByUser, storyAllowance } = data;
   let { accountAddress, contractDetected } = blockchain
   let { 
     tokenId,
@@ -320,6 +307,30 @@ const Tavern = () => {
                 )
               }) : (
                 <span>Loading amazing stories...</span>
+              )
+            }
+            {
+              storiesLoading ? 
+              (
+                <>
+                  <FontAwesomeIcon
+                    icon={faSpinner}
+                    className="story-icon loading"
+                  ></FontAwesomeIcon>
+                </>
+                
+              ):(
+                <>
+                  <FontAwesomeIcon
+                    icon={faRedoAlt}
+                    className="story-icon"
+                    onClick={ () => {
+                      dispatch(
+                        refreshSkullsStories()
+                      )
+                    } }
+                  ></FontAwesomeIcon>
+                </>
               )
             }
             </div>

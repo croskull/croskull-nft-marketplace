@@ -4,6 +4,7 @@ import AllCroSkulls from "./components/AllCroSkulls/AllCroSkulls";
 import AccountDetails from "./components/AccountDetails/AccountDetails";
 import CroskullAdventure from "./components/CroskullAdventure/CroskullAdventure";
 import Merchant from "./components/Merchant/Merchant";
+import Analytics from "./components/Analytics/Analytics";
 import Navbar from "./components/Navbar/Navbar";
 import Notifier from "./components/Notifier/Notifier";
 import Tavern from "./components/Tavern/Tavern";
@@ -352,6 +353,12 @@ class App extends Component {
                           path="/merchant"
                           render={() => (
                             <Merchant />
+                          )}
+                        />
+                        <Route 
+                          path="/analytics"
+                          render={() => (
+                            <Analytics />
                           )}
                         />
                       </Switch>

@@ -24,6 +24,9 @@
 	grid-template-rows: 7vh 1fr 3vh;
   overflow-x: clip;
 }
+.loading {
+  animation: infinite rotate 3s;
+}
 .container-fluid{
   display: flex;
   flex-direction: column;
@@ -437,19 +440,24 @@ span {
   color: #fff !important;
   opacity: 0;
   font-weight: 400 !important;
-  text-transform: capitalize;
   border: none !important;
   font-size: 12px !important;
-  padding: 2px 6px;
+  padding: 6px;
+  border-radius: 6px;
   transition: opacity 0.2s linear;
   z-index: 99;
+  min-width: 150px;
 }
 
-.skull-icon:hover + .sk-tooltip{
+.tooltip-icon{
+  font-size: 12px;
+  margin-left: 6px;
+}
+
+.skull-icon:hover + .sk-tooltip, .tooltip-toggle:hover .sk-tooltip{
   transform: scale(1);
   opacity: 1;
 }
-
 /** END GLOBAL */
 
 
@@ -674,6 +682,10 @@ label {
   padding: 12px;
 }
 
+.metric-icon {
+  font-weight: 500;
+}
+
 .story-modal .description {
   margin: 6px;
   padding: 12px;
@@ -741,5 +753,14 @@ label {
 	}
 	100% {
 		background-position: 0% 50%;
+	}
+}
+
+@keyframes rotate {
+	0% {
+		transform: rotate(0deg);
+	}
+  75% {
+    transform: rotate(359deg);
 	}
 }

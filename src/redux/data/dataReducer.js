@@ -44,6 +44,10 @@ const initialState = {
     //stories
     storyAllowance: false,
     skullsStories: [],
+    storiesLoading: false,
+    storyLastBlock: 0,
+    //ebisus
+    ebisusData: [],
     //notifier
     title: "",
     message: "",
@@ -97,7 +101,8 @@ const dataReducer = (state = initialState, action) => {
                 loading: false,
                 croSkulls: payload.croSkulls,
                 croSkullsStaked: payload.croSkullsStaked,
-                advancedMetadata: payload.advancedMetadata
+                advancedMetadata: payload.advancedMetadata,
+                ebisusData: payload.ebisusData
             }
         case "FETCH_STAKING_SUCCESS":
             return {
@@ -146,10 +151,16 @@ const dataReducer = (state = initialState, action) => {
                 tx: payload.tx,
                 type: payload.type
             }
+        case "FETCH_STORIES":
+            return {
+                ...state,
+                storiesLoading: true
+            }
         case "SET_SKULLS_STORIES":
             return {
                 ...state,
-                skullsStories: payload.skullsStories
+                skullsStories: payload.skullsStories,
+                storiesLoading: false
             }
         case "SET_POTIONS":
             return {

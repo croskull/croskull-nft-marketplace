@@ -78,27 +78,50 @@ export const refreshSkullsStories = () => {
     dispatch( 
       updateState( { key: "storyAllowance", value: storyAllowance >= storyCost ? true : false } 
     ))
+    let { storiesLoading, storyLastBlock, skullsStories } = store.getState().data
+      console.log( storiesLoading )
+    if( storiesLoading ) return;
+    console.log('refreshSkullsStories')
+    dispatch(updateState({
+      key: 'storiesLoading',
+      value: true
+    }))
     let storiesFilter = croSkullsDescription.filters.DescriptionUpdate()
 
+    croSkullsDescription.on('DescriptionUpdate', (content) => {
+      console.log( content )
+    })
     let currentBlock = await ethProvider.getBlockNumber()
+    if( storyLastBlock )
+      currentBlock = storyLastBlock;
+    let finalBlock = 0;
     let blockLimit = 2000;
-    let blockDiff = currentBlock - genesisBlock
-    let tempGenesis = genesisBlock
-    let storyEvents = []
-    for(let i = 1; i <= blockDiff; i += 2000){ 
-      if( currentBlock - tempGenesis  < blockLimit ) {
-        blockLimit = currentBlock - tempGenesis;
-      }
+    let storyEvents = [];
+    /*if( skullsStories.length )
+      storyEvents = skullsStories*/
+
+    let storyLimit = storyLastBlock ? 20 : 5;
+    for(let i = 0; storyEvents.length <= storyLimit; i += blockLimit){ 
       storyEvents.push.apply(
         storyEvents, 
-        await croSkullsDescription.queryFilter(storiesFilter, tempGenesis, tempGenesis + blockLimit )
+        await croSkullsDescription.queryFilter(storiesFilter, currentBlock - i - blockLimit, currentBlock - i )
       )
-      tempGenesis += blockLimit
+      finalBlock = currentBlock - i - blockLimit;
+      console.log(
+        i,
+        currentBlock - i - blockLimit, 
+        currentBlock - i
+      )
     }
-    let skullsStories = []
+    let newSkullsStories = []
+    if( skullsStories)
+      newSkullsStories = skullsStories
     storyEvents.map( story => {
       let { tokenId, ownerOf, ipfsHash } = story.args;
-      skullsStories[tokenId] = {
+      if ( newSkullsStories[tokenId] )
+        return
+
+      newSkullsStories[tokenId] = {
         tokenId: tokenId.toString(),
         ownerOf: ownerOf,
         ipfsHash: ipfsHash,
@@ -106,13 +129,23 @@ export const refreshSkullsStories = () => {
       }
     })
 
-    skullsStories.sort( (a, b) => {
+    newSkullsStories.sort( (a, b) => {
       return  b.blocknumber - a.blocknumber
     })
 
+    console.log( newSkullsStories )
+
     dispatch(updateState({
       key: 'skullsStories',
-      value: skullsStories
+      value: newSkullsStories
+    }))
+    dispatch(updateState({
+      key: 'storiesLoading',
+      value: false
+    }))
+    dispatch(updateState({
+      key: 'storyLastBlock',
+      value: finalBlock
     }))
   }
 }
@@ -366,7 +399,10 @@ export const getSkullsData = () => {
         skulls.push( tokenId.toString() )
       }
       let inStakeTokens = await croSkullsStaking.getTokensIds()
-
+      const rawEbisusData = await fetch( 'https://api.ebisusbay.com/collections?collection=0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F' );
+      let ebisusData = await rawEbisusData.json();
+      ebisusData = ebisusData.collections[0]
+      console.log(ebisusData)
       const rawResult = await fetch( 'https://croskull.mypinata.cloud/ipfs/QmSrjCsmQ9e5m1HFYXRSYgxHi9K6u9a6DXRsWz7KWW5i6p/_metadata' );
       let metaData = await rawResult.json();
       let rarityPerTrait = []
@@ -407,7 +443,8 @@ export const getSkullsData = () => {
       dispatch(skullsSuccess( {
           croSkulls: skulls,
           croSkullsStaked: inStakeTokens,
-          advancedMetadata: metaData
+          advancedMetadata: metaData,
+          ebisusData: ebisusData
       }))
   }
 }

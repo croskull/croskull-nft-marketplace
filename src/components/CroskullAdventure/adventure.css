@@ -5,6 +5,14 @@
     .adventure .sk-flex.sk-row{
         flex-direction: column-reverse !important;
     }
+    .metric-container.vertical {
+        flex-direction: row !important;
+        align-items: center !important ;
+    }
+}
+.adventure-image {
+    height: 150px;
+    width: fit-content;
 }
 .adventure{
     background-image: url(cave.png);
@@ -31,6 +39,11 @@
     align-items: center;
     margin: 3px 0%;
     position: relative;
+}
+
+.metric-container.vertical {
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .metric-icon{

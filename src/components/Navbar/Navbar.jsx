@@ -1,4 +1,8 @@
 import React , { useState } from "react";
+import { UserAgent } from "react-useragent"
+import {
+  ethers
+} from 'ethers';
 import store from "../../redux/store";
 import cryptoIcon from "./crypto-com.svg";
 import { connect, disconnect } from "../../redux/blockchain/blockchainActions";
@@ -12,6 +16,7 @@ import Skull from "./skull.png";
 import GraveMined from "./grave-mined.png";
 import GraveAvailable from "./grave-available.png";
 import SkullAdventure from './skull-adventure.png';
+import MetricItem from "./MetricItem";
 import { Link } from "react-router-dom";
 import menuIcon from "./menu-icon.svg";
 import Soul from "./soul.png";
@@ -33,30 +38,59 @@ const Navbar = () => {
       }
     }, [window.ethereum.selectedAddress])
 */
+  const [menuState, setMenuState] = useState(false)
+
+  const toggleMenu = () => {
+    setMenuState( ! menuState )
+  }
+  
   
 
   const toggleProvidersModal = async () => {
     await web3Modal._toggleModal();
     web3ModalConnection()
+    /*let _provider = await web3Modal.connect()
+    const provider = new ethers.providers.Web3Provider(_provider);
+    dispatch(connect( provider ))*/
+  }
+
+  const autoConnect = async () => {
+    localStorage.clear();
+    const provider = new WalletConnectProvider({
+      chainId: 25,
+      rpc: {25: 'https://gateway.nebkas.ro'}
+    });
+    await provider.enable();
+    const ethersProvider = new ethers.providers.Web3Provider(provider);
+    //const provider = new ethers.providers.Web3Provider(provider);
+    dispatch(connect( ethersProvider ))
   }
 
   const web3ModalConnection = () => {
     web3Modal.on("connect", async (_provider) => {
-      dispatch(connect( _provider ))
+      const provider = new ethers.providers.Web3Provider(_provider);
+      dispatch(connect( provider ))
     })
   }
 
   const handleButton = () => {
+    
+
+    toggleProvidersModal()
     if( isHovered ){
       if( contractDetected ){
         dispatch(disconnect())
       }else{
-        toggleProvidersModal()
+        let userAgent = window.navigator.userAgent.includes('DeFiWallet')
+        if( userAgent ){
+          autoConnect()
+        }else{
+        }
       }
     }
   }
 
-  let malusAmount = rewards > 0 ? formatEther( rewards , true) - formatEther( rewardPlusMalus, true) : 0
+  let malusAmount = rewards > 0 ? parseFloat(formatEther( rewards , true) - formatEther( rewardPlusMalus, true)).toFixed(2) : 0
   return (
     <nav className="navbar navbar-expand-sm header">
       <Link to="/" className="crLogo">
@@ -64,8 +98,9 @@ const Navbar = () => {
       </Link>
       <button
         className="navbar-toggler"
-        data-toggle="collapse"
-        data-target="#navbarNav"
+        onClick={
+          () => toggleMenu()
+        }
       >
         <span className="navbar-toggler-icon">
           <img 
@@ -150,11 +185,12 @@ const Navbar = () => {
       </div>
       <div 
         id="navbarNav" 
-        className={`collapse navMenu navbar-collapse`}
+        className={`collapse navMenu navbar-collapse ${menuState ? 'show' : ''}`}
       >
         <ul
           style={{ fontSize: "0.8rem", letterSpacing: "0.2rem" }}
           className="navbar-nav ml-auto"
+          onClick={ () => toggleMenu() }
         >
           <li className="nav-item">
             <Link to="/" className="nav-link">
@@ -181,6 +217,11 @@ const Navbar = () => {
               Merchant
             </Link>
           </li>
+          <li className="nav-item merchant-menu">
+            <Link to="/analytics" className="nav-link">
+              Analytics
+            </Link>
+          </li>
         </ul>
       </div>
       <div 
@@ -188,12 +229,9 @@ const Navbar = () => {
       >
         <button
           className="account-button"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
           onClick={
-            () => {
-              handleButton()
-            }
+            () =>
+            handleButton()
           }
         >
           { ! contractDetected ?
@@ -220,13 +258,11 @@ const providerOptions = {
           name: "Crypto.com DeFi Wallet",
           description: "Connect with the CDC DeFi Wallet"
       },
-      options: {},
       package: WalletConnectProvider,
       connector: async (ProviderPackage, options) =>  {
           const connector = new DeFiWeb3Connector({
               supportedChainIds: [25],
-              //rpc: {25: 'https://gateway.nebkas.ro'},
-              rpc: {25: 'https://evm.cronos.org'},
+              rpc: {25: 'https://gateway.nebkas.ro'},
               pollingInterval: 15000,
               metadata: {
                   icons: ['https://ebisusbay.com/vector%20-%20face.svg'],
@@ -240,6 +276,7 @@ const providerOptions = {
       }
   }
 }
+
 
 const web3Modal = new Web3Modal({
   cacheProvider: false, // optional

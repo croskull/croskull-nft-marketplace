@@ -1,0 +1,18 @@
+.analytics{
+    background-image: url(ice-bonefire.jpg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    width: 100%;
+    justify-content: center !important;
+    flex-direction: row !important; 
+    align-items: center;
+    justify-content: center;
+}
+
+
+@media (min-width:320px) and (max-width:640px) {
+    .analytics .sk-box-content.sk-row{
+        flex-direction: column;
+    }
+}

@@ -86,22 +86,12 @@ export const disconnect = () => {
     }
 }
 
-export const connect = (_provider = false, newChainId = false) => {
+export const connect = ( ethProvider ) => {
     return async (dispatch) => {
         dispatch(connectRequest());
-        let provider;
-
-        if (_provider) {
-            provider = _provider;
-        } else if (!_provider) {
-            provider = window.ethereum
-            dispatch(handleProviderChanges(provider))
-        }
-
-        let ethProvider = new ethers.providers.Web3Provider(provider, "any");
-        console.log( ethProvider )
-        if (provider.chainId == chainId || provider.chainId == networkId ) {
-            let signer = ethProvider.getSigner(0)
+        dispatch(handleProviderChanges(ethProvider))
+        if (ethProvider.provider.chainId == chainId || ethProvider.provider.chainId == networkId ) {
+            let signer = ethProvider.getSigner()
             let croSkullsContract = new ethers.Contract(ContractAddress, CroSkulls.abi, signer)
             let croSkullsStaking = new ethers.Contract(stakingAddress, StakingArtifacts.abi, signer)
             let croSkullsGrave = new ethers.Contract(graveAddress, Grave.abi, signer)
@@ -111,7 +101,7 @@ export const connect = (_provider = false, newChainId = false) => {
             let croSkullsDescription = new ethers.Contract(descriptionAddress, Description.abi, signer)
             let croSkullsPetEggs = new ethers.Contract(petEggsAddress, PetEggs.abi, signer)
             let croSkullsSouls = new ethers.Contract(soulsAddress, Souls.abi, signer)
-            let accounts = await provider.request({
+            let accounts = await ethProvider.provider.request({
                 method: 'eth_accounts',
             })
             
@@ -129,7 +119,6 @@ export const connect = (_provider = false, newChainId = false) => {
                     accountAddress,
                     accountBalance,
                     ethProvider,
-                    provider,
                     croSkullsContract,
                     croSkullsStaking,
                     croSkullsGrave,
@@ -144,7 +133,7 @@ export const connect = (_provider = false, newChainId = false) => {
             //await this.loadBlockchainData()
         } else {
             dispatch(contractNotDetected())
-            provider.request({
+            ethProvider.provider.request({
                 "id": 1,
                 "jsonrpc": "2.0",
                 "method": "wallet_switchEthereumChain",
@@ -158,14 +147,14 @@ export const connect = (_provider = false, newChainId = false) => {
     }
 }
 
-export const handleProviderChanges = (provider) => {
+export const handleProviderChanges = (ethProvider) => {
     return async (dispatch) => {
-        provider.on( 'accountsChanged', (accounts) => {
+        ethProvider.provider.on( 'accountsChanged', (accounts) => {
             dispatch(cleanData())
-            dispatch(connect())
+            dispatch(connect(ethProvider))
         })
-        provider.on( 'chainChanged', (_chainId) => {
-                dispatch(connect(provider))
+        ethProvider.provider.on( 'chainChanged', (_chainId) => {
+                dispatch(connect(ethProvider))
         })
     }
 }

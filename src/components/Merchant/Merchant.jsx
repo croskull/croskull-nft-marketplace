@@ -70,7 +70,7 @@ const Merchant = () => {
                             <span>Minted</span>
                             <span className="highlight">{petEggsSupply} of {petEggsMaxSupply}</span>
                         </div>
-                        <span>Burn your <b>GRAVE</b> to recieve a limited and super-rare Pet's Egg.</span>
+                        <span>Burn your <b>GRAVE</b> to receive a limited and super-rare Pet Eggs.</span>
                         <div className="sk-box-content sk-column">
                             <span>Cost: { formatEther(petEggsCost) } <b>GRAVE</b></span>
                             <span>Limit: Max 2 Eggs per Address</span>

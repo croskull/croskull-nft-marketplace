@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import { getSkullsData, sendNotification, getStakingData, toTavern } from "../../redux/data/dataActions";
 import store from "../../redux/store";
 import { useDispatch } from "react-redux";
-import title from './title.png';
+import MetricContainer from "../MetricContainer/MetricContainer";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import Grave from "../Navbar/grave.png";
@@ -157,6 +157,7 @@ const CroskullAdventure = () => {
   let seasonProgress = parseInt( 100 / HUNDRED_DAYS_IN_SEC *  (blockTimestamp - globalStartTimestamp ) )
   burnedGraves = burnedGraves ?  burnedGraves : 0
   let burnedPercent = burnedGraves ? parseFloat(100 / 45990000 * formatEther(burnedGraves)).toFixed(3) : 0
+  let malusAmount = rewards > 0 ? parseFloat(formatEther( rewards , true) - formatEther( rewardPlusMalus, true)).toFixed(2) : 0
   return (
     <>
       <div className="sk-flex sk-row">
@@ -303,103 +304,70 @@ const CroskullAdventure = () => {
                   </button>
               </div>
               <div className={`sk-box-content sk-column ${ ! detailsView ? 'show' : 'hide'}`}>
-                <div className="metric-container">
-                  <span>Your Skulls</span>
-                  <span className="metric-icon">
-                    { croSkulls.length }
-                    <img 
-                      className="skull-icon"
-                      src={SkullAdventure}
-                    />
-                  </span>
-                </div>
-                <div className="metric-container">
-                  Mined Grave
-                  <span>
-                    {  `${formatEther(rewards)}` } 
-                    <span className="positive">
-                      {` (100%)`}
-                    </span>
-                  </span>
-                </div>
-                <div className="metric-container">
-                  <span>
-                    Current Malus
-                  </span>
-                  <span>
-                    {  `${formatEther(rewardPlusMalus)}` }
-                    <span className="negative">
-                      {` (-${malusPercent}%)`}
-                    </span>
-                  </span>
-                </div>
-                <div className="metric-container">
-                  Claimed Grave
-                  <span className="metric-icon">
-                    { `${formatEther(alreadyClaimed)}`  }
-                    <img 
-                      className="skull-icon"
-                      src={Grave} 
-                    />
-                  </span>
-                </div>
-                <div className="metric-container">
-                  Mined Soul
-                  <span className="metric-icon">
-                    { soulsGenerated }
-                    <img 
-                      className="skull-icon"
-                      src={Soul} 
-                    />
-                  </span>
-                </div>
+                <MetricContainer 
+                  label="Skulls in Adventure"
+                  value={croSkullsStaked.length}
+                  icon={SkullAdventure}
+                  tooltip="Amount of your CroSkulls currently in Adventure."
+                />
+                <MetricContainer 
+                  label="Mined Grave"
+                  value={formatEther(rewards)}
+                  icon={Grave}
+                  tooltip="Amount of Grave you've generated since the start. This is used as main metric to calculate the actual rewards minus actual Malus Fee."
+                />
+                <MetricContainer 
+                  label="Current Malus"
+                  addClass="negative"
+                  value={malusAmount}
+                  icon={GraveBurn}
+                  tooltip="Amount of Grave you'll burn based on Mined Grave and current Malus Burn Fee."
+                />
+                <MetricContainer 
+                  label="Available to Withdraw"
+                  addClass="positive"
+                  value={formatEther(rewardPlusMalus)}
+                  icon={GraveAvailable}
+                  tooltip="Amount of Grave you'll recieve based on Mined Grave and current Malus Burn Fee."
+                />
+                <MetricContainer 
+                  label="Claimed Grave"
+                  value={formatEther(alreadyClaimed)}
+                  icon={Grave}
+                  tooltip="Amount of Grave you've already harvested from the Adventure."
+                />
+                <MetricContainer 
+                  label="Mined Soul"
+                  value={soulsGenerated}
+                  icon={Soul}
+                  tooltip="Total amount of Soul mined since the adventure start. It actually reflect the amount of Soul you'll recieve once claim done."
+                />
               </div>
               <div className={`sk-box-content sk-column ${ detailsView ? 'show' : 'hide'}`}>
-                <div className="metric-container">
-                  <span>Skulls Staked</span>
-                  <span className="metric-icon">
-                    { totalSkullsStaked }
-                    <img 
-                      className="skull-icon"
-                      src={SkullAdventure}
-                    />
-                  </span>
-                </div>
-                <div className="metric-container">
-                  <span>
-                    Mined Grave
-                  </span>
-                  <span className="metric-icon">
-                    { formatEther(totalWithdrawedGraves) }
-                    <img
-                      className="skull-icon"
-                      src={GraveMined}
-                    />
-                  </span>
-                </div>
-                <div className="metric-container">
-                  <span>
-                    Burned Grave
-                  </span>
-                  <span className="metric-icon">
-                    { formatEther(burnedGraves) }
-                    {` (${burnedPercent}%)`}
-                    <img
-                      className="skull-icon"
-                      src={GraveBurn}
-                    />
-                  </span>
-                </div>
-                <div className="metric-container">
-                  Mined Soul
-                  <span className="metric-icon">
-                    { totalWithdrawedSouls }
-                    <img 
-                      className="skull-icon"
-                      src={Soul} 
-                    />
-                  </span>
-                </div>
+                <MetricContainer 
+                  label="Skulls Staked"
+                  value={totalSkullsStaked}
+                  icon={SkullAdventure}
+                  tooltip="Keep track of all the CroSkulls actually in adventure."
+                />
+                <MetricContainer 
+                  label="Mined Grave"
+                  value={formatEther(totalWithdrawedGraves)}
+                  icon={GraveMined}
+                  tooltip="Total amount of all the Grave withdrawed since the start. Don't reflect total generated rewards, but just withdrawed."
+                />
+                <MetricContainer 
+                  label="Burned Grave"
+                  value={`${formatEther(burnedGraves) } (${burnedPercent}%)`}
+                  icon={GraveBurn}
+                  tooltip="Total Burned Grave amount base on the total supply, not only Adventure burn. ( total percent of burn )."
+                />
+                <MetricContainer 
+                  label="Mined Soul"
+                  value={totalWithdrawedSouls}
+                  icon={Soul}
+                  tooltip="Total amount of all the Soul withdrawed since the start. Don't reflect total generated Soul, but just withdrawed."
+                />
               </div>
               {
                 ! approval ?
