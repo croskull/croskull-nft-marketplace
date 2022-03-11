@@ -436,14 +436,15 @@ const Tavern = () => {
                       Adventure
                     </li>
                   ) : (
-                    <li
-                      className={`skull-button view-button approve`}
+                    <button
+                      className={`skull-button view-button ${ blockchain.accountAddress ? 'approve' : 'disabled'}`}
+                      disabled={ blockchain.accountAddress ? false : true}
                       onClick={ () => {
                         setApprovalforAll()
                       }}
                     >
                       Approve
-                    </li>
+                    </button>
                   )
                 }
               </ul>

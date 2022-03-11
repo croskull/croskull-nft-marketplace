@@ -81,7 +81,8 @@ const Merchant = () => {
                             ! approvedEggs ? 
                             (
                                 <button
-                                    className="sk-purchase-btn"
+                                    className={`sk-purchase-btn ${ accountAddress ? '' : 'disabled'}`}
+                                    disabled={ accountAddress ? false : true}
                                     onClick={
                                         () => {
                                             approveEggs()

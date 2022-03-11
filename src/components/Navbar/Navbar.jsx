@@ -74,18 +74,11 @@ const Navbar = () => {
   }
 
   const handleButton = () => {
-    
-
-    toggleProvidersModal()
     if( isHovered ){
       if( contractDetected ){
         dispatch(disconnect())
       }else{
-        let userAgent = window.navigator.userAgent.includes('DeFiWallet')
-        if( userAgent ){
-          autoConnect()
-        }else{
-        }
+        toggleProvidersModal()
       }
     }
   }
@@ -185,7 +178,7 @@ const Navbar = () => {
       </div>
       <div 
         id="navbarNav" 
-        className={`collapse navMenu navbar-collapse ${menuState ? 'show' : ''}`}
+        className={`navMenu navbar-collapse ${menuState ? 'show' : ''}`}
       >
         <ul
           style={{ fontSize: "0.8rem", letterSpacing: "0.2rem" }}
@@ -229,6 +222,8 @@ const Navbar = () => {
       >
         <button
           className="account-button"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
           onClick={
             () =>
             handleButton()

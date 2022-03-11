@@ -5,14 +5,20 @@
     .adventure .sk-flex.sk-row{
         flex-direction: column-reverse !important;
     }
+    .container-fluid.adventure {
+        max-height: 100%;
+        padding: 0px 0px !important;
+        height: 100%;
+        overflow-y: scroll;
+        margin-bottom: 30px;
+    }
     .metric-container.vertical {
         flex-direction: row !important;
         align-items: center !important ;
     }
 }
 .adventure-image {
-    height: 150px;
-    width: fit-content;
+    padding: 15px 25px;
 }
 .adventure{
     background-image: url(cave.png);

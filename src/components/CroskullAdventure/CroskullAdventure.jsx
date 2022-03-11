@@ -373,7 +373,8 @@ const CroskullAdventure = () => {
                 ! approval ?
                 (
                 <button 
-                  className="sk-claim-btn"
+                  className={`sk-claim-btn ${ blockchain.accountAddress ? '' : 'disabled'}`}
+                  disabled={ blockchain.accountAddress ? false : true}
                   onClick={ () => {
                     setApprovalforAll()
                   }}

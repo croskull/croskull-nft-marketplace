@@ -15,9 +15,8 @@
   transform: translateX(200%);
 }
 
-
 @media (min-width:320px) and (max-width:640px) { 
-  .merchant{
+  .container-fluid.merchant{
     max-height: 100% !important;
     height: 100% !important;
   }
