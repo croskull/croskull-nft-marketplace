@@ -160,14 +160,14 @@ const CroskullAdventure = () => {
   let malusAmount = rewards > 0 ? parseFloat(formatEther( rewards , true) - formatEther( rewardPlusMalus, true)).toFixed(2) : 0
   return (
     <>
-      <div className="sk-flex sk-row">
-        <div className="sk-container wd-66">
+      <div className="sk-flex sk-row h100">
+        <div className="sk-container wd-66 h100">
           <div className="sk-box">
             <div className="tab-head">
               <h2>Skulls in Adventure {  totalSkulls > 0 ?  `(${croSkullsStaked.length}/${totalSkulls})` : `Loading` } </h2>
             </div>
             <div className="sk-box-content sk-column">
-              <div className={`skulls-list in-adventure active`}>
+              <div className={`skulls-list in-adventure h100 active`}>
                 <div className="list-head">
                   <div className="div-button">
                     {
@@ -231,13 +231,13 @@ const CroskullAdventure = () => {
             </div>
           </div>
         </div>
-        <div className="sk-container wd-33">
-          <div className="sk-flex sk-column">
+        <div className="sk-container wd-33 h100">
+          <div className="sk-flex sk-column details ">
             <img 
               src={season1Banner}  
               className="adventure-image"
             />
-            <div className="sk-box sk-flex sk-column">
+            <div className="sk-box sk-flex sk-column h100">
               <div className="progress-info season-container">
                 <FontAwesomeIcon 
                   icon={faDungeon} 
@@ -285,90 +285,93 @@ const CroskullAdventure = () => {
                   </div>
                 </div>
               </div>
-              <div className="sk-box-content switcher-wrapper">
-                  <button
-                    className={`skull-button view-button ${ detailsView ? '' : 'active'}`}
-                    onClick={
-                      () => setDetailsView(false)
-                    }
-                  >
-                    Your Stats
-                  </button>
-                  <button
-                    className={`skull-button view-button ${ ! detailsView ? '' : 'active'}`}
-                    onClick={
-                      () => setDetailsView(true)
-                    }
-                  >
-                    Global Stats
-                  </button>
+              <div class="switcher-container">
+                <div className=" switcher-wrapper">
+                    <button
+                      className={`switcher-button view-button ${ detailsView ? '' : 'active'}`}
+                      onClick={
+                        () => setDetailsView(false)
+                      }
+                    >
+                      Your Stats
+                    </button>
+                    <button
+                      className={`switcher-button view-button ${ ! detailsView ? '' : 'active'}`}
+                      onClick={
+                        () => setDetailsView(true)
+                      }
+                    >
+                      Global Stats
+                    </button>
+                </div>
+                <div className={`sk-box-content sk-column first ${ ! detailsView ? 'show' : 'hide'}`}>
+                  <MetricContainer 
+                    label="Skulls in Adventure"
+                    value={croSkullsStaked.length}
+                    icon={SkullAdventure}
+                    tooltip="Amount of your CroSkulls currently in Adventure."
+                  />
+                  <MetricContainer 
+                    label="Mined Grave"
+                    value={formatEther(rewards)}
+                    icon={Grave}
+                    tooltip="Amount of Grave you've generated since the start. This is used as main metric to calculate the actual rewards minus actual Malus Fee."
+                  />
+                  <MetricContainer 
+                    label="Current Malus"
+                    addClass="negative"
+                    value={malusAmount}
+                    icon={GraveBurn}
+                    tooltip="Amount of Grave you'll burn based on Mined Grave and current Malus Burn Fee."
+                  />
+                  <MetricContainer 
+                    label="Available to Withdraw"
+                    addClass="positive"
+                    value={formatEther(rewardPlusMalus)}
+                    icon={GraveAvailable}
+                    tooltip="Amount of Grave you'll recieve based on Mined Grave and current Malus Burn Fee."
+                  />
+                  <MetricContainer 
+                    label="Claimed Grave"
+                    value={formatEther(alreadyClaimed)}
+                    icon={Grave}
+                    tooltip="Amount of Grave you've already harvested from the Adventure."
+                  />
+                  <MetricContainer 
+                    label="Mined Soul"
+                    value={soulsGenerated}
+                    icon={Soul}
+                    tooltip="Total amount of Soul mined since the adventure start. It actually reflect the amount of Soul you'll recieve once claim done."
+                  />
+                </div>
+                <div className={`sk-box-content sk-column ${ detailsView ? 'show' : 'hide'}`}>
+                  <MetricContainer 
+                    label="Skulls Staked"
+                    value={totalSkullsStaked}
+                    icon={SkullAdventure}
+                    tooltip="Keep track of all the CroSkulls actually in adventure."
+                  />
+                  <MetricContainer 
+                    label="Mined Grave"
+                    value={formatEther(totalWithdrawedGraves)}
+                    icon={GraveMined}
+                    tooltip="Total amount of all the Grave withdrawed since the start. Don't reflect total generated rewards, but just withdrawed."
+                  />
+                  <MetricContainer 
+                    label="Burned Grave"
+                    value={`${formatEther(burnedGraves) } (${burnedPercent}%)`}
+                    icon={GraveBurn}
+                    tooltip="Total Burned Grave amount base on the total supply, not only Adventure burn. ( total percent of burn )."
+                  />
+                  <MetricContainer 
+                    label="Mined Soul"
+                    value={totalWithdrawedSouls}
+                    icon={Soul}
+                    tooltip="Total amount of all the Soul withdrawed since the start. Don't reflect total generated Soul, but just withdrawed."
+                  />
+                </div>
               </div>
-              <div className={`sk-box-content sk-column ${ ! detailsView ? 'show' : 'hide'}`}>
-                <MetricContainer 
-                  label="Skulls in Adventure"
-                  value={croSkullsStaked.length}
-                  icon={SkullAdventure}
-                  tooltip="Amount of your CroSkulls currently in Adventure."
-                />
-                <MetricContainer 
-                  label="Mined Grave"
-                  value={formatEther(rewards)}
-                  icon={Grave}
-                  tooltip="Amount of Grave you've generated since the start. This is used as main metric to calculate the actual rewards minus actual Malus Fee."
-                />
-                <MetricContainer 
-                  label="Current Malus"
-                  addClass="negative"
-                  value={malusAmount}
-                  icon={GraveBurn}
-                  tooltip="Amount of Grave you'll burn based on Mined Grave and current Malus Burn Fee."
-                />
-                <MetricContainer 
-                  label="Available to Withdraw"
-                  addClass="positive"
-                  value={formatEther(rewardPlusMalus)}
-                  icon={GraveAvailable}
-                  tooltip="Amount of Grave you'll recieve based on Mined Grave and current Malus Burn Fee."
-                />
-                <MetricContainer 
-                  label="Claimed Grave"
-                  value={formatEther(alreadyClaimed)}
-                  icon={Grave}
-                  tooltip="Amount of Grave you've already harvested from the Adventure."
-                />
-                <MetricContainer 
-                  label="Mined Soul"
-                  value={soulsGenerated}
-                  icon={Soul}
-                  tooltip="Total amount of Soul mined since the adventure start. It actually reflect the amount of Soul you'll recieve once claim done."
-                />
-              </div>
-              <div className={`sk-box-content sk-column ${ detailsView ? 'show' : 'hide'}`}>
-                <MetricContainer 
-                  label="Skulls Staked"
-                  value={totalSkullsStaked}
-                  icon={SkullAdventure}
-                  tooltip="Keep track of all the CroSkulls actually in adventure."
-                />
-                <MetricContainer 
-                  label="Mined Grave"
-                  value={formatEther(totalWithdrawedGraves)}
-                  icon={GraveMined}
-                  tooltip="Total amount of all the Grave withdrawed since the start. Don't reflect total generated rewards, but just withdrawed."
-                />
-                <MetricContainer 
-                  label="Burned Grave"
-                  value={`${formatEther(burnedGraves) } (${burnedPercent}%)`}
-                  icon={GraveBurn}
-                  tooltip="Total Burned Grave amount base on the total supply, not only Adventure burn. ( total percent of burn )."
-                />
-                <MetricContainer 
-                  label="Mined Soul"
-                  value={totalWithdrawedSouls}
-                  icon={Soul}
-                  tooltip="Total amount of all the Soul withdrawed since the start. Don't reflect total generated Soul, but just withdrawed."
-                />
-              </div>
+              
               {
                 ! approval ?
                 (

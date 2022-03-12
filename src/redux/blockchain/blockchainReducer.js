@@ -15,6 +15,7 @@ const initialState = {
     croSkullsSouls: false,
     croPotionBlue: false,
     croPotionRed: false,
+    ebisusMarketplace: false,
     providerConnected: false,
     contractDetected: false,
     ethers: ethers,
@@ -45,6 +46,7 @@ const blockchainReducer = (state = initialState, action) => {
                 croSkullsSouls: payload.croSkullsSouls,
                 croPotionBlue: payload.croPotionBlue,
                 croPotionRed: payload.croPotionRed,
+                ebisusMarketplace: payload.ebisusMarketplace,
                 provider: payload.provider,
                 providerConnected: true,
             };
@@ -76,6 +78,7 @@ const blockchainReducer = (state = initialState, action) => {
                 croSkullsSouls: false,
                 croPotionBlue: false,
                 croPotionRed: false,
+                ebisusMarketplace: false,
                 providerConnected: false,
                 contractDetected: false,
             }

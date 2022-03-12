@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { HashRouter, Route, Switch } from "react-router-dom";
-import AllCroSkulls from "./components/AllCroSkulls/AllCroSkulls";
+import Marketplace from "./components/Marketplace/Marketplace";
 import AccountDetails from "./components/AccountDetails/AccountDetails";
 import CroskullAdventure from "./components/CroskullAdventure/CroskullAdventure";
 import Merchant from "./components/Merchant/Merchant";
@@ -9,7 +9,6 @@ import Navbar from "./components/Navbar/Navbar";
 import Notifier from "./components/Notifier/Notifier";
 import Tavern from "./components/Tavern/Tavern";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
-import market from './utils/market.jpg'
 import { ethers } from 'ethers';
 import store from "./redux/store";
 import "./App.css";
@@ -295,52 +294,13 @@ class App extends Component {
                         <Route
                           path="/marketplace"
                           render={() => (
-                            this.state.isMarketplace ? 
-                              <AllCroSkulls
-                                accountAddress={this.state.accountAddress}
-                                marketplaceView={this.state.marketplaceView}
-                                croSkullsCount={this.state.croSkullsCount}
-                                changeTokenPrice={this.changeTokenPrice}
-                                toggleForSale={this.toggleForSale}
-                                buyCroSkull={this.buyCroSkull}
-                                loading={this.state.loading}
-                                floorPrice={this.state.floorPrice}
-                                highPrice={this.state.highPrice}
-                                handleOrderChange={this.handleOrderChange}
-                                handleFilterBar={this.handleFilterBar}
-                                handleStatusNFTFilter={this.handleStatusNFTFilter}
-                                order={this.state.order}
-                                traits={this.state.traits}
-                                traitsTypes={this.state.traitsTypes}
-                                croSkullsMaxSupply={this.state.croSkullsMaxSupply}
-                                resetFilter={this.resetFilter}
-                                />
-                              :
-                              <div class="">
-                                <div className="market-title">
-                                  <h2>
-                                  Click <a href="https://app.ebisusbay.com/collection/0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F">Here!</a> to trade CroSkull on Ebisu's bay marketplace!
-                                  </h2>
-                                </div>
-                                <br></br>
-                                <img src={market} className="market" />
-                              </div>     
-                            )}
-                          />
+                            <Marketplace></Marketplace>
+                          )} 
+                        />
                         <Route
                           path="/adventure"
                           render={() => (
-                            <CroskullAdventure
-                              accountAddress={this.state.accountAddress}
-                              croSkulls={this.state.croSkulls}
-                              totalTokensOwnedByAccount={
-                                this.state.totalTokensOwnedByAccount
-                              }
-                              provider={ethProvider}
-                              croSkullContract={contract}
-                              stakingContract={stakingContract}
-                              baseURI={this.state.baseURI}
-                            />
+                            <CroskullAdventure></CroskullAdventure>
                           )}
                         />
                         <Route
