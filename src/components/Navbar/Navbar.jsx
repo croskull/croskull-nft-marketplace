@@ -1,5 +1,5 @@
 import React , { useState } from "react";
-import { UserAgent } from "react-useragent"
+
 import {
   ethers
 } from 'ethers';

@@ -16,7 +16,7 @@ import eggImage from './egg.png';
 import bluePotionImage from './bluePotionImage.png';
 import redPotionImage from './redPotionImage.png';
 import "react-quill/dist/quill.snow.css";
-import './tavern.css';
+import './Tavern.css';
 
 const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/"
 const ipfsUri128 = "https://croskull.mypinata.cloud/ipfs/QmZn1HvYE1o1J8LhNpxFTj5k8LQb2bWT49YvbrhB3r19Xx/"

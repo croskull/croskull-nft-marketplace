@@ -639,6 +639,7 @@ label {
   align-content: center;
   z-index: 9999;
   background: #00000065 !important;
+  overflow-y: hidden;
 }
 
 .story-modal .container {
@@ -647,6 +648,7 @@ label {
   display: flex;
   flex-direction: row;
   max-width: 720px;
+  overflow-y: auto;
 }
 
 .story-modal .description {
