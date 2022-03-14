@@ -32,3 +32,4 @@ build.zip
 src/components/Marketplace/mkt_bkg.jpg
 src/components/Navbar/Navbar.jsx
 src/components/Navbar/Navbar.jsx
+src/App.js

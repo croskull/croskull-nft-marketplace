@@ -12,6 +12,7 @@ import { TransitionGroup, CSSTransition } from "react-transition-group";
 import { ethers } from 'ethers';
 import store from "./redux/store";
 import "./App.css";
+import Raffle from "./components/Raffle/Raffle"
 
 let provider, contract, stakingContract, ethProvider;
 class App extends Component {
@@ -319,6 +320,12 @@ class App extends Component {
                           path="/analytics"
                           render={() => (
                             <Analytics />
+                          )}
+                        />
+                        <Route 
+                          path="/raffle"
+                          render={() => (
+                            <Raffle accountAddress={this.state.accountAddress} />
                           )}
                         />
                       </Switch>

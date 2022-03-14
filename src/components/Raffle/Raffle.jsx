@@ -9,8 +9,10 @@ import { faHourglassHalf, faQuestionCircle } from '@fortawesome/free-solid-svg-i
 import MetricContainer from "../MetricContainer/MetricContainer";
 import Soul from "../Navbar/soul.png";
 import Rune from "../Navbar/grave-burn.png";
-const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/"
-const ipfsUri128 = "https://croskull.mypinata.cloud/ipfs/QmZn1HvYE1o1J8LhNpxFTj5k8LQb2bWT49YvbrhB3r19Xx/"
+import Coins from "./coins.png";
+const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/";
+const ipfsUri128 = "https://croskull.mypinata.cloud/ipfs/QmZn1HvYE1o1J8LhNpxFTj5k8LQb2bWT49YvbrhB3r19Xx/";
+
 const Raffle = ({ accountAddress }) => {
   const raf1 = {
     type: "Crazy-Raffle",
@@ -109,10 +111,10 @@ const Raffle = ({ accountAddress }) => {
             <span class="close-btn" onClick={() => { closeModal() }}>&times;</span>
             {
               modalState.winners.map(winner => {
-                return(
+                return (
                   <div>
                     {winner} wins {modalState.prize} coins;
-                    </div>
+                  </div>
                 )
               })
             }
@@ -131,10 +133,12 @@ const Raffle = ({ accountAddress }) => {
               let raffleStart = raf.start - new Date();
               let raffleDurationDate = formatDate(raffleDuration);
               return (
-                <div className="sk-raffle-item sk-flex">
-                  <div className="raffle-box-1 wd-66">
-
-                    <div >
+                <div className="sk-raffle-item sk-flex sk-row" >
+                  <div className="wd-22">
+                    <img src={Coins} className="img-raffle" />
+                  </div>
+                  <div className="raffle-box-1 wd-44">
+                    <div  >
                       <h5>{raf.type} <FontAwesomeIcon icon={faQuestionCircle} title={raf.type.includes('Normal') ? normalDesc : crazyDesc} /> |
                         | N-Winners: {raf.nWinners} | N-Partecipants: {raf.nPart}</h5>
                       <h3>{raf.title}</h3>

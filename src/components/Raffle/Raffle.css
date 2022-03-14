@@ -10,7 +10,7 @@
 .raffle-box-1 {
     padding-top: 20px;
     padding-bottom: 20px;
-    padding-left: 10px;
+    padding-left: 20px;
     padding-right: 10px;
   }
   .raffle-box-2 {
@@ -53,6 +53,15 @@
     width: 80%;
     background-color: #B20000;
     color: white;
+  }
+  .img-raffle
+  {
+    width: 98%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 1%;
+    margin-right: 1%;
+    border-radius: 5px;
   }
 
   .modal {

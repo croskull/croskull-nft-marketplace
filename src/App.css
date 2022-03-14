@@ -254,6 +254,12 @@ a:hover {
 .wd-100{
   min-width: 100%;
 }
+.wd-44{
+  min-width: 44%;
+}
+.wd-22{
+  min-width: 22%;
+}
 
 /** ACTION BUTTON */
 
