@@ -127,7 +127,7 @@ const Raffle = ({ accountAddress }) => {
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget urna ex. Etiam eleifend interdum lobortis. Morbi laoreet purus sed felis semper posuere.
           </p>
-          <div className="sk-raffle">
+          <div className="sk-raffle sk-flex sk-column">
             {(rafs.map(raf => {
               let raffleDuration = raf.finish - new Date();
               let raffleStart = raf.start - new Date();
@@ -137,19 +137,17 @@ const Raffle = ({ accountAddress }) => {
                   <div className="wd-22">
                     <img src={Coins} className="img-raffle" />
                   </div>
-                  <div className="raffle-box-1 wd-44">
-                    <div  >
-                      <h5>{raf.type} <FontAwesomeIcon icon={faQuestionCircle} title={raf.type.includes('Normal') ? normalDesc : crazyDesc} /> |
-                        | N-Winners: {raf.nWinners} | N-Partecipants: {raf.nPart}</h5>
+                  <div className="raffle-box-1 wd-44 sk-flex sk-column">
+                      <span className="sk-raffle-details">
+                        { `${raf.type} | ${raf.nWinners} Winners | ${raf.Part} Participants` }
+                      </span>
                       <h3>{raf.title}</h3>
-                      <hr></hr>
                       <p>
                         {raf.text} {raf.win} <img src={
                           raf.coin.includes("Grave") ? Grave :
                             raf.coin.includes("Soul") ? Soul :
                               Rune} className="skull-icon" /> will be airdropped!
                       </p>
-                    </div>
                   </div>
                   {
                     raffleDuration > 0 ?

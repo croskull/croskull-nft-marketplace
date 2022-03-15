@@ -16,7 +16,7 @@ import eggImage from './egg.png';
 import bluePotionImage from './bluePotionImage.png';
 import redPotionImage from './redPotionImage.png';
 import "react-quill/dist/quill.snow.css";
-import './Tavern.css';
+import './tavern.css';
 
 const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/"
 const ipfsUri128 = "https://croskull.mypinata.cloud/ipfs/QmZn1HvYE1o1J8LhNpxFTj5k8LQb2bWT49YvbrhB3r19Xx/"
@@ -93,10 +93,9 @@ const Tavern = () => {
   
   const fetchSkullDescription = async ( { tokenId, ownerOf } ) => {
     let { croSkullsDescription, accountAddress } = blockchain
-    console.log( tokenId )
     let ipfsHash = await croSkullsDescription.descriptionHashes( tokenId )
     ipfsHash = ipfsHash.toString()
-    if( ipfsHash ) {
+    if( ipfsHash) {
       ipfsHash = ipfsHash.replace('ipfs://', 'https://ipfs.infura.io/ipfs/')
       let hashMetadata = await fetch( ipfsHash );
       let { name, description, birthDate, deathDate, hobby, twitter, faction} = await hashMetadata.json();
@@ -731,8 +730,8 @@ const Tavern = () => {
                     src={`${ipfsUri480}${tokenId}.webp`}
                     className='card div-skull'
                   />
-                  <span>Birth Date: {  birthDate != 0 ?  new Date(birthDate * 1000).toISOString().slice(0, 10) : '' }</span>
-                  <span>Death Date: { deathDate != 0 ? new Date(deathDate * 1000).toISOString().slice(0, 10) : '' }</span>
+                  <span>Birth Date: {  birthDate > 0 ?  new Date(birthDate * 1000).toISOString().slice(0, 10) : '' }</span>
+                  <span>Death Date: {  deathDate > 0 ? new Date(deathDate * 1000).toISOString().slice(0, 10) : '' }</span>
                   <span>Faction: { faction }</span>
                   <span>Twitter: { twitter !== '' ? (
                     <a href={ twitter ? `https://twitter.com/${twitter.replace('@', '')}` : ''} target="_blank" rel="noopener noreferrer">{twitter}</a>
