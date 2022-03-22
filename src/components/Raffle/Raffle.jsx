@@ -25,7 +25,7 @@ const Raffle = ({ accountAddress }) => {
     start: new Date(2022, 1, 12),
     finish: new Date(2022, 1, 25),
     partecipants: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    winners: [1, 3],
+    winners: ['0xb413198d200e371db7D65759Ec8b4E67dDb23Ad2', '0xb513198d200e371db7D65759Ec8b4E67dDb23F35'],
     text: 'Join now this amazing raffle in partnership with MM.Finance.',
   }
 
@@ -60,15 +60,19 @@ const Raffle = ({ accountAddress }) => {
   }
 
   const [modalState, setModalState] = useState({
+    title: '',
     winners: [],
     prize: 1,
+    coin: ''
   });
 
 
   const openModal = (raf) => {
     setModalState({
+      title: raf.title,
       winners: raf.winners,
-      prize: raf.win / raf.nWinners
+      prize: raf.win / raf.nWinners,
+      coin: raf.coin
     })
     let modal = document.getElementById("modal-winners");
     modal.style.display = "block";
@@ -109,11 +113,17 @@ const Raffle = ({ accountAddress }) => {
         <div className="modal-w-content">
           <div className="sk-box">
             <span class="close-btn" onClick={() => { closeModal() }}>&times;</span>
+            <h1>{modalState.title}</h1>
+            <div className="modal-header"> 
+            <h3>Prize</h3>
+            <span><h3>Address</h3></span>
+            </div>
             {
-              modalState.winners.map(winner => {
+              modalState.winners.map((winner,i) => {
                 return (
-                  <div>
-                    {winner} wins {modalState.prize} coins;
+                  <div className="modal-header">
+                    <h3>{i+1}</h3>
+                    <span className="address">{winner}</span>
                   </div>
                 )
               })

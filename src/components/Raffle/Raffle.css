@@ -58,7 +58,15 @@
   margin: 6px;
   border-radius: 6px;
 }
-
+.raffle-box-1 img{
+  margin-top: -1%;
+}
+.raffle-box-2 img{
+  margin-top: -1%;
+}
+.sk-box .close-btn{
+  text-align: right;
+}
 .modal {
   position: absolute;
   display: none;
@@ -77,7 +85,7 @@ overflow-y: hidden;
 }
 .modal-w-content {
   position: relative; 
-  top:50%;
+  top:40%;
   padding: 20px; 
   margin: auto; 
   width: 30%;  
@@ -95,11 +103,37 @@ overflow-y: hidden;
 .close-btn:hover {
   color: darkgray;
 }
+.modal-header h3{
+  display: inline;
+}
+.address{
+  font-size: 1.5vh;
+}
+#modal-winners img{
+margin-top: -15%;
+}
+#modal-winners h1{
+  text-align: center;
+}
 @-webkit-keyframes animatetop {
   from {top:-300px; opacity:0} 
-  to {top:50; opacity:1}
+  to {top:40; opacity:1}
 }
 @keyframes animatetop {
   from {top:-300px; opacity:0}
-  to {top:50; opacity:1}
+  to {top:40; opacity:1}
+}
+
+@media (min-width:320px) and (max-width:640px) { 
+  .modal-w-content {
+    position: relative; 
+    top:30%;
+    padding: 20px; 
+    margin: auto; 
+    width: 100%;  
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
+  }
 }
