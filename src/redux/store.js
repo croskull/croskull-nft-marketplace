@@ -3,11 +3,13 @@ import thunk from "redux-thunk";
 import blockchainReducer from "./blockchain/blockchainReducer";
 import dataReducer from "./data/dataReducer";
 import marketplaceReducer from "./marketplace/marketplaceReducer";
+import raffleReducer from "./raffle/raffleReducer";
 
 const rootReducer = combineReducers({
   blockchain: blockchainReducer,
   data: dataReducer,
-  marketplace: marketplaceReducer
+  marketplace: marketplaceReducer,
+  raffle: raffleReducer
 });
 
 const middleware = [thunk];

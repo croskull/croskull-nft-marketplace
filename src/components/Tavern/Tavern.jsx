@@ -8,13 +8,13 @@ import { useDispatch } from "react-redux";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDungeon, faRunning, faCoins, faSkullCrossbones, faSpinner, faRedoAlt  } from '@fortawesome/free-solid-svg-icons';
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import ReactQuill from "react-quill";
 import IpfsHttpClient from "ipfs-http-client";
 import hexagon from './hexagon.svg';
 import inventoryIcon from './inventory.svg';
 import eggImage from './egg.png';
 import bluePotionImage from './bluePotionImage.png';
 import redPotionImage from './redPotionImage.png';
+import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import './tavern.css';
 
@@ -787,18 +787,18 @@ const Tavern = () => {
 }
 
 let modules = {
-    toolbar: [
-      [{ 'header': [1, 2, false] }],
-      ['bold', 'italic', 'underline','strike', 'blockquote'],
-      [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
-      ['clean']
-    ],
-  };
+  toolbar: [
+    [{ 'header': [1, 2, false] }],
+    ['bold', 'italic', 'underline','strike', 'blockquote'],
+    [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+    ['clean']
+  ],
+};
 
-  let formats = [
-    'header',
-    'bold', 'italic', 'underline', 'strike', 'blockquote',
-    'list', 'bullet', 'indent',
-  ];
+let formats = [
+  'header',
+  'bold', 'italic', 'underline', 'strike', 'blockquote',
+  'list', 'bullet', 'indent',
+];
 
 export default Tavern;

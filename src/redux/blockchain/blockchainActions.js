@@ -12,6 +12,7 @@ import BluePotion from "../../abis/CroSkullsBluePotions.json";
 import RedPotion from "../../abis/CroSkullsRedPotions.json";
 import PetEggs from "../../abis/petEggs.json";
 import Souls from "../../abis/Souls.json";
+import Raffle from "../../abis/SkullsRaffle.json";
 import {
   sendNotification, getSkullsData, cleanData
 } from "../data/dataActions";
@@ -25,6 +26,7 @@ const petEggsAddress = PetEggs.networks[networkId].address;
 const soulsAddress = Souls.networks[networkId].address;
 const blueAddress = BluePotion.networks[networkId].address;
 const redAddress = RedPotion.networks[networkId].address;
+const raffleAddress = Raffle.networks[networkId].address;
 const ebisusAddress = "0x7a3CdB2364f92369a602CAE81167d0679087e6a3";
 
 const ebisusAbi = [
@@ -106,6 +108,7 @@ export const connect = ( ethProvider ) => {
             let croSkullsDescription = new ethers.Contract(descriptionAddress, Description.abi, signer)
             let croSkullsPetEggs = new ethers.Contract(petEggsAddress, PetEggs.abi, signer)
             let croSkullsSouls = new ethers.Contract(soulsAddress, Souls.abi, signer)
+            let croRaffle = new ethers.Contract(raffleAddress, Raffle.abi, signer)
             let ebisusMarketplace = new ethers.Contract(ebisusAddress, ebisusAbi, signer)
             let accounts = await ethProvider.provider.request({
                 method: 'eth_accounts',
@@ -133,6 +136,7 @@ export const connect = ( ethProvider ) => {
                     croSkullsSouls,
                     croPotionBlue,
                     croPotionRed,
+                    croRaffle,
                     ebisusMarketplace
                 }))
                 dispatch(getSkullsData())

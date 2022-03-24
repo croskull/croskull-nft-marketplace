@@ -1,62 +1,63 @@
 import React, { useEffect, useState } from "react";
-
-import "react-quill/dist/quill.snow.css";
-import coins from "./coins.png";
-import './Raffle.css';
-import Grave from "../Navbar/grave.png";
+import { ethers } from 'ethers';
+import { useDispatch } from "react-redux";
+import store from "../../redux/store";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHourglassHalf, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import MetricContainer from "../MetricContainer/MetricContainer";
-import Soul from "../Navbar/soul.png";
-import Rune from "../Navbar/grave-burn.png";
+import { loadRaffleData } from '../../redux/raffle/raffleActions';
+import { faHourglassHalf } from '@fortawesome/free-solid-svg-icons';
+import { sendNotification } from "../../redux/data/dataActions";
+import IpfsHttpClient from "ipfs-http-client";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import Coins from "./coins.png";
-const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/";
-const ipfsUri128 = "https://croskull.mypinata.cloud/ipfs/QmZn1HvYE1o1J8LhNpxFTj5k8LQb2bWT49YvbrhB3r19Xx/";
+import Grave from "../Navbar/grave.png";
+import Rune from "../Navbar/grave-burn.png";
+import Soul from "../Navbar/soul.png";
+import "react-quill/dist/quill.snow.css";
+import './Raffle.css';
 
 const Raffle = ({ accountAddress }) => {
+  let dispatch = useDispatch()
+  let { blockchain, raffle } = store.getState()
+  let { formatEther } = blockchain
+  let { isManager, raffles } = raffle;
+  const [hasData, toggleData] = useState(false)
+
+  useEffect( () => {
+      if( raffle.init ) return 
+      dispatch(loadRaffleData())
+  }, [blockchain.croRaffle])
+
   const raf1 = {
-    type: "Crazy-Raffle",
-    title: "First Raffle",
-    nWinners: 2,
-    nPart: 276,
-    cost: 5,
-    win: 1000,
-    coin: 'Soul',
-    start: new Date(2022, 1, 12),
-    finish: new Date(2022, 1, 25),
-    partecipants: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    winners: ['0xb413198d200e371db7D65759Ec8b4E67dDb23Ad2', '0xb513198d200e371db7D65759Ec8b4E67dDb23F35'],
-    text: 'Join now this amazing raffle in partnership with MM.Finance.',
+    type: 500,
+    image: 0,
+    title: "Raffle Title",
+    winnersCount: 5,
+    participants: 45,
+    maxParticipants: 0,
+    cost: 0,
+    collectionName: '',
+    collectionAddress: 0,
+    startTimestamp: new Date(2022, 1, 12),
+    endTimestamp: new Date(2022, 1, 21),
+    winners: [],
+    description: 'Join now this amazing raffle in partnership with MM.Finance.',
   }
 
   const raf2 = {
-    type: "Normal-Raffle",
-    title: "Second Raffle",
-    nWinners: 5,
-    nPart: 1000,
-    cost: 5,
-    win: 2000,
-    coin: 'Grave',
-    start: new Date(2022, 2, 12),
-    finish: new Date(2022, 2, 25),
-    partecipants: [],
+    type: 0,
+    image: 0,
+    title: "Raffle Title 2",
+    winnersCount: 5,
+    participants: 45,
+    maxParticipants: 50,
+    cost: 0,
+    collectionName: '',
+    collectionAddress: 0,
+    startTimestamp: new Date(2022, 1, 12),
+    endTimestamp: new Date(2022, 3, 27),
     winners: [],
-    text: 'Join now this amazing raffle in partnership with MM.Finance.',
-  }
-
-  const raf3 = {
-    type: "Normal-Raffle",
-    title: "Thrid Raffle",
-    nWinners: 5,
-    nPart: 10000,
-    cost: 10,
-    win: 20000,
-    coin: 'Rude',
-    start: new Date(2022, 3, 1),
-    finish: new Date(2022, 3, 13),
-    partecipants: [],
-    winners: [],
-    text: 'Join now this amazing raffle in partnership with MM.Finance.',
+    description: 'Join now this amazing raffle in partnership with MM.Finance.',
   }
 
   const [modalState, setModalState] = useState({
@@ -65,6 +66,34 @@ const Raffle = ({ accountAddress }) => {
     prize: 1,
     coin: ''
   });
+
+  const [raffleCreator, setRaffleCreator] = useState( {
+    display: false,
+    image: 0,
+    type: 0,
+    title: "Thrid Raffle",
+    winnersCount: 0,
+    maxParticipants: 0,
+    cost: 0,
+    collectionName: '',
+    collectionAddress: 0,
+    startTimestamp: 0,
+    endTimestamp: 0,
+    description: '',
+  } )
+
+  const handleFieldChange = ( event ) => {
+    let value = event.target ? event.target.value.replace(/</g, "&lt;").replace(/>/g, "&gt;") : event
+    let name = event.target ? event.target.id : "description"
+    let type = event.target ? event.target.type : "description"
+    if( type === 'date' ){
+      value = parseInt( new Date( value ).getTime() / 1000 )
+    }
+    setRaffleCreator( {
+      ...raffleCreator,
+      [name]: value
+    } )
+  }
 
 
   const openModal = (raf) => {
@@ -82,13 +111,12 @@ const Raffle = ({ accountAddress }) => {
     let modal = document.getElementById("modal-winners");
     modal.style.display = "none";
   }
-  const rafs = [raf1, raf2, raf3, raf2, raf1, raf2, raf1, raf2, raf1, raf2, raf1, raf2];
+  const rafs = [raf1, raf2];
 
   const DAY_IN_SEC = 60 * 60 * 24 * 1000;
   const HUNDRED_DAYS_IN_SEC = 100 * DAY_IN_SEC//100 * DAY_IN_SEC;
   const formatDate = (timestamp) => {
-    console.log(timestamp);
-    let tsHours = timestamp / 60 / 60 / 1000
+    let tsHours = timestamp / 60 / 60
     let days = parseInt(timestamp / DAY_IN_SEC)
     let hoursDiff = tsHours - (days * 24)
     let hours = parseInt(hoursDiff)
@@ -104,10 +132,84 @@ const Raffle = ({ accountAddress }) => {
   let crazyDesc = 'A Crazy Raffle, every time someone join the time is reduced by 5%';
   let normalDesc = 'A Normal raffle join to get a chance to win!';
 
+  const retrieveImage = (e) => {
+    const data = e.target.files[0];
+    const reader = new window.FileReader();
+    reader.readAsArrayBuffer(data);
+    reader.onloadend = () => {
+      setRaffleCreator({
+        ...raffleCreator,
+        image: Buffer(reader.result)
+      });
+    }
+    e.preventDefault();  
+  }
 
+
+  const participateRaffle = async () => {
+    return
+  }
+
+  const addRaffle = async ( ) => {
+    let { croRaffle } = blockchain
+    setRaffleCreator({
+      ...raffleCreator,
+      startTimestamp: parseInt( new Date( ).getTime() / 1000 ),
+    })
+    let rafflefied = JSON.stringify(raffleCreator)
+    let descriptionBuffer = Buffer.from(rafflefied)
+    try {
+      const client = IpfsHttpClient(new URL('https://ipfs.infura.io:5001/api/v0'));
+      if( raffleCreator.image ){
+        const ipfsImage = await client.add(raffleCreator.image);
+        setRaffleCreator({
+          ...raffleCreator,
+          image: `ipfs://${ipfsImage.path}`
+        })
+      }
+      const ipfsResponse = await client.add(descriptionBuffer);
+      if( ipfsResponse.path !== "" ){
+          let ipfsPath = `ipfs://${ipfsResponse.path}`
+          let addRaffleTx = croRaffle.addRaffle(
+            raffleCreator.winnersCount,
+            raffleCreator.collectionAddress,
+            ethers.utils.parseEther(raffleCreator.cost),
+            raffleCreator.endTimestamp,
+            ipfsPath,
+            raffleCreator.type * 100,
+            raffleCreator.maxParticipants
+          )
+            //return;
+            await addRaffleTx.then(
+              async (tx) => {
+                console.log( tx )
+                dispatch(sendNotification({
+                  title: `Transaction Sent`,
+                  message: 'Waiting for confirmation...',
+                  tx,
+                  type: "info"
+                }))
+                await tx.wait(2)
+                dispatch(sendNotification({
+                  title: `Raffle Created!`,
+                  message: `Raffle Created Succesful`,
+                  tx,
+                  type: "success"
+                }))
+                setRaffleCreator({
+                  ...raffleCreator,
+                  display: false
+                })
+                dispatch(loadRaffleData())
+              }
+          )
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
 
   return (
-
     <>
       <div className="modal" id="modal-winners">
         <div className="modal-w-content">
@@ -115,90 +217,256 @@ const Raffle = ({ accountAddress }) => {
             <span class="close-btn" onClick={() => { closeModal() }}>&times;</span>
             <h1>{modalState.title}</h1>
             <div className="modal-header"> 
-            <h3>Prize</h3>
-            <span><h3>Address</h3></span>
+              <h3>Prize</h3>
+              <span>
+                <h3>Address</h3>
+              </span>
             </div>
             {
-              modalState.winners.map((winner,i) => {
-                return (
-                  <div className="modal-header">
-                    <h3>{i+1}</h3>
-                    <span className="address">{winner}</span>
-                  </div>
-                )
-              })
+              /*raffles && raffles.length > 0 ?
+                raffles.winners.map((winner,i) => {
+                  return (
+                    <div className="modal-header">
+                      <h3>{i+1}</h3>
+                      <span className="address">{winner}</span>
+                    </div>
+                  )
+                })
+              :
+              ('')*/
             }
           </div>
         </div>
       </div>
+        {
+          raffleCreator.display && isManager ? (
+            <div className="story-modal">
+              <div 
+                className="sk-box container" 
+              >
+              <div className="image">
+                <label for="image">Raffle Image</label>
+                <input type="file" name="image" onChange={retrieveImage} />
+                <label for="endTimestamp">Finish date</label>
+                <input
+                  id="endTimestamp"
+                  type="date"
+                  name="endTimestamp"
+                  onChange={handleFieldChange}
+                />
+                <label htmlFor="type">Fast Raffle ( 0 = deactivated )</label>
+                <input
+                  id="type"
+                  type="number"
+                  name="type"
+                  onChange={handleFieldChange}
+                />
+                <label htmlFor="maxParticipants">Max Participants ( 0 = deactivated )</label>
+                <input
+                  id="maxParticipants"
+                  type="number"
+                  name="maxParticipants"
+                  onChange={handleFieldChange}
+                />
+                <label htmlFor="maxParticipants">Ticket Cost</label>
+                <input
+                  id="cost"
+                  type="number"
+                  name="cost"
+                  onChange={handleFieldChange}
+                />
+                <label htmlFor="winnersCount">Winners ( max 10 )</label>
+                <input
+                  id="winnersCount"
+                  type="number"
+                  name="winnersCount"
+                  onChange={handleFieldChange}
+                />
+              </div>
+                <div className="metadata">
+                  <div
+                    className="close-icon"
+                    onClick={ () => {
+                      setRaffleCreator({
+                        ...raffleCreator,
+                        display: false
+                      })
+                    }}
+                  >
+                    Back
+                  </div>
+                  <h2 style={{ fontSize: '18px' }}>Create a new Raffle</h2>
+                  <label for="collectionName">Collection Name</label>
+                  <input
+                    id="collectionName"
+                    type="text"
+                    name="collectionName"
+                    onChange={handleFieldChange}
+                  />
+                  <label for="collectionAddress">Collection Address</label>
+                  <input
+                    id="collectionAddress"
+                    type="text"
+                    name="collectionAddress"
+                    onChange={handleFieldChange}
+                  />
+                  <label for="title">Raffle Title</label>
+                  <input
+                    id="title"
+                    type="text"
+                    name="title"
+                    onChange={handleFieldChange}
+                  />
+                  <label for="description">Raffle Description</label>
+                  <div
+                    style={{ overflowY: 'scroll'}}
+                  >
+                    <ReactQuill
+                      className="description-editor"
+                      modules={modules}
+                      formats={formats}
+                      value={raffleCreator.description}
+                      onChange={handleFieldChange}
+                      placeholder={"Write something awesome..."}
+                      name="description"
+                    />
+                  </div>
+                  <div
+                    className="pay-action"
+                  >
+                    <button
+                      className="skull-button save-grave"
+                      onClick={ () => addRaffle() }
+                    >
+                      Add Raffle
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : 
+          ('')
+        }
       <div className="sk-container sk-row" style={{ overflow: 'hidden' }}>
         <div className="sk-box sk-column sk-raffle">
-          <h3>Raffle Time!</h3>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget urna ex. Etiam eleifend interdum lobortis. Morbi laoreet purus sed felis semper posuere.
-          </p>
-          <div className="sk-raffle sk-flex sk-column">
-            {(rafs.map(raf => {
-              let raffleDuration = raf.finish - new Date();
-              let raffleStart = raf.start - new Date();
-              let raffleDurationDate = formatDate(raffleDuration);
-              return (
-                <div className="sk-raffle-item sk-flex sk-row" >
-                  <div className="wd-22">
-                    <img src={Coins} className="img-raffle" />
-                  </div>
-                  <div className="raffle-box-1 wd-44 sk-flex sk-column">
-                      <span className="sk-raffle-details">
-                        { `${raf.type} | ${raf.nWinners} Winners | ${raf.Part} Participants` }
-                      </span>
-                      <h3>{raf.title}</h3>
-                      <p>
-                        {raf.text} {raf.win} <img src={
-                          raf.coin.includes("Grave") ? Grave :
-                            raf.coin.includes("Soul") ? Soul :
-                              Rune} className="skull-icon" /> will be airdropped!
-                      </p>
-                  </div>
-                  {
-                    raffleDuration > 0 ?
-                      (
-                        raffleStart < 0 ?
-                          <div className="raffle-box-2 wd-33">
-                            <p>Cost: 5<img src={Grave} className="skull-icon" /></p>
-                            <p>Ending in: {raffleDurationDate.days}D {raffleDurationDate.hours}H {raffleDurationDate.minutes}M <FontAwesomeIcon icon={faHourglassHalf} /></p>
-                            {
-                              raf.partecipants.includes(accountAddress) ?
-                                <button className="skull-button joined-button">Alredy joined</button>
-                                :
-                                <button className="partecipate-button skull-button " >Partecipate</button>
-                            }
-                          </div>
-                          :
-                          <div className="raffle-box-2 wd-33" >
-                            <p>Start: {raf.start.toLocaleDateString("en-US")}</p>
-                            <p>End: {raf.finish.toLocaleDateString("en-US")}</p>
-                            <button className="skull-button soon-button" disabled>Soon!</button>
-                          </div>
-                      )
-                      :
-                      <div className="raffle-box-2 wd-33">
-                        <p>Started: {raf.start.toLocaleDateString("en-US")}</p>
-                        <p>Ended: {raf.finish.toLocaleDateString("en-US")}</p>
-
-                        <button className="skull-button winners-button" onClick={() => { openModal(raf) }}>View Winners</button>
-                      </div>
-                  }
-                </div>
-              )
-            }))}
+          <div className="">
+            <h3>Raffle Time!</h3>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget urna ex. Etiam eleifend interdum lobortis. Morbi laoreet purus sed felis semper posuere.
+            </p>
+            {
+              isManager ? (
+              <button 
+                className="skull-button"
+                onClick={ () => 
+                  setRaffleCreator({
+                    ...raffleCreator,
+                    display: true
+                  })
+                }
+              >
+                Add Raffle
+              </button>
+              ) : ('')
+            }
           </div>
+          <div className="sk-raffle sk-flex sk-column">
+            { raffles && raffles.length > 0 ?
+              raffles.map( raf => {
+                let {
+                  type, 
+                  title, 
+                  winnersCount, 
+                  maxParticipants, 
+                  cost, 
+                  collectionName, 
+                  collectionAddress, 
+                  startTimestamp, 
+                  endTimestamp, 
+                  description,
+                  participants,
+                  winners
+                } = raf
+                /*let raffleDuration = raf.finish - ( new Date() / 1000 );
+                let raffleStart = raf.start - ( new Date() / 1000 );
+                let raffleDurationDate = formatDate(raffleDuration);*/
+                let currentTimestamp = parseInt( new Date( ).getTime() / 1000 )
+                let raffleDuration = currentTimestamp < endTimestamp ? endTimestamp - currentTimestamp : 0
+                let raffleDurationFormatted = formatDate(raffleDuration)
+                console.log(
+                  currentTimestamp,
+                  raffleDuration,
+                  raffleDurationFormatted
+                )
+                let raffleStart = 0;
+                let raffleDurationDate = 0;
+                
+                return (
+                  <div className="sk-raffle-item sk-flex sk-row" >
+                    <div className="wd-22">
+                      <img src={Coins} className="img-raffle" />
+                    </div>
+                    <div className="raffle-box-1 wd-44 sk-flex sk-column">
+                        <span className="sk-raffle-details">
+                          { `${type > 0 ? `Fast Raffle ${type}%` : 'Normal Raffle'} | ${winnersCount} Winners | ${ maxParticipants ? `${participants}/${maxParticipants}` : participants } Participants` }
+                        </span>
+                        <h3>{title}</h3>
+                        <p>
+                          {description} 
+                        </p>
+                    </div>
+                    {
 
+                      winners && winners.length ?
+                        (
+                          <div className="raffle-box-2 wd-33">
+                            <p>Started: {startTimestamp}</p>
+                            <p>Ended: {endTimestamp}</p>
+                            <button 
+                              className="skull-button winners-button" 
+                              onClick={ () => { openModal(raf) } } 
+                            >
+                              View Winners
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="raffle-box-2 wd-33">
+                            <p>Cost: { cost }<img src={Grave} className="skull-icon" /></p>
+                            <p>Ending in: {raffleDurationFormatted.days}d {raffleDurationFormatted.hours}h {raffleDurationFormatted.minutes}m <FontAwesomeIcon icon={faHourglassHalf} /></p>
+                            <button 
+                              className="skull-button winners-button" 
+                              onClick={ () => { participateRaffle(raf.id) } }
+                            >
+                              Participate
+                            </button>
+                          </div>
+                        )
+                    }
+                  </div>
+                )
+              }) :
+                ('')
+              }
+          </div>
         </div>
-
       </div>
     </>
   )
 }
 
+let modules = {
+  toolbar: [
+    [{ 'header': [1, 2, false] }],
+    ['bold', 'italic', 'underline','strike', 'blockquote'],
+    [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+    ['clean']
+  ],
+};
+
+let formats = [
+  'header',
+  'bold', 'italic', 'underline', 'strike', 'blockquote',
+  'list', 'bullet', 'indent',
+];
 
 export default Raffle;

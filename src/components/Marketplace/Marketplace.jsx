@@ -4,10 +4,9 @@ import { useDispatch } from "react-redux";
 import store from "../../redux/store";
 import { loadEbisusData, loadEbisusSkulls, loadEbisusBlue, loadEbisusRed, purchaseItem } from "../../redux/marketplace/marketplaceActions";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDungeon, faRunning, faCoins, faSkullCrossbones, faSpinner, faRedoAlt  } from '@fortawesome/free-solid-svg-icons';
+import { faDungeon } from '@fortawesome/free-solid-svg-icons';
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import './marketplace.css';
-import { parseBytes32String } from '@ethersproject/strings';
 import { sendNotification } from '../../redux/data/dataActions';
 
 const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/"

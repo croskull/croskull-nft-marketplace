@@ -107,11 +107,6 @@ export const refreshSkullsStories = () => {
         await croSkullsDescription.queryFilter(storiesFilter, currentBlock - i - blockLimit, currentBlock - i )
       )
       finalBlock = currentBlock - i - blockLimit;
-      console.log(
-        i,
-        currentBlock - i - blockLimit, 
-        currentBlock - i
-      )
     }
     let newSkullsStories = []
     if( skullsStories)
