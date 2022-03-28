@@ -15,4 +15,8 @@
     .analytics .sk-box-content.sk-row{
         flex-direction: column;
     }
+    .sk-analytics{
+        max-height: 40vh;
+        overflow-y: scroll;
+    }
 }

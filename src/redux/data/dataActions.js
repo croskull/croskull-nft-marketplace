@@ -313,6 +313,7 @@ export const getStakingData =  () => {
         let totalWithdrawedSouls = await croSkullsStaking.poolWithdrawedSouls()
         let soulsBalance = await croSkullsSouls.balanceOf(accountAddress)
         let daysLastWithdraw = await croSkullsStaking.daysSinceLastWithdraw()
+        let graveTotalSupply = await croSkullsGrave.totalSupply();
         let burnedGraves = await croSkullsGrave.burnedAmount()
         burnedGraves = burnedGraves.toString()
 
@@ -334,6 +335,7 @@ export const getStakingData =  () => {
         totalWithdrawedGraves = totalWithdrawedGraves.toString()
         totalWithdrawedSouls = totalWithdrawedSouls.toString()
         soulsBalance = soulsBalance.toString()
+        graveTotalSupply = graveTotalSupply.toString()
         
         dispatch(fetchStakingSuccess({
           malusFee,
@@ -353,7 +355,8 @@ export const getStakingData =  () => {
           lastWithdrawTimestamp,
           soulsBalance,
           daysLastWithdraw,
-          burnedGraves
+          burnedGraves,
+          graveTotalSupply
         }))
       }
     }else{

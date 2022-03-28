@@ -11,6 +11,7 @@
         height: 100%;
         overflow-y: scroll;
         margin-bottom: 30px;
+        background-position: left;
     }
     .metric-container.vertical {
         flex-direction: row !important;
@@ -144,7 +145,7 @@
     font-size: 18px;
 }
 
-.adventure .data-container {
+ .data-container {
     width: 100%;
     max-width: 500px;
     margin: auto;
@@ -158,11 +159,11 @@
     background: rgba(13, 16, 63, 0.562);
 }
 
-.adventure .sk-box-content.hide{
+.sk-box-content.hide{
     display: none;
 }
 
-.adventure .switcher-wrapper{
+.switcher-wrapper{
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: space-around;

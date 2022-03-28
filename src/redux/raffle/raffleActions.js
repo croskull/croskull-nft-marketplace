@@ -26,26 +26,31 @@ export const loadRaffleData = () => {
         raffleCount = await raffleCount.toString()
         console.log( raffleCount )
         if( raffleCount ) {
-            for( let i = 0; i < raffleCount; i++){
+            for( let i = raffleCount-1; i > 1; i--){
+                if( i <= 1 ) return
                 let raffle = await croRaffle.getRaffle(i)
                 let winners = await croRaffle.getWinners(i)
+
+                let isParticipant = await croRaffle.isParticipant(i)
                 let playersCount = await raffle.playersCount.toString()
 
                 let ipfsHash = raffle.ipfsHash.replace('ipfs://', 'https://ipfs.infura.io/ipfs/')
                 let hashMetadata = await fetch( ipfsHash );
-                console.log( raffle.cost.toString() )
-                let { type, title, winnersCount, maxParticipants, cost, collectionName, collectionAddress, startTimestamp, endTimestamp, description } = await hashMetadata.json();
+                hashMetadata = await hashMetadata.json()
+                let { type, title, winnersCount, maxParticipants, cost, collectionName, collectionAddress, startTimestamp, description, image } = hashMetadata;
                 raffles.push({
                     type, 
                     title,
                     id: i,
                     winnersCount,
                     maxParticipants, 
-                    cost, 
-                    collectionName, 
+                    cost,
+                    image,
+                    collectionName,
+                    isParticipant,
                     collectionAddress,
                     startTimestamp,
-                    endTimestamp,
+                    endTimestamp: raffle.endTimestamp.toString(),
                     description,
                     winners,
                     participants: playersCount

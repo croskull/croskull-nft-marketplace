@@ -151,7 +151,7 @@ contract SkullsRaffle {
         _generateWinners(_raffle, raffleHash, _raffleId);
     }
 
-    function _generateWinners(Raffle memory _raffle, bytes32 _raffleHash, uint _raffleId) public {
+    function _generateWinners(Raffle memory _raffle, bytes32 _raffleHash, uint _raffleId) internal {
         uint i = 1;
         while( raffles[_raffleHash].claimedAmount > 0 ){
             uint rgnPlayer = random() % ( _raffle.playersCount + i );
@@ -208,7 +208,7 @@ contract SkullsRaffle {
         );
         
         if( _raffle.fastRaffle > 0 ){
-            uint endDiff = block.timestamp - _raffle.endTimestamp;
+            uint endDiff = _raffle.endTimestamp - block.timestamp;
             raffles[raffleHash].endTimestamp = _raffle.endTimestamp - ( endDiff * _raffle.fastRaffle / 10000 );
         }
         bytes32 partecipationHash = keccak256(
@@ -223,6 +223,17 @@ contract SkullsRaffle {
         if( raffles[raffleHash].playersCount == _raffle.maxParticipants )
             _generateWinners(_raffle, raffleHash, _raffleId);
 
+    }
+
+    function isParticipant(uint _raffleId) public view returns(bool) {
+        bytes32 raffleHash = rafflesHash[_raffleId];
+        bytes32 playerHash = keccak256(
+            abi.encodePacked(
+                raffleHash,
+                msg.sender
+            )
+        );
+        return players[playerHash];
     }
 
     function getRaffle(uint _raffleId) public view returns(Raffle memory){

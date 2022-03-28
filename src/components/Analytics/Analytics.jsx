@@ -1,25 +1,64 @@
 import React, { useEffect, useState } from "react";
+import { ethers } from 'ethers';
 import './analytics.css'
 import CROIcon from '../Navbar/crypto-com.svg';
+import { useDispatch } from "react-redux";
 import Skull from '../Navbar/skull.png';
 import MetricContainer from '../MetricContainer/MetricContainer';
+import { loadEbisusData } from "../../redux/marketplace/marketplaceActions";
+import { loadDexData } from "../../redux/dexscreener/dexscreenerActions";
+import Grave from "../Navbar/grave.png";
+import GraveBurn from "../Navbar/grave-burn.png";
+import Soul from "../Navbar/soul.png";
 import store from "../../redux/store";
 
 const Analytics = () => {
-    let { blockchain, data } = store.getState()
-    
+    let dispatch = useDispatch()
+    const [detailsView, setDetailsView] = useState('skulls')
+    let { blockchain, marketplace, data, dexscreener } = store.getState()
+    let { formatEther } = blockchain
+
+    useEffect( () => {
+        if( marketplace.redSolds ) return 
+        dispatch(loadEbisusData())
+        dispatch(loadDexData())
+    }, [])
+
     let {
         totalSkullsStaked,
-        ebisusData
+        burnedGraves
     } = data
 
-    
+
+    let {
+        saleSkulls,
+        saleBlue,
+        saleRed,
+        //skull stats
+        skullAvgPrice,
+        skullFloorPrice,
+        skullForSales,
+        skullSolds,
+        skullTotalVolume,
+        //bluepotion stats
+        blueAvgPrice,
+        blueFloorPrice,
+        blueForSales,
+        blueSolds,
+        blueTotalVolume,
+        //redpotion stats
+        redAvgPrice,
+        redFloorPrice,
+        redForSales,
+        redSolds,
+        redTotalVolume,
+    } = marketplace
 
     return (
         <>
             <div className="sk-flex sk-row">
                 <div className="sk-container wd-66">
-                    <div className="sk-box">
+                    <div className="sk-box sk-analytics">
                         <div className="tab-head">
                             <h2>Analytics</h2>
                         </div>
@@ -33,62 +72,239 @@ const Analytics = () => {
                             />
                             <MetricContainer 
                                 label="Stake Percent"
-                                value={`${ totalSkullsStaked ? parseFloat(100 / 6666 * totalSkullsStaked).toFixed(1) : 0 }%`}
+                                value={`${ totalSkullsStaked ? parseFloat( ( 100 / 6666 * totalSkullsStaked ) ).toFixed(1) : 0 }%`}
                                 icon={Skull}
                                 vertical={true}
                                 tooltip={`Stake Percent: Percent of Staked skull based on the Total Supply (${totalSkullsStaked}/6666).`}
                             />
                             <MetricContainer 
                                 label="FDV"
-                                value={totalSkullsStaked && ebisusData ? totalSkullsStaked * ebisusData.floorPrice : 0}
+                                value={ skullFloorPrice ? ( totalSkullsStaked * skullFloorPrice ).toLocaleString('en-US') : 0}
                                 vertical={true}
                                 icon={CROIcon}
                                 tooltip="Fully Diluted Value: Total diluted market cap of the Adventure pool equal to ( SLiq * Current Floor Price)."
                             />
                             <MetricContainer 
+                                label="$FDV"
+                                value={ skullFloorPrice && dexscreener ? `$ ${( totalSkullsStaked * skullFloorPrice * dexscreener.croInUsd ).toLocaleString('en-US')}` : 0}
+                                vertical={true}
+                                tooltip="Fully Diluted Value in Dollars: Total diluted market cap of the Adventure pool equal to ( SLiq * Current Floor Price * CRO/USD)."
+                            />
+                            <MetricContainer 
                                 label="ADV"
-                                value={totalSkullsStaked && ebisusData ? parseInt(totalSkullsStaked * ebisusData.averageSalePrice) : 0}
+                                value={totalSkullsStaked  ? parseInt(totalSkullsStaked * skullAvgPrice).toLocaleString('en-US') : 0}
                                 vertical={true}
                                 icon={CROIcon}
                                 tooltip="Average Diluted Value: Diluted market cap of the Adventure pool equal to ( SLiq * Current Avg Sale Price)."
                             />
                         </div>
-                        <div className="sk-box-content sk-row">
-
+                        <div className={`sk-box-content sk-row`}>
+                            <MetricContainer 
+                                label="Total Volume"
+                                value={ redTotalVolume ? parseInt( Number(skullTotalVolume) + Number(blueTotalVolume) + Number(redTotalVolume) ).toLocaleString('en-US') : 0}
+                                icon={CROIcon}
+                                vertical={true}
+                                tooltip={`Volume generated by all Collections related to CroSkull. (Skulls + Blue and Red Potions).`}
+                            />
+                            <MetricContainer 
+                                label="Total Volume USD"
+                                value={ dexscreener && skullTotalVolume ? `$ ${parseInt( ( Number(skullTotalVolume) + Number(blueTotalVolume) + Number(redTotalVolume) ) * dexscreener.croInUsd ).toLocaleString('en-US')}` : 0}
+                                vertical={true}
+                                tooltip={`Volume generated by all Collections related to CroSkull in dollars. (Skulls + Blue and Red Potions).`}
+                            />
+                            <MetricContainer 
+                                label="Floor Price"
+                                value={ redFloorPrice ? parseInt( Number(skullFloorPrice) + Number(blueFloorPrice) + Number(redFloorPrice)).toLocaleString('en-US') : 0}
+                                icon={CROIcon}
+                                vertical={true}
+                                tooltip={`Actual Floor Price if you want to buy a Skull + Blue + Red, will reflect the base evoSkull Price.`}
+                            />
+                            <MetricContainer 
+                                label="Total Sales"
+                                value={ redSolds ? Number(skullSolds) + Number(blueSolds) + Number(redSolds) : 0 }
+                                icon={Skull}
+                                vertical={true}
+                            />
+                            <MetricContainer 
+                                label="Total for Sales"
+                                value={ redForSales ? Number(skullForSales) +  Number(blueForSales) +  Number(redForSales) : 0}
+                                icon={Skull}
+                                vertical={true}
+                            />
                         </div>
+                        <div className="sk-box-content sk-row">
+                            <MetricContainer 
+                                label="GRVE/CRO"
+                                value={`${ dexscreener && dexscreener.graveInCro }`}
+                                icon={CROIcon}
+                                vertical={true}
+                                tooltip="Actual Grave Value in CRO."
+                            />
+                            <MetricContainer 
+                                label="GRVE/USD"
+                                value={`$ ${ dexscreener && dexscreener.graveInUsd }` }
+                                vertical={true}
+                                tooltip={`Actual Grave Value in USD.`}
+                            />
+                            <MetricContainer 
+                                label="Liquidity CRO"
+                                value={ `${ dexscreener && ( dexscreener.liquidityCro ).toLocaleString('en-US')}` }
+                                vertical={true}
+                                icon={CROIcon}
+                                tooltip="Total amount of CRO used as Collateral"
+                            />
+                            <MetricContainer 
+                                label="Liquidity USD"
+                                value={ `$ ${dexscreener && ( dexscreener.liquidityUsd ).toLocaleString('en-US')}` }
+                                vertical={true}
+                                tooltip="Liquidity Pool Total Value in Dollars."
+                            />
+                        </div>
+                        <div className="sk-box-content sk-row">
+                            <MetricContainer 
+                                label="Total Grave"
+                                value={ `${dexscreener && data.graveTotalSupply ? formatEther(data.graveTotalSupply, 2).toLocaleString('en-US') : 0 }` }
+                                vertical={true}
+                                icon={Grave}
+                                tooltip="Actual Grave total supply."
+                            />
+                            <MetricContainer 
+                                label="Burned GRVE"
+                                value={`${ burnedGraves ? formatEther(burnedGraves, 2).toLocaleString('en-US') : 0 }`}
+                                icon={GraveBurn}
+                                vertical={true}
+                                tooltip="Total amount of burned grave."
+                            />
+                            <MetricContainer 
+                                label="Burned %"
+                                value={`${ burnedGraves ? parseFloat(100 / 45990000 * formatEther(burnedGraves, 2)).toFixed(2) : 0 } %` }
+                                vertical={true}
+                                icon={GraveBurn}
+                                tooltip={`Actual Burned Grave Percent.`}
+                            />
+                            <MetricContainer 
+                                label="Burned in USD"
+                                value={ `$ ${ burnedGraves && dexscreener ? ( formatEther(burnedGraves) * dexscreener.croInUsd ).toFixed(0).toLocaleString('en-US') : 0 }` }
+                                vertical={true}
+                                tooltip="Actual Burned Grave Value in USD."
+                            />
+                        </div>
+                        <span>Data by <b>Ebisu's Bay</b> & <b>DexScreener</b></span>
                     </div>
                 </div>
                 <div className="sk-container wd-33">
                     <div className="sk-box">
                         <div className="tab-head">
-                            <h2>CroSkull Stats</h2>
+                            <h2>Collections Stats</h2>
                         </div>
-                        <div className="sk-box-content sk-column">
-                            <MetricContainer 
-                                label="Total Volume"
-                                value={ebisusData && ebisusData.totalVolume ? parseInt(ebisusData.totalVolume) : 0}
-                                icon={CROIcon}
-                            />
-                            <MetricContainer 
-                                label="Floor Price"
-                                value={ebisusData && ebisusData.floorPrice ? parseInt(ebisusData.floorPrice) : 0}
-                                icon={CROIcon}
-                            />
-                            <MetricContainer 
-                                label="Avg. Sale Price"
-                                value={ebisusData && ebisusData.averageSalePrice ? parseFloat(ebisusData.averageSalePrice).toFixed(2) : 0 }
-                                icon={CROIcon}
-                            />
-                            <MetricContainer 
-                                label="Skull Sales"
-                                value={ebisusData ? ebisusData.numberOfSales : 0 }
-                                icon={Skull}
-                            />
-                            <MetricContainer 
-                                label="Skull for Sales"
-                                value={ebisusData ? ebisusData.numberActive : 0}
-                                icon={Skull}
-                            />
+                        <div class="switcher-container">
+                            <div className=" switcher-wrapper">
+                                <button
+                                    className={`switcher-button view-button ${ detailsView === 'skulls' ? 'active' : ''}`}
+                                    onClick={
+                                        () => setDetailsView('skulls')
+                                    }
+                                >
+                                    CroSkull
+                                </button>
+                                <button
+                                    className={`switcher-button view-button ${ detailsView === 'blue' ? 'active' : ''}`}
+                                    onClick={
+                                        () => setDetailsView('blue')
+                                    }
+                                >
+                                    Blue Potions
+                                </button>
+                                <button
+                                    className={`switcher-button view-button ${ detailsView === 'red' ? 'active' : ''}`}
+                                    onClick={
+                                        () => setDetailsView('red')
+                                    }
+                                >
+                                    Red Potions
+                                </button>
+                            </div>
+                            <div className={`sk-box-content sk-column first ${ detailsView === 'skulls' ? 'show' : 'hide'}`}>
+                                <MetricContainer 
+                                    label="Total Volume"
+                                    value={ skullTotalVolume ? parseInt(skullTotalVolume).toLocaleString('en-US') : 0}
+                                    icon={CROIcon}
+                                />
+                                <MetricContainer
+                                    label="Floor Price"
+                                    value={ skullFloorPrice ? parseInt(skullFloorPrice).toLocaleString('en-US') : 0}
+                                    icon={CROIcon}
+                                />
+                                <MetricContainer
+                                    label="Avg. Sale Price"
+                                    value={ skullAvgPrice ? parseFloat(skullAvgPrice).toFixed(2).toLocaleString('en-US') : 0 }
+                                    icon={CROIcon}
+                                />
+                                <MetricContainer 
+                                    label="Skull Sales"
+                                    value={ skullSolds ? skullSolds : 0 }
+                                    icon={Skull}
+                                />
+                                <MetricContainer 
+                                    label="Skull for Sales"
+                                    value={skullForSales ? skullForSales : 0}
+                                    icon={Skull}
+                                />
+                            </div>
+                            <div className={`sk-box-content sk-column ${ detailsView === 'blue' ? 'show' : 'hide'}`}>
+                                <MetricContainer 
+                                    label="Total Volume"
+                                    value={ blueTotalVolume ? parseInt(blueTotalVolume).toLocaleString('en-US') : 0}
+                                    icon={CROIcon}
+                                />
+                                <MetricContainer 
+                                    label="Floor Price"
+                                    value={blueFloorPrice ? parseInt(blueFloorPrice).toLocaleString('en-US') : 0}
+                                    icon={CROIcon}
+                                />
+                                <MetricContainer 
+                                    label="Avg. Sale Price"
+                                    value={ blueAvgPrice ? parseFloat(blueAvgPrice).toFixed(2).toLocaleString('en-US') : 0 }
+                                    icon={CROIcon}
+                                />
+                                <MetricContainer 
+                                    label="Blue Sales"
+                                    value={ blueSolds ? blueSolds : 0 }
+                                    icon={Skull}
+                                />
+                                <MetricContainer 
+                                    label="Blue for Sales"
+                                    value={ blueForSales ? blueForSales : 0}
+                                    icon={Skull}
+                                />
+                            </div>
+                            <div className={`sk-box-content sk-column ${ detailsView === 'red' ? 'show' : 'hide'}`}>
+                                <MetricContainer 
+                                    label="Total Volume"
+                                    value={ redTotalVolume ? parseInt(redTotalVolume).toLocaleString('en-US') : 0}
+                                    icon={CROIcon}
+                                />
+                                <MetricContainer 
+                                    label="Floor Price"
+                                    value={ redFloorPrice ? parseInt(redFloorPrice).toLocaleString('en-US') : 0}
+                                    icon={CROIcon}
+                                />
+                                <MetricContainer 
+                                    label="Avg. Sale Price"
+                                    value={ redAvgPrice ? parseFloat(redAvgPrice).toFixed(2).toLocaleString('en-US') : 0 }
+                                    icon={CROIcon}
+                                />
+                                <MetricContainer 
+                                    label="Red Sales"
+                                    value={ redSolds ? redSolds : 0 }
+                                    icon={Skull}
+                                />
+                                <MetricContainer 
+                                    label="Red for Sales"
+                                    value={ redForSales ? redForSales : 0}
+                                    icon={Skull}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

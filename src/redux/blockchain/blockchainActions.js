@@ -93,23 +93,27 @@ export const disconnect = () => {
     }
 }
 
-export const connect = ( ethProvider ) => {
+export const connect = ( ethProvider = false) => {
     return async (dispatch) => {
         dispatch(connectRequest());
+        if( ! ethProvider ){
+            ethProvider = await ethers.getDefaultProvider('https://gateway.nebkas.ro')
+            await ethProvider.getNetwork()
+        }
         dispatch(handleProviderChanges(ethProvider))
         if (ethProvider.provider.chainId == chainId || ethProvider.provider.chainId == networkId ) {
             let signer = ethProvider.getSigner()
-            let croSkullsContract = new ethers.Contract(ContractAddress, CroSkulls.abi, signer)
-            let croSkullsStaking = new ethers.Contract(stakingAddress, StakingArtifacts.abi, signer)
-            let croSkullsGrave = new ethers.Contract(graveAddress, Grave.abi, signer)
-            let croPotionBlue = new ethers.Contract(blueAddress, BluePotion.abi, signer)
-            let croPotionRed = new ethers.Contract(redAddress, RedPotion.abi, signer)
+            let croSkullsContract = new ethers.Contract(ContractAddress, CroSkulls.abi, signer ? signer : false )
+            let croSkullsStaking = new ethers.Contract(stakingAddress, StakingArtifacts.abi, signer ? signer : false )
+            let croSkullsGrave = new ethers.Contract(graveAddress, Grave.abi, signer ? signer : false )
+            let croPotionBlue = new ethers.Contract(blueAddress, BluePotion.abi, signer ? signer : false )
+            let croPotionRed = new ethers.Contract(redAddress, RedPotion.abi, signer ? signer : false )
             //let croSkullsDescription = ''
-            let croSkullsDescription = new ethers.Contract(descriptionAddress, Description.abi, signer)
-            let croSkullsPetEggs = new ethers.Contract(petEggsAddress, PetEggs.abi, signer)
-            let croSkullsSouls = new ethers.Contract(soulsAddress, Souls.abi, signer)
-            let croRaffle = new ethers.Contract(raffleAddress, Raffle.abi, signer)
-            let ebisusMarketplace = new ethers.Contract(ebisusAddress, ebisusAbi, signer)
+            let croSkullsDescription = new ethers.Contract(descriptionAddress, Description.abi, signer ? signer : false )
+            let croSkullsPetEggs = new ethers.Contract(petEggsAddress, PetEggs.abi, signer ? signer : false )
+            let croSkullsSouls = new ethers.Contract(soulsAddress, Souls.abi, signer ? signer : false )
+            let croRaffle = new ethers.Contract(raffleAddress, Raffle.abi, signer ? signer : false )
+            let ebisusMarketplace = new ethers.Contract(ebisusAddress, ebisusAbi, signer ? signer : false )
             let accounts = await ethProvider.provider.request({
                 method: 'eth_accounts',
             })

@@ -15,6 +15,9 @@
 .navbar{
   grid-area: header;
 }
+b, strong {
+  font-weight: 700;
+}
 .main {
   display: grid !important;
 	grid-template-areas: 
@@ -458,6 +461,9 @@ span {
   transition: opacity 0.2s linear;
   z-index: 99;
   min-width: 150px;
+}
+.sk-tooltip-full {
+  width: 50vw;
 }
 
 .tooltip-icon{

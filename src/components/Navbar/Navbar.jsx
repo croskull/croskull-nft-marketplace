@@ -1,8 +1,7 @@
-import React , { useState } from "react";
-
 import {
   ethers
 } from 'ethers';
+import React, { useEffect, useState } from "react";
 import store from "../../redux/store";
 import cryptoIcon from "./crypto-com.svg";
 import { connect, disconnect } from "../../redux/blockchain/blockchainActions";
@@ -27,17 +26,18 @@ const Navbar = () => {
   const dispatch = useDispatch();
   let { blockchain, data } = store.getState();
   let { rewardPlusMalus, soulsBalance, userGraveBalance, croSkulls, rewards, croSkullsStaked, daysLastWithdraw } = data
-  let { accountAddress, formatEther, contractDetected } = blockchain
+  let { accountAddress, formatEther, contractDetected, loading } = blockchain
   const [isHovered, setIsHovered] = useState(false)
   let malusPercent = ( 800 - ( 25 * daysLastWithdraw ) ) / 10
 
-  /*
+  
     useEffect( () => {
-      if(  window.ethereum._state.accounts[0] && ! loading && ! contractDetected ){
-        dispatch( connect() )
+      if(  window.ethereum && window.ethereum.isConnected() && ! loading && ! contractDetected ){
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        dispatch( connect( provider ))
       }
-    }, [window.ethereum.selectedAddress])
-*/
+    }, [window.ethereum])
+
   const [menuState, setMenuState] = useState(false)
 
   const toggleMenu = () => {

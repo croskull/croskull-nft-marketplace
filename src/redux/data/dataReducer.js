@@ -9,6 +9,7 @@ const initialState = {
     rarities: [],
     //grave
     userGraveBalance: 0,
+    graveTotalSupply: 0,
     //soul
     soulsBalance: 0,
     //staking
@@ -128,7 +129,8 @@ const dataReducer = (state = initialState, action) => {
                 lastWithdrawTimestamp: payload.lastWithdrawTimestamp,
                 soulsBalance: payload.soulsBalance,
                 daysLastWithdraw: payload.daysLastWithdraw,
-                burnedGraves: payload.burnedGraves
+                burnedGraves: payload.burnedGraves,
+                graveTotalSupply: payload.graveTotalSupply
             }
         case "UPDATE_STATE":
             console.log( payload )
@@ -211,7 +213,8 @@ const dataReducer = (state = initialState, action) => {
                 redCount: 0,
                 blueCount: 0,
                 storyAllowance: false,
-                daysLastWithdraw: 0
+                daysLastWithdraw: 0,
+                graveTotalSupply: 0
             }
         case "UPDATE_MERCHANT":
             return {

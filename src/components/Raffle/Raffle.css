@@ -1,27 +1,43 @@
-.raffle{
-    background-image: url(lottery2.jpg);
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-    width: 100%;
-    justify-content: center;
+.raffle {
+  background-image: url(bg-raffle.jpeg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  width: 100%;
+  justify-content: center;
 }
 
 .raffle-box-1 {
   padding: 12px 24px;
 }
+
+.wd-22 {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+}
+
 .raffle-box-2 {
   text-align: center;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  row-gap: 12px;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
 }
-.sk-raffle
-{
+
+.sk-raffle {
   padding: 12px;
   overflow-y: auto;
+  min-height: 50vh;
 }
-.sk-raffle-item
-{
+
+.sk-raffle-item {
   background: var(--violet);
   border-radius: 6px;
   border: 1px solid rgba(0, 0, 0, 0.055);
@@ -31,109 +47,174 @@
   column-gap: 6px;
   padding: 6px;
 }
-.partecipate-button{
-    width: 80% ;
-    background-color: #3b2694 ;
-      color: white ;
+
+.participate-button {
+  width: 80%;
+  background-color: #B20000;
+  color: white;
 }
-.joined-button{
+
+.joined-button {
   width: 80%;
   background-color: #008000;
   color: white;
 }
-.soon-button{
+
+.soon-button {
   width: 80%;
   background-color: #B20000;
   color: white;
 }
-.winners-button
-{
+
+.winners-button {
   width: 80%;
-  background-color: #B20000;
+  background-color: #36a25b;
   color: white;
 }
-.img-raffle
-{
+
+.img-raffle {
   width: 100%;
-  margin: 6px;
   border-radius: 6px;
 }
-.raffle-box-1 img{
+
+.raffle-box-1 img {
   margin-top: -1%;
 }
-.raffle-box-2 img{
+
+.raffle-box-2 img {
   margin-top: -1%;
 }
-.sk-box .close-btn{
+
+.sk-box .close-btn {
   text-align: right;
 }
+
 .modal {
   position: absolute;
   display: none;
-left: 0;
-top: 0;
-width: 100vw;
-min-height: 100vh;
-flex-direction: column;
-justify-content: center;
-align-items: flex-start;
-flex-wrap: nowrap;
-align-content: center;
-z-index: 9999;
-background: #00000065 !important;
-overflow-y: hidden;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  max-height: 100vh;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  align-content: center;
+  z-index: 9999;
+  background: #00000065 !important;
+  overflow-y: hidden;
+}
+.raffle-head {
+  justify-content: space-between;
+  align-items: center;
+}
+.winners-list{
+  display: flex;
+  flex-direction: column;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 .modal-w-content {
-  position: relative; 
-  top:40%;
-  padding: 20px; 
-  margin: auto; 
-  width: 30%;  
+  position: relative;
+  max-height: 90vh;
+  padding: 20px;
+  margin: auto;
+  width: 40%;
   -webkit-animation-name: animatetop;
   -webkit-animation-duration: 0.4s;
   animation-name: animatetop;
   animation-duration: 0.4s
 }
+
 .close-btn {
-  float: right; 
-  color: lightgray; 
-  font-size: 24px;  
+  float: right;
+  color: lightgray;
+  font-size: 24px;
   font-weight: bold;
+  line-height: 1em;
+  cursor: pointer;
 }
+
 .close-btn:hover {
   color: darkgray;
 }
-.modal-header h3{
+
+.modal-header h3 {
   display: inline;
 }
-.address{
-  font-size: 1.5vh;
-}
-#modal-winners img{
-margin-top: -15%;
-}
-#modal-winners h1{
-  text-align: center;
-}
-@-webkit-keyframes animatetop {
-  from {top:-300px; opacity:0} 
-  to {top:40; opacity:1}
-}
-@keyframes animatetop {
-  from {top:-300px; opacity:0}
-  to {top:40; opacity:1}
+
+.address {
+  font-size: 12px;
 }
 
-@media (min-width:320px) and (max-width:640px) { 
+#modal-winners img {
+  margin-top: -15%;
+}
+
+#modal-winners h1 {
+  text-align: center;
+}
+
+.tooltip-toggle.sk-row {
+  align-items: center;
+}
+
+.raffle-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  column-gap: 12px;
+}
+
+.winners-button @-webkit-keyframes animatetop {
+  from {
+    top: -300px;
+    opacity: 0
+  }
+
+  to {
+    top: 40;
+    opacity: 1
+  }
+}
+
+@keyframes animatetop {
+  from {
+    top: -300px;
+    opacity: 0
+  }
+
+  to {
+    top: 40;
+    opacity: 1
+  }
+}
+
+@media (min-width:320px) and (max-width:640px) {
   .modal-w-content {
-    position: relative; 
-    top:30%;
-    padding: 20px; 
-    margin: auto; 
-    width: 100%;  
+    position: relative;
+    padding: 0px;
+    margin: auto;
+    width: 100%;
     -webkit-animation-name: animatetop;
     -webkit-animation-duration: 0.4s;
     animation-name: animatetop;
     animation-duration: 0.4s
+  }
+
+  .sk-raffle {
+    max-height: 80vh;
+  }
+
+  .raffle-box-1 {
+    padding: 6px 12px;
+  }
+
+  .raffle-box-2 {
+    display: flex;
+    column-gap: 6px;
   }
 }

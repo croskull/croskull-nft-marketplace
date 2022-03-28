@@ -13,6 +13,7 @@ const Merchant = () => {
     let { petEggsSupply, petEggsMaxSupply, petEggsLimit, petEggsMintedByUser, petEggsCost, userGraveBalance, approvedEggs } = data
     let { croSkullsGrave, croSkullsPetEggs, accountAddress, formatEther } = blockchain
 
+
     const purchaseEgg = async () => {
         let purchaseTx = croSkullsPetEggs.purchaseEgg(
             accountAddress
@@ -97,7 +98,9 @@ const Merchant = () => {
                                     disabled={ canMint && hasBalance ? false : true }
                                     onClick={ 
                                         () => {
-                                            purchaseEgg()
+                                            canMint && hasBalance ?
+                                                purchaseEgg() :
+                                                window.open('https://mm.finance/swap?outputCurrency=0x9885488cD6864DF90eeBa6C5d07B35f08CEb05e9')
                                         }
                                     }
                                 >
