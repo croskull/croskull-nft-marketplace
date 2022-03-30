@@ -1,0 +1,353 @@
+
+.bank{
+    background-image: url(bg.jpg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+.bank .gd-container{
+  margin-top: 10%;
+  margin-bottom: 10%;
+}
+.bank .global-container{
+  position: relative;
+  min-width: 50%;
+  justify-content: center;
+  overflow-y: auto;
+  width: 50%;
+}
+/*GLOBAL DATA CSS*/
+.bank .bank-gd-row{
+  flex-direction: row;
+  display: flex;
+  width: 100%;
+}
+.bank .bank-gd-box{
+  display: flex;
+  flex-direction: column;
+  row-gap: 9px;
+  padding: 18px;
+  margin: 12px;
+  border-radius: 12px;
+  background-color: var(--violet);
+  backdrop-filter: blur(30px);
+  border: 1px solid #16112d26;
+  -webkit-box-shadow: 3px 2px 23px 2px rgba(89, 2, 250, 0.29);
+  box-shadow: 3px 2px 23px 2px rgba(132, 0, 255, 0.29);
+  width: 100%;
+  text-align: center;
+}
+.bank .bank-gd-box:hover{
+  box-shadow: 3px 2px 23px 2px rgba(132, 0, 255, 0.753);
+}
+.bank .switcher-wrapper{
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-around center;
+  align-items: center;
+  text-align: center;
+}
+
+
+.bank .pool-content
+{
+  padding: 12px;
+  background: var(--violet);
+  transition: 1s;
+}
+/*RIGHE CON I DATI CSS*/
+.bank .data-row{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.753);
+  height: 100px;
+  margin: 0;
+  border-bottom: 1px solid rgb(67, 0, 192);
+}
+.bank .bank-name{
+  width: 30% !important;
+  margin: auto;
+  text-align: center;
+  flex-direction: row;
+  display: flex;
+  justify-content: center;
+}
+.bank .bank-name h1{
+  color: white;
+  size: 1vh;
+}
+.bank .bank-name h3{
+  color: rgb(110, 110, 110);
+  size: 0.5vh;
+}
+.bank .bank-name-img img{
+height: 50px;
+}
+.bank .bank-name-text{
+  text-align: left;
+  margin-left: 1px;
+}
+
+.bank .data-row-box{
+  margin: auto;
+  width: 14%;
+  text-align: center;
+}
+.bank .metric-container {
+  margin: auto;
+  text-align: center;
+  color: gray;
+}
+.bank .metric-container span{
+  margin: auto;
+  text-align: center;
+}
+
+
+
+/*DATA CONTAINER*/
+.bank .data-container{
+  background-color: rgba(67, 0, 192, 0.712);
+  padding: 20px;
+  transition: all 1s;
+}
+.bank .data-container-wrapped{
+  background-color: rgba(67, 0, 192, 0.712);
+  padding: 0px;
+  height: 0px;
+  overflow-y: hidden;
+  transition: all 1s;
+}
+.bank .data-box{
+  width: 50%;
+  margin: auto;
+}
+.bank .data-box span{
+  float: right;
+}
+.bank .data-box hr{
+  border-top: 1px solid aliceblue;
+  width: 100%;
+}
+.bank .data-box-content{
+  display: flex;
+  flex-direction: column;
+}
+.bank .input-content{
+  margin: auto;
+  background-color: rgb(41, 41, 41);
+  padding: 10px;
+  border-radius: 6px;
+  width: 100%;
+}
+.bank .balance{
+  text-align: right;
+  margin-bottom: 1px;
+}
+.bank .input-content input{
+  text-align: right;
+  float: right;
+  background-color: rgb(41, 41, 41);
+  color: white;
+  border-width:0px;
+  border:none;
+  outline:none;
+}
+.bank .input-content input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.bank .stake-button{
+  background-color: var(--green);
+  margin-top: 10px;
+}
+.bank .claim-button{
+  background-color: var(--yellow);
+  margin-top: 10px;
+}
+.bank .unstake-button{
+  background-color: var(--red);
+  margin-top: 10px;
+}
+.bank .disabled-button{
+  background-color: rgba(75, 75, 75, 0.562);
+  margin-top: 10px;
+  font-size: 14px;
+  padding: 4px 12px !important;
+  border-radius: 6px !important;
+  border: none;
+  font-size: 13px;
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .54s cubic-bezier(0,.52,.47,.98) 0s;
+  color: aliceblue;
+  cursor: not-allowed;
+}
+.bank .bank-icon{
+  width: 1%;
+}
+.bank .pool-content .first{
+  border-radius: 6px 6px 0px 0px;
+}
+.bank .pool-content .data-row-last{
+  border-radius:0px 0px 6px 6px ;
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.753);
+  margin: 0;
+}
+.bank .pool-content .data-row-last p{
+  margin: auto;
+  text-align: center;
+}
+
+/*BOX SCELTA CONTRATTO*/
+.bank .choise-container{
+  flex-direction: row ;
+  display: flex;
+  border-radius: 12px;
+  background-color: var(--violet);
+  backdrop-filter: blur(30px);
+  border: 1px solid #16112d26;
+  -webkit-box-shadow: 3px 2px 23px 2px rgb(0 0 0 / 29%);
+  box-shadow: 3px 2px 23px 2px rgb(0 0 0 / 29%);
+  margin-bottom: 20px;
+}
+.bank .simulate-container input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+.bank .simulate-container{
+  width: 25%;
+  height: 200px;
+  margin: 12px;
+}
+.bank .simulate-container input {
+  margin-bottom: 10px;
+  width: 75%;
+}
+.bank .simulate-container p {
+  margin: 0;
+}
+.bank .simulate-container button{
+  width: 75%;
+}
+.bank .contract-container{
+  overflow-x: hidden;
+  width: 75%;
+}
+.bank .contract-content{
+  width: 100%;
+  height: fit-content;
+
+  white-space: nowrap;    
+  overflow-x: scroll;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/*BOX CONTRATTO*/
+.bank .contract-box h1{
+  text-align: center;
+}
+.bank .contract-box{
+    width: 25%;
+    height: 200px;
+    float: none;
+    display: inline-block;
+}
+
+.bank .contract-box h3{
+margin: 10px !important;
+font-size: 2vh ;
+}
+.bank .contract-box button{
+  width: 100% ;
+  margin-top: 10px;
+  position:relative;
+  margin-top:20%;
+  
+}
+
+
+/*FARM CSS*/
+.bank .farm-content
+{
+  padding: 12px;
+  background: var(--violet);
+  transition: 1s;
+}
+.bank .farm-box{
+  width: 25%;
+  margin: auto;
+}
+.bank .farm-box h1{
+  text-align: center;
+}
+.bank .farm-box h3{
+    margin-top: 20px !important;
+}
+.bank .farm-box button{
+  margin-top: 10%;
+}
+.bank .farm-box span{
+  float: right;
+}
+.bank .farm-box img{
+  margin-top: -10%;
+}
+/*CSS MOBILE*/
+@media (min-width:320px) and (max-width:640px) { 
+  .bank .sk-row.sk-flex{
+    flex-direction: column;
+  }
+  
+  .bank .data-container{
+    width: 100%;
+    overflow-y: auto;
+  }
+  .bank .global-container{
+    width: 100%;
+  }
+  .bank .pool-content{
+    width: 100%;
+  }
+  .bank .data-row-box{
+    width: 25%;
+  }
+  .bank .only-d{
+  visibility: hidden !important;
+  width: 0% !important;
+  height: 0%;
+  }
+  .bank .angle{
+    width: 10% !important;
+  }
+  .bank .bank-name{
+    width: 40% !important;
+    margin: 10px;
+    flex-direction: column;
+  }
+  .bank .bank-name h1,.bank .bank-name h3{
+    text-align: center;
+  }
+  .bank .data-box{
+    width: 100%;
+  }
+
+/*simulate container*/
+.bank .simulate-container{
+  width: 60%;
+}
+.bank .contract-box{
+  width: 90%;
+}
+.bank .contract-content::-webkit-scrollbar {
+  display: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+}

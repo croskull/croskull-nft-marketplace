@@ -52,3 +52,10 @@ package.json
 package-lock.json
 src/components/Tavern/Tavern.jsx
 src/components/Tavern/Tavern.jsx
+src/App.js
+src/components/Social/Social.css
+src/components/Social/Profile.jsx
+src/components/Social/bg2.jpg
+src/components/Social/bg.jpg
+src/App.js
+src/App.css

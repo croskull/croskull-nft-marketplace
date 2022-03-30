@@ -12,7 +12,10 @@ import { TransitionGroup, CSSTransition } from "react-transition-group";
 import { ethers } from 'ethers';
 import store from "./redux/store";
 import "./App.css";
-import Raffle from "./components/Raffle/Raffle"
+import Raffle from "./components/Raffle/Raffle";
+import Story from "./components/Story/Story";
+import Bank from "./components/Bank/Bank";
+import Profile from "./components/Social/Profile";
 
 let provider, contract, stakingContract, ethProvider;
 class App extends Component {
@@ -21,7 +24,7 @@ class App extends Component {
     this.state = {
       blockchain: 0,
       //reward©
-      
+
       traits: [],
       traitsTypes: [],
       order: 'ASC',
@@ -35,18 +38,18 @@ class App extends Component {
     this.subscribe()
   };
 
-  setProvider = (_provider = false ) => {
-    if( _provider ){
+  setProvider = (_provider = false) => {
+    if (_provider) {
       provider = _provider;
-    }else if( ! provider ) {
+    } else if (!provider) {
       provider = window.ethereum
     }
   }
-  
+
 
   getNFTData = async () => {
-    let {croSkullContract, stakingContract, accountAddress} = this.state
-    let receivedFilter = croSkullContract.filters.Transfer(null,accountAddress)
+    let { croSkullContract, stakingContract, accountAddress } = this.state
+    let receivedFilter = croSkullContract.filters.Transfer(null, accountAddress)
     let transferedFilter = croSkullContract.filters.Transfer(accountAddress)
     let inStakeFilter = stakingContract.filters.Stake(accountAddress)
 
@@ -57,34 +60,34 @@ class App extends Component {
 
     let received = [];
     let transfered = [];
-    receivedEvents.map( event => {
-      let topics = event.decode( event.data, event.topics)
+    receivedEvents.map(event => {
+      let topics = event.decode(event.data, event.topics)
       let tokenId = topics.tokenId.toString()
       console.log(tokenId)
       //if( ! received.includes(tokenId) )
-      if( received[tokenId] ){
+      if (received[tokenId]) {
         received[tokenId]++
-      } else{
+      } else {
         received[tokenId] = 1
       }
     })
-    transferedEvents.map( event => {
-      let topics = event.decode( event.data, event.topics)
+    transferedEvents.map(event => {
+      let topics = event.decode(event.data, event.topics)
       let tokenId = topics.tokenId.toString()
-      if( transfered[tokenId] ){
+      if (transfered[tokenId]) {
         transfered[tokenId]++
-      } else{
+      } else {
         transfered[tokenId] = 1
       }
     })
     let final = []
-    received.forEach( ( nTrasfer, tokenId ) => {
-      if(  nTrasfer > transfered[tokenId] || nTrasfer && !transfered[tokenId] ){
+    received.forEach((nTrasfer, tokenId) => {
+      if (nTrasfer > transfered[tokenId] || nTrasfer && !transfered[tokenId]) {
         final.push(tokenId)
       }
     })
     //let sfiltred = received.filter( x => ! transfered.includes(x))
-    final = final.filter( x => ! inStakeTokens.includes(x))
+    final = final.filter(x => !inStakeTokens.includes(x))
     this.setState({
       croSkulls: final,
       croSkullsStaked: inStakeTokens
@@ -96,47 +99,47 @@ class App extends Component {
     if (croSkulls.length !== 0) {
       let traits = []
       let traitsTypes = []
-      if( croSkulls.length.length !== 0 ){
+      if (croSkulls.length.length !== 0) {
         let boyLength = croSkulls.length
-        croSkulls.forEach( (cryptoboy, iBoy) => { //loop cryptoboy
-          if( cryptoboy.metaData ){
+        croSkulls.forEach((cryptoboy, iBoy) => { //loop cryptoboy
+          if (cryptoboy.metaData) {
             let traitsLength = cryptoboy.metaData.attributes.length
-            cryptoboy.metaData.attributes.forEach( (trait, iTraits) => { // loop tratti
-              
+            cryptoboy.metaData.attributes.forEach((trait, iTraits) => { // loop tratti
+
               let { trait_type, value } = trait
               let type = trait_type.replace(' ', '-')
               let uniqueType = true
 
-              traitsTypes.forEach( ( existType, i) => {
-                if( existType === type )
+              traitsTypes.forEach((existType, i) => {
+                if (existType === type)
                   uniqueType = false
-              } )
+              })
 
-              if( uniqueType )
-                traitsTypes.push( type )
+              if (uniqueType)
+                traitsTypes.push(type)
 
-              if( traits[type] === undefined )
+              if (traits[type] === undefined)
                 traits[type] = []
 
               let unique = true
-              traits[type].forEach( existValue => {
-                if (existValue === value )
+              traits[type].forEach(existValue => {
+                if (existValue === value)
                   unique = false
               })
 
-              if( unique )
-                traits[type].push( value )
-              
+              if (unique)
+                traits[type].push(value)
 
-                
-                if( boyLength === ( iBoy + 1 ) && traitsLength === ( iTraits + 1 ) ){
-                  this.setState({ traits });
-                  this.setState( { traitsTypes });
-                }
-              })
-            }
-          })
-        }
+
+
+              if (boyLength === (iBoy + 1) && traitsLength === (iTraits + 1)) {
+                this.setState({ traits });
+                this.setState({ traitsTypes });
+              }
+            })
+          }
+        })
+      }
 
     }
   };
@@ -145,30 +148,30 @@ class App extends Component {
     let { croSkulls, accountAddress } = this.state;
     let value = ev.value
     let newMarketplaceView = [];
-    switch (value){
+    switch (value) {
       case 'all':
         newMarketplaceView = croSkulls
         break;
       case 'inSale':
-        croSkulls.forEach( ( croSkull, i ) => {
-          if( croSkull.forSale )
+        croSkulls.forEach((croSkull, i) => {
+          if (croSkull.forSale)
             newMarketplaceView.push(croSkull)
-        } )
+        })
         break;
       case 'notInSale':
-        croSkulls.forEach( ( croSkull, i ) => {
-          if( ! croSkull.forSale )
+        croSkulls.forEach((croSkull, i) => {
+          if (!croSkull.forSale)
             newMarketplaceView.push(croSkull)
-        } )
+        })
         break;
       case 'owned':
-        croSkulls.forEach( ( croSkull, i ) => {
-          if( croSkull.currentOwner === accountAddress)
+        croSkulls.forEach((croSkull, i) => {
+          if (croSkull.currentOwner === accountAddress)
             newMarketplaceView.push(croSkull)
-        } )
+        })
         break;
-      }
-      this.setState( { marketplaceView: newMarketplaceView } )
+    }
+    this.setState({ marketplaceView: newMarketplaceView })
 
 
   }
@@ -182,53 +185,53 @@ class App extends Component {
     value = value[1].replace('-', ' ')
 
     let newFilters = activeFilters
-    if( ! newFilters.length > 0){
-      newFilters.push({ trait_type: trait , value: value })
-    }else{
+    if (!newFilters.length > 0) {
+      newFilters.push({ trait_type: trait, value: value })
+    } else {
       let exist = false
-      newFilters.forEach( ( filter, i )=> { //controllo i filtri attivi
-        if( exist ) return; //se esiste già esco
-        if( filter.trait_type === trait  ){ // tipo tratto uguale 
-          if( filter.value != value){ // valore tratto diverso 
+      newFilters.forEach((filter, i) => { //controllo i filtri attivi
+        if (exist) return; //se esiste già esco
+        if (filter.trait_type === trait) { // tipo tratto uguale 
+          if (filter.value != value) { // valore tratto diverso 
 
-              newFilters[i] = { trait_type: trait , value: value }
+            newFilters[i] = { trait_type: trait, value: value }
             exist = true
           }
-          if( filter.value === value ){ // valoe tratto uguale
+          if (filter.value === value) { // valoe tratto uguale
             exist = true
           }
         }
       })
-        if( ! exist ) 
-          newFilters.push( { trait_type: trait , value: value } )
+      if (!exist)
+        newFilters.push({ trait_type: trait, value: value })
     }
 
 
     let newView = [];
-    croSkulls.map( ( croSkull, i ) => { //crypto boy 1
-      if( croSkull.metaData ){
+    croSkulls.map((croSkull, i) => { //crypto boy 1
+      if (croSkull.metaData) {
         let filterValid = true
-        newFilters.forEach( filter => { //filtro 1
-          if( ! filterValid ) return
+        newFilters.forEach(filter => { //filtro 1
+          if (!filterValid) return
           let traitValid = false
           croSkull.metaData.attributes.forEach(forTrait => { // tratto 1
-            if( traitValid ) return
+            if (traitValid) return
 
-            if( ( forTrait.trait_type === filter.trait_type ) && ( forTrait.value === filter.value ) || ( filter.value === 'none' ) ){ //tratto valido
+            if ((forTrait.trait_type === filter.trait_type) && (forTrait.value === filter.value) || (filter.value === 'none')) { //tratto valido
               traitValid = true
               return
             }
           })
           filterValid = traitValid
         })
-        if(filterValid)
+        if (filterValid)
           newView.push(croSkull) // aggiungo il tratto
       }
     })
 
 
-    this.setState( { marketplaceView: newView } )
-    this.setState( { activeFilters: newFilters } )
+    this.setState({ marketplaceView: newView })
+    this.setState({ activeFilters: newFilters })
   }
 
   handleOrderChange = (ev = null) => {
@@ -236,17 +239,17 @@ class App extends Component {
     const { numToEth } = this
     let order = ev != null ? ev.value : this.state.order
     const { marketplaceView } = this.state;
-    if( order === 'ASC' ){
-      marketplaceView.sort( (a, b) => {
-        a = parseInt( numToEth(a.price) )
-        b = parseInt( numToEth(b.price) )
-        return (  a - b  ) 
+    if (order === 'ASC') {
+      marketplaceView.sort((a, b) => {
+        a = parseInt(numToEth(a.price))
+        b = parseInt(numToEth(b.price))
+        return (a - b)
       })
-    }else{
-      marketplaceView.sort( (a, b) => {
-        a = parseInt( numToEth(a.price) )
-        b = parseInt( numToEth(b.price) )
-        return (  a - b  ) 
+    } else {
+      marketplaceView.sort((a, b) => {
+        a = parseInt(numToEth(a.price))
+        b = parseInt(numToEth(b.price))
+        return (a - b)
       }).reverse()
     }
     this.setState({ order })
@@ -259,27 +262,27 @@ class App extends Component {
       });
     });
   }
-  
+
 
   render() {
     return (
       <div className="main">
         <Notifier data={store.getState().data} />
-        {  (
-            <>
-            <HashRouter 
+        {(
+          <>
+            <HashRouter
               basename="/">
-              <Navbar/>
+              <Navbar />
               <Route
                 render={({ location }) => (
-                    
-                  <TransitionGroup className={`container-fluid ${location.pathname.replace('/','')}`}>
+
+                  <TransitionGroup className={`container-fluid ${location.pathname.replace('/', '')}`}>
                     <CSSTransition
                       key={location.pathname}
                       classNames="fade"
                       timeout={500}
                     >
-                      <Switch 
+                      <Switch
                         location={location}
                       >
                         <Route
@@ -296,7 +299,7 @@ class App extends Component {
                           path="/marketplace"
                           render={() => (
                             <Marketplace></Marketplace>
-                          )} 
+                          )}
                         />
                         <Route
                           path="/adventure"
@@ -310,28 +313,47 @@ class App extends Component {
                             <Tavern />
                           )}
                         />
-                        <Route 
+                        <Route
                           path="/merchant"
                           render={() => (
                             <Merchant />
                           )}
                         />
-                        <Route 
+                        <Route
                           path="/analytics"
                           render={() => (
                             <Analytics />
                           )}
                         />
-                        <Route 
+                        <Route
+                          path="/story"
+                          render={() => (
+                            <Story />
+                          )}
+                        />
+                        <Route
                           path="/raffle"
                           render={() => (
                             <Raffle accountAddress={this.state.accountAddress} />
                           )}
                         />
+                        <Route
+                          path="/bank"
+                          render={() => (
+                            <Bank accountAddress={this.state.accountAddress} />
+                          )}
+                        />
+                        <Route
+                          path="/profile"
+                          render={() => (
+                            <Profile accountAddress={this.state.accountAddress} />
+                          )}
+                        />
+                        
                       </Switch>
                     </CSSTransition>
-                  </TransitionGroup> 
-              )}/>
+                  </TransitionGroup>
+                )} />
             </HashRouter>
           </>
         )}
