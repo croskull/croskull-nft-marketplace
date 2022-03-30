@@ -10,7 +10,7 @@ import House from "./house.png"
 import Fountain from "./Fountain.png"
 import Castle from "./castle.png"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleUp, faAngleDown, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { faAngleUp, faAngleDown, faQuestionCircle,faHourglassHalf } from '@fortawesome/free-solid-svg-icons';
 import './Bank.css';
 import MetricContainer from "../MetricContainer/MetricContainer";
 import { init } from "react-async";
@@ -32,6 +32,7 @@ const Bank = ({ accountAddress }) => {
   const [inputGraveStaked, setInputGraveStaked] = useState(0)
   const [angleIconFarm, setAngleIconFarm] = useState([false, false]);
   const [angleIconPool, setAngleIconPool] = useState([false, false]);
+  const [enableBuildingButton,setEnableBuildingButton] = useState(false);
 
 
 
@@ -53,7 +54,7 @@ const Bank = ({ accountAddress }) => {
     setInputGraveStaked(value);
   }
   const getMax = () => {
-    let d = document.getElementById("input-grave");
+    let d = document.getElementById("input-grave2");
     d.value = balance
     setInputGrave(balance);
   }
@@ -68,7 +69,7 @@ const Bank = ({ accountAddress }) => {
     let d = document.getElementById("farm-" + i);
     setDetailsView2(false);
     if (d.getAttribute('class').includes('wrapped')) {
-      d.setAttribute('class', 'data-container')
+      d.setAttribute('class', 'farm-container')
     } else {
       d.setAttribute('class', 'data-container-wrapped')
     }
@@ -78,7 +79,7 @@ const Bank = ({ accountAddress }) => {
     let d = document.getElementById("pool-" + i);
     setDetailsView2(false);
     if (d.getAttribute('class').includes('wrapped')) {
-      d.setAttribute('class', 'data-container')
+      d.setAttribute('class', 'pool-container')
     } else {
       d.setAttribute('class', 'data-container-wrapped')
     }
@@ -98,8 +99,8 @@ const Bank = ({ accountAddress }) => {
   const c1 = {
      address: '0xb39384',
      amount: 100,
-     StartTimeStamp: 1648677600,
-     unluckTimeStamp: 1649282400,
+     StartTimeStamp: 1647730800,
+     unluckTimeStamp: 1648335600,
      usedWishbones: 10,
      duration: 14,
      init: 1002
@@ -167,17 +168,38 @@ const contracts = [c1,c2,c3];
         return Castle;
     }
   }
+
+  function enableCalculateButton(){
+    let d = document.getElementById("input-grave");
+    let d2 = document.getElementById("input-wishbones");
+    if(d.value >= balance)
+      d.value=balance
+    if(d2.value % 10 == 0 && d.value >0)
+    setEnableBuildingButton(true)
+    else
+    {
+    setEnableBuildingButton(false)
+    alert('wishbones need to be a 10 multiplier');
+    }
+  }
     
-  const DAY_IN_SEC = 60 * 60 * 24 * 1000;
+  const DAY_IN_SEC = 60 * 60 * 24 *1000;
   const HUNDRED_DAYS_IN_SEC = 100 * DAY_IN_SEC//100 * DAY_IN_SEC;
   function formatDate(data) {
-    let timestamp = data - (new Date( ).getTime() / 1000);
-    let tsHours = timestamp / 60 / 60
+    let timestamp = data*1000 - new Date( ).getTime()  ;
+
+    let tsHours = timestamp / 60 / 60 / 1000
     let days = parseInt(timestamp / DAY_IN_SEC)
     let hoursDiff = tsHours - (days * 24)
     let hours = parseInt(hoursDiff)
     let tsMinutes = hoursDiff * 60
     let minutes = parseInt(tsMinutes - (hours * 60))
+    if(timestamp <=0)
+    {
+      days=0;
+      hours=0;
+      minutes=0;
+    }
     return {
       days,
       hours,
@@ -239,11 +261,11 @@ const contracts = [c1,c2,c3];
               <div className="simulate-container">
                 <h1>Choose Your Contract</h1>
                 <p>Grave Amount</p>
-                <input type='number' placeholder="0"></input>
+                <input type='number' placeholder="0" id='input-grave'></input>
                 <p>Wishbone Amount</p>
-                <input type='number' placeholder="0" step="10" max="300"></input>
+                <input type='number' placeholder="0" step="10" max="300" min="0" className="wishbones" readonly id='input-wishbones'></input>
                 <br />
-                <button className="skull-button">CALCULATE</button>
+                <button className="skull-button" onClick={() => enableCalculateButton()}>CALCULATE</button>
               </div>
               <div className="contract-container">
                 <div className="contract-content">
@@ -251,40 +273,40 @@ const contracts = [c1,c2,c3];
                     <h1>1 WEEK</h1>
                     <h3>APY: 129%</h3>
                     <h3>Rewards: 75000</h3>
-                    <button className="skull-button">HELP BUILDING!</button>
+                    <button className="skull-button" disabled={!enableBuildingButton}>HELP BUILDING!</button>
                   </div>
                   <div className="contract-box sk-box">
                     <h1>2 WEEK</h1>
                     <h3>APY: 129%</h3>
                     <h3>Rewards: 75000</h3>
-                    <button className="skull-button">HELP BUILDING!</button>
+                    <button className="skull-button" disabled={!enableBuildingButton}>HELP BUILDING!</button>
                   </div>
                   <div className="contract-box sk-box">
                     <h1>3 WEEK</h1>
                     <h3>APY: 129%</h3>
                     <h3>Rewards: 75000</h3>
-                    <button className="skull-button">HELP BUILDING!</button>
+                    <button className="skull-button" disabled={!enableBuildingButton}>HELP BUILDING!</button>
                   </div>
                   <div className="contract-box sk-box">
                     <h1>1 MONTH</h1>
                     <h3>APY: 129%</h3>
                     <h3>Rewards: 75000</h3>
-                    <button className="skull-button">HELP BUILDING!</button>
+                    <button className="skull-button" disabled={!enableBuildingButton}>HELP BUILDING!</button>
                   </div>
                   <div className="contract-box sk-box">
                     <h1>2 MONTH</h1>
                     <h3>APY: 129%</h3>
                     <h3>Rewards: 7500</h3>
-                    <button className="skull-button">HELP BUILDING!</button>
+                    <button className="skull-button" disabled={!enableBuildingButton}>HELP BUILDING!</button>
                   </div>
                 </div>
               </div>
             </div>
 
            { contracts.map( (contract,i) => {
-              let currentTimestamp = parseInt( new Date( ).getTime() / 1000 )
-              let raffleDuration = currentTimestamp < contract.StartTimeStamp ? contract.unluckTimeStamp - currentTimestamp : 0
-              let ending = formatDate(raffleDuration)
+              let ending = formatDate(contract.unluckTimeStamp)
+              console.log(ending)
+              let finish = (ending.days == 0 && ending.hours == 0 && ending.minutes == 0)
            return(
              <>
             <div className="data-row first">
@@ -359,13 +381,14 @@ const contracts = [c1,c2,c3];
             </div>
 
             <div className="data-container-wrapped" id={'farm-'+(i)}>
-              <div className="farm-box">
-                <h1>Ending in:</h1>
-                <h1>3D 5H 45M</h1>
+              <div className="farm-box sk-box">
+              <h1 hidden={!finish}>Finished!</h1>
+                <h1 hidden={finish}>Ending in:</h1>
+                <h1  hidden={finish}>{ending.days}D {ending.hours}H {ending.minutes}M <FontAwesomeIcon icon={faHourglassHalf} /></h1>
                 <h3>APY:<span>500%</span></h3>
                 <h3>Rewards: <span>300<img src={Grave} className="skull-icon"/></span></h3>
-                <h3> <span>25<img src={Soul} className="skull-icon"/></span></h3>
-                <button className="skull-button">CLAIM</button>
+                <h4> <span>25<img src={Soul} className="skull-icon"/></span></h4>
+                <button className={finish ? 'skull-button' : 'disabled-button'} disabled={!finish}>CLAIM</button>
               </div>
             </div>
             </>
@@ -376,13 +399,6 @@ const contracts = [c1,c2,c3];
             </div>
 
           </div>
-
-
-
-
-
-
-
 
 
 
@@ -490,7 +506,7 @@ const contracts = [c1,c2,c3];
                     <p className="balance"> {balance.toFixed(2)} Balance</p>
                     <div className="input-content">
                       <button className="skull-button" onClick={() => getMax()}>MAX</button>
-                      <input id="input-grave" type="number" placeholder="0" onChange={handleFieldChange} step=".0000000001"></input>
+                      <input id="input-grave2" type="number" placeholder="0" onChange={handleFieldChange} step=".0000000001"></input>
                     </div>
                     <button className={inputGrave > 0 ? 'skull-button stake-button' : 'disabled-button'} disabled={inputGrave < 0 ? true : false}>STAKE</button>
                     <button className={profit > 0 ? 'skull-button claim-button' : 'disabled-button'} disabled={profit < 0 ? true : false}>CLAIM</button>

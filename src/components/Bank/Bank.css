@@ -111,9 +111,9 @@ height: 50px;
   background-color: rgba(67, 0, 192, 0.712);
   padding: 20px;
   transition: all 1s;
+  width: 100% !important;
 }
 .bank .data-container-wrapped{
-  background-color: rgba(67, 0, 192, 0.712);
   padding: 0px;
   height: 0px;
   overflow-y: hidden;
@@ -156,6 +156,10 @@ height: 50px;
 }
 .bank .input-content input::-webkit-inner-spin-button {
   -webkit-appearance: none;
+  margin: 0;
+}
+.bank .wishbones::-webkit-inner-spin-button {
+  -webkit-appearance: auto !important;
   margin: 0;
 }
 .bank .stake-button{
@@ -271,13 +275,22 @@ font-size: 2vh ;
   margin-top:20%;
   
 }
-
+.pool-container{
+  background-color: rgba(67, 0, 192, 0.712);
+  padding: 20px;
+  transition: 1s;
+}
 
 /*FARM CSS*/
 .bank .farm-content
 {
   padding: 12px;
   background: var(--violet);
+  transition: 1s;
+}
+.farm-container{
+  background-color: rgba(30, 27, 36, 0.712);
+  padding: 20px;
   transition: 1s;
 }
 .bank .farm-box{
@@ -349,5 +362,8 @@ font-size: 2vh ;
   display: none;
   -webkit-overflow-scrolling: touch;
 }
-
+.bank .farm-box{
+  width: 100%;
+  margin: auto;
+}
 }
