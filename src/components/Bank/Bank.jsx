@@ -14,6 +14,8 @@ import { faAngleUp, faAngleDown, faQuestionCircle,faHourglassHalf } from '@forta
 import './Bank.css';
 import MetricContainer from "../MetricContainer/MetricContainer";
 import { init } from "react-async";
+import { useDispatch } from "react-redux";
+import { wishboneError } from "../../redux/blockchain/blockchainActions";
 const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/";
 const ipfsUri128 = "https://croskull.mypinata.cloud/ipfs/QmZn1HvYE1o1J8LhNpxFTj5k8LQb2bWT49YvbrhB3r19Xx/";
 
@@ -30,9 +32,11 @@ const Bank = ({ accountAddress }) => {
   const [staked, setStaked] = useState(87.83736)
   const [inputGrave, setInputGrave] = useState(0)
   const [inputGraveStaked, setInputGraveStaked] = useState(0)
-  const [angleIconFarm, setAngleIconFarm] = useState([false, false]);
-  const [angleIconPool, setAngleIconPool] = useState([false, false]);
+  const [angleIconFarm, setAngleIconFarm] = useState([]);
+  const [angleIconPool, setAngleIconPool] = useState([]);
   const [enableBuildingButton,setEnableBuildingButton] = useState(false);
+  const [enableCalculategButton,setEnableCalculateButton] = useState(false);
+  const dispatch = useDispatch();
 
 
 
@@ -54,12 +58,12 @@ const Bank = ({ accountAddress }) => {
     setInputGraveStaked(value);
   }
   const getMax = () => {
-    let d = document.getElementById("input-grave2");
+    let d = document.getElementById("input-lp");
     d.value = balance
     setInputGrave(balance);
   }
   const getMaxStaked = () => {
-    let d = document.getElementById("input-grave-staked");
+    let d = document.getElementById("input-lp-staked");
     d.value = staked
     setInputGraveStaked(staked);
   }
@@ -169,20 +173,29 @@ const contracts = [c1,c2,c3];
     }
   }
 
-  function enableCalculateButton(){
+  function enableBuilding(){
     let d = document.getElementById("input-grave");
     let d2 = document.getElementById("input-wishbones");
     if(d.value >= balance)
       d.value=balance
-    if(d2.value % 10 == 0 && d.value >0)
+      console.log(d.value)
+    if((d2.value % 10 == 0 || d2.value == 0) && d.value >0)
     setEnableBuildingButton(true)
     else
     {
     setEnableBuildingButton(false)
-    alert('wishbones need to be a 10 multiplier');
+      dispatch(wishboneError())
     }
   }
     
+  function enableCalculate(){
+    let d = document.getElementById("input-grave");
+    console.log(d.value)
+    if(d.value>0)
+    setEnableCalculateButton(true)
+    else
+    setEnableCalculateButton(false)
+  }
   const DAY_IN_SEC = 60 * 60 * 24 *1000;
   const HUNDRED_DAYS_IN_SEC = 100 * DAY_IN_SEC//100 * DAY_IN_SEC;
   function formatDate(data) {
@@ -261,11 +274,11 @@ const contracts = [c1,c2,c3];
               <div className="simulate-container">
                 <h1>Choose Your Contract</h1>
                 <p>Grave Amount</p>
-                <input type='number' placeholder="0" id='input-grave'></input>
+                <input type='number' placeholder="0" id='input-grave' min="0.0000000001" onChange={() => enableCalculate()}></input>
                 <p>Wishbone Amount</p>
-                <input type='number' placeholder="0" step="10" max="300" min="0" className="wishbones" readonly id='input-wishbones'></input>
+                <input type='number' placeholder="0-10-20-30..." step="10" max="300" min="0" className="wishbones" readonly id='input-wishbones'></input>
                 <br />
-                <button className="skull-button" onClick={() => enableCalculateButton()}>CALCULATE</button>
+                <button className="skull-button" onClick={() => enableBuilding()} id="calculate-button" disabled={!enableCalculategButton}>CALCULATE</button>
               </div>
               <div className="contract-container">
                 <div className="contract-content">
@@ -309,7 +322,7 @@ const contracts = [c1,c2,c3];
               let finish = (ending.days == 0 && ending.hours == 0 && ending.minutes == 0)
            return(
              <>
-            <div className="data-row first">
+            <div className={ i== 0 ? 'data-row first' : 'data-row'}>
               <div className="bank-name">
                 <div className="bank-name-img">
                   <img src={imgSelector(dateDiff(contract.StartTimeStamp,contract.unluckTimeStamp))} />
@@ -386,7 +399,7 @@ const contracts = [c1,c2,c3];
                 <h1 hidden={finish}>Ending in:</h1>
                 <h1  hidden={finish}>{ending.days}D {ending.hours}H {ending.minutes}M <FontAwesomeIcon icon={faHourglassHalf} /></h1>
                 <h3>APY:<span>500%</span></h3>
-                <h3>Rewards: <span>300<img src={Grave} className="skull-icon"/></span></h3>
+                <h3>Rewards: <span>300<img src={Rudes} className="skull-icon"/></span></h3>
                 <h4> <span>25<img src={Soul} className="skull-icon"/></span></h4>
                 <button className={finish ? 'skull-button' : 'disabled-button'} disabled={!finish}>CLAIM</button>
               </div>
@@ -506,7 +519,7 @@ const contracts = [c1,c2,c3];
                     <p className="balance"> {balance.toFixed(2)} Balance</p>
                     <div className="input-content">
                       <button className="skull-button" onClick={() => getMax()}>MAX</button>
-                      <input id="input-grave2" type="number" placeholder="0" onChange={handleFieldChange} step=".0000000001"></input>
+                      <input id="input-lp" type="number" placeholder="0" onChange={handleFieldChange} step=".0000000001"></input>
                     </div>
                     <button className={inputGrave > 0 ? 'skull-button stake-button' : 'disabled-button'} disabled={inputGrave < 0 ? true : false}>STAKE</button>
                     <button className={profit > 0 ? 'skull-button claim-button' : 'disabled-button'} disabled={profit < 0 ? true : false}>CLAIM</button>
@@ -525,7 +538,7 @@ const contracts = [c1,c2,c3];
                     <p className="balance"> {staked.toFixed(2)} Staked</p>
                     <div className="input-content">
                       <button className="skull-button" onClick={() => getMaxStaked()}>MAX</button>
-                      <input id="input-grave-staked" type="number" placeholder="0" onChange={handleFieldChangeStaked} step=".0000000001"></input>
+                      <input id="input-lp-staked" type="number" placeholder="0" onChange={handleFieldChangeStaked} step=".0000000001"></input>
                     </div>
                     <button className={inputGraveStaked > 0 ? 'skull-button stake-button' : 'disabled-button'} disabled={inputGraveStaked < 0 ? true : false}>UNSTAKE</button>
                     <button className={staked > 0 ? 'skull-button unstake-button' : 'disabled-button'} disabled={staked < 0 ? true : false}>UNSTAKE ALL {"&"} CLAIM</button>

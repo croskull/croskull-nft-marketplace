@@ -86,6 +86,16 @@ const requestDisconnect = () => {
     }
 }
 
+export const wishboneError = () => {
+   
+    return async (dispatch) => {
+         dispatch(sendNotification({
+        title: `Wishbones Error`,
+        message: `wishbones must be a multiple of 10`,
+        type: "danger"
+    }))}
+}
+
 export const disconnect = () => {
     return async (dispatch) => {
         dispatch(requestDisconnect())

@@ -312,6 +312,13 @@ font-size: 2vh ;
 .bank .farm-box img{
   margin-top: -10%;
 }
+
+.bank .skull-icon{
+  margin-top: -10%;
+}
+.bank .data-row .skull-icon{
+  margin-top: -2%;
+}
 /*CSS MOBILE*/
 @media (min-width:320px) and (max-width:640px) { 
   .bank .sk-row.sk-flex{
@@ -365,5 +372,9 @@ font-size: 2vh ;
 .bank .farm-box{
   width: 100%;
   margin: auto;
+}
+.bank .wishbones::-webkit-inner-spin-button {
+  -webkit-appearance: auto !important;
+  margin: 0;
 }
 }
