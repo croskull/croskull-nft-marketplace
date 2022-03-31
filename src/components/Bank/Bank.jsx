@@ -13,6 +13,7 @@ import Fountain from "./Fountain.png"
 import Castle from "./castle.png"
 import Rude from "./rude.png"
 import CoinSound from "./collect-coin.mp3";
+import Wishbone from "../../images/wishbone.png"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleUp, faAngleDown, faQuestionCircle, faHourglassHalf, faExternalLink} from '@fortawesome/free-solid-svg-icons';
@@ -250,7 +251,7 @@ const Bank = ({ accountAddress }) => {
               <span className="details-title">Total Contracts Active</span>
             </div>
         </div>
-        <div class="switcher-container">
+        <div class="sk-row switcher-container">
           <div className="switcher-wrapper">
             <button
               className={`switcher-button view-button ${detailsView ? '' : 'active'}`}
@@ -302,15 +303,21 @@ const Bank = ({ accountAddress }) => {
               <div className="contract-container">
                 <div className="contract-content">
                   <div className="contract-box sk-box">
-                    <h1>1 WEEK</h1>
+                    <span className="sk-flex sk-row">
+                      <img src={} />
+                      <h1>House building</h1>
+                    </span>
+                    <MetricContainer 
+                      label="Est. rewards"
+                      value={ `4553.4` }
+                    />
+                    <MetricContainer 
+                      label="Durartion"
+                      value={ `7 days` }
+                    />
                     <MetricContainer 
                       label="APY"
                       value={ `128%` }
-                    />
-                    <MetricContainer 
-                      label="Rewards"
-                      value={ `4553.4` }
-                      icon={Rude}
                     />
                     <button className="skull-button" disabled={!enableBuildingButton}>Subscribe</button>
                   </div>
@@ -429,7 +436,7 @@ const Bank = ({ accountAddress }) => {
                   label="Wishbone Used"
                   value={ `40` }
                   vertical={true}
-                  icon={Grave}
+                  icon={Wishbone}
                   tooltip="Your Grave Staked in this specific contract."
                 />
                 <button 
@@ -517,7 +524,7 @@ const Bank = ({ accountAddress }) => {
               </div>
             </div>
             <div className="data-container-wrapped" id="pool-1">
-              <div class="switcher-container">
+              <div class="sk-row switcher-container">
                 <div className="switcher-wrapper">
                   <button
                     className={`switcher-button view-button ${detailsView2 ? '' : 'active'}`}

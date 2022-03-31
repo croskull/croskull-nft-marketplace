@@ -71,6 +71,9 @@
   font-weight: 700;
   font-size: 18px;
 }
+.bank .switcher-container {
+  width: 100%
+}
 .bank .switcher-container > .sk-box {
   margin-top: 0px;
 }
@@ -282,6 +285,7 @@
 .bank .simulate-container {
   padding: 12px;
   display: flex;
+  min-width: 15%;
   flex-direction: column;
   justify-content: stretch;
 }
@@ -295,13 +299,14 @@
 }
 
 .bank .contract-container {
+  width: 100%;
   overflow-x: hidden;
 }
 
 .bank .contract-content {
   width: 100%;
   height: fit-content;
-  display: flex;
+  display: -webkit-box;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
@@ -311,6 +316,10 @@
   overflow-x: overlay;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
+}
+
+.bank .contract-box {
+  flex: 1 1 20%;
 }
 
 /*BOX CONTRATTO*/
@@ -325,10 +334,6 @@
 
 .bank .contract-box button {
   width: 100%;
-  margin-top: 10px;
-  position: relative;
-  margin-top: 20%;
-
 }
 
 .pool-container {
@@ -383,6 +388,13 @@
   .bank .sk-row.sk-flex {
     flex-direction: column;
   }
+  .bank .choise-container{
+    flex-direction: column;
+  }
+  .gd-container .sk-box{
+    width: auto;
+    flex: 1;
+  }
 
   .skull-button{
     width: 60%;
@@ -426,11 +438,15 @@
 
   /*simulate container*/
   .bank .simulate-container {
-    width: 60%;
+    width: 100%;
+  }
+  .gd-container {
+    flex-direction: row !important;
+    flex-wrap: wrap;
   }
 
   .bank .contract-box {
-    width: 90%;
+    flex: 1 1 85%;
   }
 
   .bank .contract-content::-webkit-scrollbar {
