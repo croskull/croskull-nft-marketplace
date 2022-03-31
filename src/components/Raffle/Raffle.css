@@ -89,7 +89,7 @@
   text-align: right;
 }
 
-.modal {
+.raffle .modal {
   position: absolute;
   display: none;
   left: 0;
@@ -116,7 +116,7 @@
   max-height: 60vh;
   overflow-y: auto;
 }
-.modal-w-content {
+.raffle .modal-w-content {
   position: relative;
   max-height: 90vh;
   padding: 20px;

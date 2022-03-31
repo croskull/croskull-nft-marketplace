@@ -10,7 +10,7 @@ import House from "./house.png"
 import Fountain from "./Fountain.png"
 import Castle from "./castle.png"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleUp, faAngleDown, faQuestionCircle,faHourglassHalf } from '@fortawesome/free-solid-svg-icons';
+import { faAngleUp, faAngleDown, faQuestionCircle, faHourglassHalf, faExternalLink} from '@fortawesome/free-solid-svg-icons';
 import './Bank.css';
 import MetricContainer from "../MetricContainer/MetricContainer";
 import { init } from "react-async";
@@ -34,8 +34,8 @@ const Bank = ({ accountAddress }) => {
   const [inputGraveStaked, setInputGraveStaked] = useState(0)
   const [angleIconFarm, setAngleIconFarm] = useState([]);
   const [angleIconPool, setAngleIconPool] = useState([]);
-  const [enableBuildingButton,setEnableBuildingButton] = useState(false);
-  const [enableCalculategButton,setEnableCalculateButton] = useState(false);
+  const [enableBuildingButton, setEnableBuildingButton] = useState(false);
+  const [enableCalculategButton, setEnableCalculateButton] = useState(false);
   const dispatch = useDispatch();
 
 
@@ -101,13 +101,13 @@ const Bank = ({ accountAddress }) => {
   }
 
   const c1 = {
-     address: '0xb39384',
-     amount: 100,
-     StartTimeStamp: 1647730800,
-     unluckTimeStamp: 1648335600,
-     usedWishbones: 10,
-     duration: 14,
-     init: 1002
+    address: '0xb39384',
+    amount: 100,
+    StartTimeStamp: 1647730800,
+    unluckTimeStamp: 1648335600,
+    usedWishbones: 10,
+    duration: 14,
+    init: 1002
   }
   const c2 = {
     address: '0xb39384',
@@ -117,89 +117,86 @@ const Bank = ({ accountAddress }) => {
     usedWishbones: 10,
     duration: 14,
     init: 1002
- }
- const c3 = {
-  address: '0xb39384',
-  amount: 100,
-  StartTimeStamp: 1648677600,
-  unluckTimeStamp: 1650492000,
-  usedWishbones: 10,
-  duration: 14,
-  init: 1002
-}
+  }
+  const c3 = {
+    address: '0xb39384',
+    amount: 100,
+    StartTimeStamp: 1648677600,
+    unluckTimeStamp: 1650492000,
+    usedWishbones: 10,
+    duration: 14,
+    init: 1002
+  }
 
-const contracts = [c1,c2,c3];
+  const contracts = [c1, c2, c3];
 
-  function timeConverter(UNIX_timestamp){
+  function timeConverter(UNIX_timestamp) {
     var a = new Date(UNIX_timestamp * 1000);
-    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     var year = a.getFullYear();
     var month = months[a.getMonth()];
     var date = a.getDate();
     var hour = a.getHours();
     var min = a.getMinutes();
     var sec = a.getSeconds();
-    var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+    var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
     return time;
   }
 
-  function dateDiff(date1,date2){
+  function dateDiff(date1, date2) {
     var d1 = new Date(date1 * 1000);
     var d2 = new Date(date2 * 1000);
-    return (d2-d1)/1000/24/3600;
+    return (d2 - d1) / 1000 / 24 / 3600;
   }
-    
-  function textSelector(d)
-  {
-    switch(d){
+
+  function textSelector(d) {
+    switch (d) {
       case 7:
         return 'House';
-        case 14:
+      case 14:
         return 'Fountain';
-        case 21:
+      case 21:
         return 'Castle';
     }
   }
-  function imgSelector(d)
-  {
+  function imgSelector(d) {
 
-    switch(d){
+    switch (d) {
       case 7:
         return House;
-        case 14:
+      case 14:
         return Fountain;
-        case 21:
+      case 21:
         return Castle;
     }
   }
 
-  function enableBuilding(){
+  function enableBuilding() {
     let d = document.getElementById("input-grave");
     let d2 = document.getElementById("input-wishbones");
-    if(d.value >= balance)
-      d.value=balance
-      console.log(d.value)
-    if((d2.value % 10 == 0 || d2.value == 0) && d.value >0)
-    setEnableBuildingButton(true)
-    else
-    {
-    setEnableBuildingButton(false)
+    if (d.value >= balance)
+      d.value = balance
+    console.log(d.value)
+    if ((d2.value % 10 == 0 || d2.value == 0) && d.value > 0)
+      setEnableBuildingButton(true)
+    else {
+      setEnableBuildingButton(false)
       dispatch(wishboneError())
     }
   }
-    
-  function enableCalculate(){
+
+  function enableCalculate() {
     let d = document.getElementById("input-grave");
     console.log(d.value)
-    if(d.value>0)
-    setEnableCalculateButton(true)
+    if (d.value > 0)
+      setEnableCalculateButton(true)
     else
-    setEnableCalculateButton(false)
+      setEnableCalculateButton(false)
   }
-  const DAY_IN_SEC = 60 * 60 * 24 *1000;
+  const DAY_IN_SEC = 60 * 60 * 24 * 1000;
   const HUNDRED_DAYS_IN_SEC = 100 * DAY_IN_SEC//100 * DAY_IN_SEC;
   function formatDate(data) {
-    let timestamp = data*1000 - new Date( ).getTime()  ;
+    let timestamp = data * 1000 - new Date().getTime();
 
     let tsHours = timestamp / 60 / 60 / 1000
     let days = parseInt(timestamp / DAY_IN_SEC)
@@ -207,11 +204,10 @@ const contracts = [c1,c2,c3];
     let hours = parseInt(hoursDiff)
     let tsMinutes = hoursDiff * 60
     let minutes = parseInt(tsMinutes - (hours * 60))
-    if(timestamp <=0)
-    {
-      days=0;
-      hours=0;
-      minutes=0;
+    if (timestamp <= 0) {
+      days = 0;
+      hours = 0;
+      minutes = 0;
     }
     return {
       days,
@@ -219,7 +215,18 @@ const contracts = [c1,c2,c3];
       minutes
     }
   }
-  
+
+  const closeModal = (i) => {
+    let modal = document.getElementById("modal-pool-"+i);
+    modal.style.display = "none";
+  }
+
+  const openModal = (i) => {
+    let modal = document.getElementById("modal-pool-"+i);
+    modal.style.display = "block";
+    console.log('qua')
+  }
+
 
   return (
 
@@ -316,97 +323,97 @@ const contracts = [c1,c2,c3];
               </div>
             </div>
 
-           { contracts.map( (contract,i) => {
+            {contracts.map((contract, i) => {
               let ending = formatDate(contract.unluckTimeStamp)
               console.log(ending)
               let finish = (ending.days == 0 && ending.hours == 0 && ending.minutes == 0)
-           return(
-             <>
-            <div className={ i== 0 ? 'data-row first' : 'data-row'}>
-              <div className="bank-name">
-                <div className="bank-name-img">
-                  <img src={imgSelector(dateDiff(contract.StartTimeStamp,contract.unluckTimeStamp))} />
-                </div>
-                <div className="bank-name-text">
-                  <h1>{textSelector(dateDiff(contract.StartTimeStamp,contract.unluckTimeStamp))} Building</h1>
-                  <h3>{dateDiff(contract.StartTimeStamp,contract.unluckTimeStamp)}Days</h3>
-                </div>
-              </div>
-              <div className="data-row-box only-d">
-                <div className="metric-container">
-                  <span>Start
-                    <span className="tooltip-toggle">
-                      <FontAwesomeIcon
-                        icon={faQuestionCircle}
-                        className="tooltip-icon"
-                      />
-                      <span className="sk-tooltip">Cosa fa Earned</span>
-                    </span>
-                  </span>
-                </div>
-                <p>{timeConverter(contract.StartTimeStamp)}</p>
-              </div>
-              <div className="data-row-box only-d">
-                <div className="metric-container">
-                  <span>End
-                    <span className="tooltip-toggle">
-                      <FontAwesomeIcon
-                        icon={faQuestionCircle}
-                        className="tooltip-icon"
-                      />
-                      <span className="sk-tooltip">Cosa fa APR</span>
-                    </span>
-                  </span>
-                </div>
-                <p>{timeConverter(contract.unluckTimeStamp)}</p>
-              </div>
-              <div className="data-row-box ">
-                <div className="metric-container">
-                  <span>Amount Staked
-                    <span className="tooltip-toggle">
-                      <FontAwesomeIcon
-                        icon={faQuestionCircle}
-                        className="tooltip-icon"
-                      />
-                      <span className="sk-tooltip">Cosa Total Staked</span>
-                    </span>
-                  </span>
-                </div>
-                <p>833333<img src={Grave} className='skull-icon' /></p>
-              </div>
-              <div className="data-row-box ">
-                <div className="metric-container">
-                  <span>Wishbones
-                    <span className="tooltip-toggle">
-                      <FontAwesomeIcon
-                        icon={faQuestionCircle}
-                        className="tooltip-icon"
-                      />
-                      <span className="sk-tooltip">Cosa fa End In</span>
-                    </span>
-                  </span>
-                </div>
-                <p>10</p>
-              </div>
-              <div className="data-row-box angle">
-                <p onClick={() => EnableFarm(i)} className="angle"> <FontAwesomeIcon icon={angleIconFarm[i] ? faAngleUp : faAngleDown} /></p>
-              </div>
-            </div>
+              return (
+                <>
+                  <div className={i == 0 ? 'data-row first' : 'data-row'}>
+                    <div className="bank-name">
+                      <div className="bank-name-img">
+                        <img src={imgSelector(dateDiff(contract.StartTimeStamp, contract.unluckTimeStamp))} />
+                      </div>
+                      <div className="bank-name-text">
+                        <h1>{textSelector(dateDiff(contract.StartTimeStamp, contract.unluckTimeStamp))} Building</h1>
+                        <h3>{dateDiff(contract.StartTimeStamp, contract.unluckTimeStamp)}Days</h3>
+                      </div>
+                    </div>
+                    <div className="data-row-box only-d">
+                      <div className="metric-container">
+                        <span>Start
+                          <span className="tooltip-toggle">
+                            <FontAwesomeIcon
+                              icon={faQuestionCircle}
+                              className="tooltip-icon"
+                            />
+                            <span className="sk-tooltip">Cosa fa Earned</span>
+                          </span>
+                        </span>
+                      </div>
+                      <p>{timeConverter(contract.StartTimeStamp)}</p>
+                    </div>
+                    <div className="data-row-box only-d">
+                      <div className="metric-container">
+                        <span>End
+                          <span className="tooltip-toggle">
+                            <FontAwesomeIcon
+                              icon={faQuestionCircle}
+                              className="tooltip-icon"
+                            />
+                            <span className="sk-tooltip">Cosa fa APR</span>
+                          </span>
+                        </span>
+                      </div>
+                      <p>{timeConverter(contract.unluckTimeStamp)}</p>
+                    </div>
+                    <div className="data-row-box ">
+                      <div className="metric-container">
+                        <span>Amount Staked
+                          <span className="tooltip-toggle">
+                            <FontAwesomeIcon
+                              icon={faQuestionCircle}
+                              className="tooltip-icon"
+                            />
+                            <span className="sk-tooltip">Cosa Total Staked</span>
+                          </span>
+                        </span>
+                      </div>
+                      <p>833333<img src={Grave} className='skull-icon' /></p>
+                    </div>
+                    <div className="data-row-box ">
+                      <div className="metric-container">
+                        <span>Wishbones
+                          <span className="tooltip-toggle">
+                            <FontAwesomeIcon
+                              icon={faQuestionCircle}
+                              className="tooltip-icon"
+                            />
+                            <span className="sk-tooltip">Cosa fa End In</span>
+                          </span>
+                        </span>
+                      </div>
+                      <p>10</p>
+                    </div>
+                    <div className="data-row-box angle">
+                      <p onClick={() => EnableFarm(i)} className="angle"> <FontAwesomeIcon icon={angleIconFarm[i] ? faAngleUp : faAngleDown} /></p>
+                    </div>
+                  </div>
 
-            <div className="data-container-wrapped" id={'farm-'+(i)}>
-              <div className="farm-box sk-box">
-              <h1 hidden={!finish}>Finished!</h1>
-                <h1 hidden={finish}>Ending in:</h1>
-                <h1  hidden={finish}>{ending.days}D {ending.hours}H {ending.minutes}M <FontAwesomeIcon icon={faHourglassHalf} /></h1>
-                <h3>APY:<span>500%</span></h3>
-                <h3>Rewards: <span>300<img src={Rudes} className="skull-icon"/></span></h3>
-                <h4> <span>25<img src={Soul} className="skull-icon"/></span></h4>
-                <button className={finish ? 'skull-button' : 'disabled-button'} disabled={!finish}>CLAIM</button>
-              </div>
-            </div>
-            </>
-           )
- })}
+                  <div className="data-container-wrapped" id={'farm-' + (i)}>
+                    <div className="farm-box sk-box">
+                      <h1 hidden={!finish}>Finished!</h1>
+                      <h1 hidden={finish}>Ending in:</h1>
+                      <h1 hidden={finish}>{ending.days}D {ending.hours}H {ending.minutes}M <FontAwesomeIcon icon={faHourglassHalf} /></h1>
+                      <h3>APY:<span>500%</span></h3>
+                      <h3>Rewards: <span>300<img src={Rudes} className="skull-icon" /></span></h3>
+                      <h4> <span>25<img src={Soul} className="skull-icon" /></span></h4>
+                      <button className={finish ? 'skull-button' : 'disabled-button'} disabled={!finish}>CLAIM</button>
+                    </div>
+                  </div>
+                </>
+              )
+            })}
             <div className="data-row-last">
               <p>To Top <FontAwesomeIcon icon={faAngleUp} /></p>
             </div>
@@ -416,14 +423,14 @@ const contracts = [c1,c2,c3];
 
 
           <div className="farm-content" hidden={!detailsView}>
-          <div className="data-row first">
+
+            <div className="data-row first">
               <div className="bank-name">
                 <div className="bank-name-img">
                   <img src={GraveToRude} />
                 </div>
                 <div className="bank-name-text">
-                  <h1>Earn Rude</h1>
-                  <h3>Stake Grave</h3>
+                  <h1 onClick={() => { openModal(1) }}>GRVE-CRO <FontAwesomeIcon icon={faQuestionCircle}/></h1>
                 </div>
               </div>
               <div className="data-row-box">
@@ -486,7 +493,6 @@ const contracts = [c1,c2,c3];
                 <p onClick={() => EnablePool(1)} className="angle"> <FontAwesomeIcon icon={angleIconPool[0] ? faAngleUp : faAngleDown} /></p>
               </div>
             </div>
-
             <div className="data-container-wrapped" id="pool-1">
               <div class="switcher-container">
                 <div className="switcher-wrapper">
@@ -509,7 +515,7 @@ const contracts = [c1,c2,c3];
                 </div>
 
                 <div className="sk-box data-box" hidden={detailsView2}>
-                  <h1><img src={Grave} className="skull-icon"></img>Stake Grave Earn $Rude</h1>
+                  <h1><img src={Grave} className="skull-icon"></img>Stake Grave Earn $Rude </h1>
                   <hr></hr>
                   <div className="data-box-content">
                     <p>APY/APR:<span>906,86/230,94%</span></p>
@@ -546,12 +552,29 @@ const contracts = [c1,c2,c3];
                 </div>
               </div>
             </div>
+            <div className="modal" id="modal-pool-1">
+              <div className="modal-w-content">
+                  <div class="modal-pool-head sk-flex">
+                    <h1>GRVE-CRO</h1>
+                    <span class="close-btn" onClick={() => { closeModal(1) }}>
+                      &times;
+                    </span>
+                  </div>
+                  <div className="info-list">
+                    <p><a href="https://mm.finance/add/0x9885488cD6864DF90eeBa6C5d07B35f08CEb05e9/0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23">GET GRVE-WCRO <FontAwesomeIcon icon={faExternalLink}/></a></p>
+                    <p><a>View Contract <FontAwesomeIcon icon={faExternalLink}/></a></p>
+                    <p><a href='https://dexscreener.com/cronos/0x4672d3d945700cc3bdf4a2b6704e429d567dc52c'>See Pair Info <FontAwesomeIcon icon={faExternalLink}/></a></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
+
         </div>
-      </div>
-    </>
-  )
+      </>
+      )
 }
 
 
-export default Bank;
+      export default Bank;
