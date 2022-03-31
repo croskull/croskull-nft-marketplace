@@ -125,7 +125,9 @@
 
 .bank .bank-name-text {
   text-align: left;
-  margin-left: 1px;
+  margin-left: 5px;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .bank .data-row-box {

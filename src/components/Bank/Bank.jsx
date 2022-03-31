@@ -15,7 +15,7 @@ import Rude from "./rude.png"
 import CoinSound from "./collect-coin.mp3";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleUp, faAngleDown, faQuestionCircle,faHourglassHalf } from '@fortawesome/free-solid-svg-icons';
+import { faAngleUp, faAngleDown, faQuestionCircle, faHourglassHalf, faExternalLink} from '@fortawesome/free-solid-svg-icons';
 import './Bank.css';
 import MetricContainer from "../MetricContainer/MetricContainer";
 const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/";
@@ -23,7 +23,7 @@ const ipfsUri128 = "https://croskull.mypinata.cloud/ipfs/QmZn1HvYE1o1J8LhNpxFTj5
 
 
 const Bank = ({ accountAddress }) => {
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
 
   const [detailsView, setDetailsView] = useState(false)
   const [detailsView2, setDetailsView2] = useState(false)
@@ -36,9 +36,11 @@ const Bank = ({ accountAddress }) => {
   const [staked, setStaked] = useState(87.83736)
   const [inputGrave, setInputGrave] = useState(0)
   const [inputGraveStaked, setInputGraveStaked] = useState(0)
-  const [angleIconFarm, setAngleIconFarm] = useState([false, false]);
-  const [angleIconPool, setAngleIconPool] = useState([false, false]);
-  const [enableBuildingButton,setEnableBuildingButton] = useState(false);
+  const [angleIconFarm, setAngleIconFarm] = useState([]);
+  const [angleIconPool, setAngleIconPool] = useState([]);
+  const [enableBuildingButton, setEnableBuildingButton] = useState(false);
+  const [enableCalculategButton, setEnableCalculateButton] = useState(false);
+  const dispatch = useDispatch();
 
   const handleFieldChange = (event) => {
     let value = event.target.value
@@ -57,12 +59,12 @@ const Bank = ({ accountAddress }) => {
     setInputGraveStaked(value);
   }
   const getMax = () => {
-    let d = document.getElementById("input-grave2");
+    let d = document.getElementById("input-lp");
     d.value = balance
     setInputGrave(balance);
   }
   const getMaxStaked = () => {
-    let d = document.getElementById("input-grave-staked");
+    let d = document.getElementById("input-lp-staked");
     d.value = staked
     setInputGraveStaked(staked);
   }
@@ -100,13 +102,13 @@ const Bank = ({ accountAddress }) => {
   }
 
   const c1 = {
-     address: '0xb39384',
-     amount: 100,
-     StartTimeStamp: 1647730800,
-     unluckTimeStamp: 1648335600,
-     usedWishbones: 10,
-     duration: 14,
-     init: 1002
+    address: '0xb39384',
+    amount: 100,
+    StartTimeStamp: 1647730800,
+    unluckTimeStamp: 1648335600,
+    usedWishbones: 10,
+    duration: 14,
+    init: 1002
   }
   const c2 = {
     address: '0xb39384',
@@ -116,46 +118,45 @@ const Bank = ({ accountAddress }) => {
     usedWishbones: 10,
     duration: 14,
     init: 1002
- }
- const c3 = {
-  address: '0xb39384',
-  amount: 100,
-  StartTimeStamp: 1648677600,
-  unluckTimeStamp: 1650492000,
-  usedWishbones: 10,
-  duration: 14,
-  init: 1002
-}
+  }
+  const c3 = {
+    address: '0xb39384',
+    amount: 100,
+    StartTimeStamp: 1648677600,
+    unluckTimeStamp: 1650492000,
+    usedWishbones: 10,
+    duration: 14,
+    init: 1002
+  }
 
-const contracts = [c1,c2,c3];
+  const contracts = [c1, c2, c3];
 
-  function timeConverter(UNIX_timestamp){
+  function timeConverter(UNIX_timestamp) {
     var a = new Date(UNIX_timestamp * 1000);
-    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     var year = a.getFullYear();
     var month = months[a.getMonth()];
     var date = a.getDate();
     var hour = a.getHours();
     var min = a.getMinutes();
     var sec = a.getSeconds();
-    var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+    var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
     return time;
   }
 
-  function dateDiff(date1,date2){
+  function dateDiff(date1, date2) {
     var d1 = new Date(date1 * 1000);
     var d2 = new Date(date2 * 1000);
-    return (d2-d1)/1000/24/3600;
+    return (d2 - d1) / 1000 / 24 / 3600;
   }
-    
-  function textSelector(d)
-  {
-    switch(d){
+
+  function textSelector(d) {
+    switch (d) {
       case 7:
         return 'House';
-        case 14:
+      case 14:
         return 'Fountain';
-        case 21:
+      case 21:
         return 'Castle';
     }
   }
@@ -164,28 +165,36 @@ const contracts = [c1,c2,c3];
     switch(d){
       case 7:
         return House;
-        case 14:
+      case 14:
         return Fountain;
-        case 21:
+      case 21:
         return Castle;
     }
   }
 
-  function enableCalculateButton(){
+  function enableBuilding() {
     let d = document.getElementById("input-grave");
     let d2 = document.getElementById("input-wishbones");
-    if(d.value >= balance)
-      d.value=balance
-    if(d2.value % 10 == 0 && d.value >0)
-    setEnableBuildingButton(true)
-    else
-    {
-    setEnableBuildingButton(false)
-    alert('wishbones need to be a 10 multiplier');
+    if (d.value >= balance)
+      d.value = balance
+    console.log(d.value)
+    if ((d2.value % 10 == 0 || d2.value == 0) && d.value > 0)
+      setEnableBuildingButton(true)
+    else {
+      setEnableBuildingButton(false)
+      //dispatch(wishboneError())
     }
   }
-    
-  const DAY_IN_SEC = 60 * 60 * 24 *1000;
+
+  function enableCalculate() {
+    let d = document.getElementById("input-grave");
+    console.log(d.value)
+    if (d.value > 0)
+      setEnableCalculateButton(true)
+    else
+      setEnableCalculateButton(false)
+  }
+  const DAY_IN_SEC = 60 * 60 * 24 * 1000;
   const HUNDRED_DAYS_IN_SEC = 100 * DAY_IN_SEC//100 * DAY_IN_SEC;
   function formatDate(data) {
     let timestamp = data*1000 - new Date( ).getTime()
@@ -195,11 +204,10 @@ const contracts = [c1,c2,c3];
     let hours = parseInt(hoursDiff)
     let tsMinutes = hoursDiff * 60
     let minutes = parseInt(tsMinutes - (hours * 60))
-    if(timestamp <=0)
-    {
-      days=0;
-      hours=0;
-      minutes=0;
+    if (timestamp <= 0) {
+      days = 0;
+      hours = 0;
+      minutes = 0;
     }
     return {
       days,
@@ -207,7 +215,18 @@ const contracts = [c1,c2,c3];
       minutes
     }
   }
-  
+
+  const closeModal = (i) => {
+    let modal = document.getElementById("modal-pool-"+i);
+    modal.style.display = "none";
+  }
+
+  const openModal = (i) => {
+    let modal = document.getElementById("modal-pool-"+i);
+    modal.style.display = "block";
+    console.log('qua')
+  }
+
 
   return (
 
@@ -278,7 +297,7 @@ const contracts = [c1,c2,c3];
                     id='input-wishbones'
                   ></input>
                 </label>
-                <button className="skull-button" onClick={() => enableCalculateButton()}>CALCULATE</button>
+                <button className="skull-button" onClick={() => enableCalculate()}>CALCULATE</button>
               </div>
               <div className="contract-container">
                 <div className="contract-content">
@@ -364,7 +383,7 @@ const contracts = [c1,c2,c3];
               </div>
             </div>
 
-           { contracts.map( (contract,i) => {
+            {contracts.map((contract, i) => {
               let ending = formatDate(contract.unluckTimeStamp)
               console.log(ending)
               let finish = (ending.days == 0 && ending.hours == 0 && ending.minutes == 0)
@@ -434,8 +453,7 @@ const contracts = [c1,c2,c3];
                   <img src={GraveToRude} />
                 </div>
                 <div className="bank-name-text">
-                  <h1>Earn Rude</h1>
-                  <h3>Stake Grave</h3>
+                  <h1 onClick={() => { openModal(1) }}>GRVE-CRO <FontAwesomeIcon icon={faQuestionCircle}/></h1>
                 </div>
               </div>
               <div className="data-row-box">
@@ -498,7 +516,6 @@ const contracts = [c1,c2,c3];
                 <span onClick={() => EnablePool(1)} className="angle"> <FontAwesomeIcon icon={angleIconPool[0] ? faAngleUp : faAngleDown} /></span>
               </div>
             </div>
-
             <div className="data-container-wrapped" id="pool-1">
               <div class="switcher-container">
                 <div className="switcher-wrapper">
@@ -521,7 +538,7 @@ const contracts = [c1,c2,c3];
                 </div>
 
                 <div className="sk-box data-box" hidden={detailsView2}>
-                  <h1><img src={Grave} className="skull-icon"></img>Stake Grave Earn $Rude</h1>
+                  <h1><img src={Grave} className="skull-icon"></img>Stake Grave Earn $Rude </h1>
                   <hr></hr>
                   <div className="data-box-content">
                     <span>APY/APR:<span>906,86/230,94%</span></span>
@@ -531,7 +548,7 @@ const contracts = [c1,c2,c3];
                     <span className="balance"> {balance.toFixed(2)} Balance</span>
                     <div className="input-content">
                       <button className="skull-button" onClick={() => getMax()}>MAX</button>
-                      <input id="input-grave2" type="number" placeholder="0" onChange={handleFieldChange} step=".0000000001"></input>
+                      <input id="input-lp" type="number" placeholder="0" onChange={handleFieldChange} step=".0000000001"></input>
                     </div>
                     <button className={inputGrave > 0 ? 'skull-button stake-button' : 'disabled-button'} disabled={inputGrave < 0 ? true : false}>STAKE</button>
                     <button className={profit > 0 ? 'skull-button claim-button' : 'disabled-button'} disabled={profit < 0 ? true : false}>CLAIM</button>
@@ -550,7 +567,7 @@ const contracts = [c1,c2,c3];
                     <span className="balance"> {staked.toFixed(2)} Staked</span>
                     <div className="input-content">
                       <button className="skull-button" onClick={() => getMaxStaked()}>MAX</button>
-                      <input id="input-grave-staked" type="number" placeholder="0" onChange={handleFieldChangeStaked} step=".0000000001"></input>
+                      <input id="input-lp-staked" type="number" placeholder="0" onChange={handleFieldChangeStaked} step=".0000000001"></input>
                     </div>
                     <button className={inputGraveStaked > 0 ? 'skull-button stake-button' : 'disabled-button'} disabled={inputGraveStaked < 0 ? true : false}>UNSTAKE</button>
                     <button className={staked > 0 ? 'skull-button unstake-button' : 'disabled-button'} disabled={staked < 0 ? true : false}>UNSTAKE ALL {"&"} CLAIM</button>
@@ -558,13 +575,28 @@ const contracts = [c1,c2,c3];
                 </div>
               </div>
             </div>
+            <div className="modal" id="modal-pool-1">
+              <div className="modal-w-content">
+                  <div class="modal-pool-head sk-flex">
+                    <h1>GRVE-CRO</h1>
+                    <span class="close-btn" onClick={() => { closeModal(1) }}>
+                      &times;
+                    </span>
+                  </div>
+                  <div className="info-list">
+                    <p><a href="https://mm.finance/add/0x9885488cD6864DF90eeBa6C5d07B35f08CEb05e9/0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23">GET GRVE-WCRO <FontAwesomeIcon icon={faExternalLink}/></a></p>
+                    <p><a>View Contract <FontAwesomeIcon icon={faExternalLink}/></a></p>
+                    <p><a href='https://dexscreener.com/cronos/0x4672d3d945700cc3bdf4a2b6704e429d567dc52c'>See Pair Info <FontAwesomeIcon icon={faExternalLink}/></a></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
+
         </div>
-      </div>
-    </>
-  )
+      </>
+      )
 }
-
-
 
 export default Bank;
