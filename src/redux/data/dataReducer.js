@@ -56,11 +56,18 @@ const initialState = {
     tx: "",
     error: false,
     errorMsg: "",
+    //audioplayer
 };
 
 const dataReducer = (state = initialState, action) => {
     let payload = action.payload
     switch (action.type) {
+        case "PLAY_SOUND":
+            return {
+                ...state,
+                audioSrc: payload.audioSrc,
+                isPlaying: payload.isPlaying
+            }
         case "CHECK_DATA_REQUEST":
             return {
                 ...state,

@@ -22,9 +22,10 @@ const Raffle = ({ accountAddress }) => {
   let { userGraveBalance } = data
   let { isManager, raffles, allowance } = raffle
   const [hasData, toggleData] = useState(false)
+  const [onlyActive, toggleActive] = useState(false)
 
   useEffect( () => {
-      if( raffle.init ) return 
+    if(blockchain.croRaffle )
       dispatch(loadRaffleData())
   }, [blockchain.croRaffle])
 
@@ -362,23 +363,34 @@ const Raffle = ({ accountAddress }) => {
         }
       <div className="sk-container sk-row">
         <div className="sk-box sk-column sk-raffle">
-          <span className="tooltip-toggle sk-flex sk-row">
+          <span className="sk-flex sk-row">
             <h3>Bonesville Raffle</h3>
-            <FontAwesomeIcon 
-                icon={faQuestionCircle} 
-                className="tooltip-icon"
-            /> 
-            <span className="sk-tooltip sk-tooltip-full">
-              <p>
-                There are two types of raffles: <b>Normal</b> and <b>Fast</b> Raffle.
-              </p>
-              <p>
-                <b>Normal</b> raffle has a maximum number of 10 prizes, a maximum number of participants and a time limit for entry. Once the maximum number of participants, or the time limit is reached, the smart contract will start a random draw and choose the winning wallets at random.
-              </p>
-              <p>
-                <b>Fast</b>: The crazy raffle has a maximum number of 10 prizes, and no limit to number of participants. Each time a user purchases a raffle ticket, the time limit for the draw will be reduced by 2% of the remaining time for each new participant. (With a lot of participation, the raffle will end quickly!). The reduction % per new participants can vary. Once the time is up, the smart contract will draw the winners through a random draw, choosing the winning wallets at random. 1 prize per wallet per raffle.
-              </p>
-            </span>
+            <div className="tooltip-toggle">
+              <FontAwesomeIcon 
+                  icon={faQuestionCircle} 
+                  className="tooltip-icon"
+              /> 
+              <span className="sk-tooltip sk-tooltip-full">
+                <p>
+                  There are two types of raffles: <b>Normal</b> and <b>Fast</b> Raffle.
+                </p>
+                <p>
+                  <b>Normal</b> raffle has a maximum number of 10 prizes, a maximum number of participants and a time limit for entry. Once the maximum number of participants, or the time limit is reached, the smart contract will start a random draw and choose the winning wallets at random.
+                </p>
+                <p>
+                  <b>Fast</b>: The crazy raffle has a maximum number of 10 prizes, and no limit to number of participants. Each time a user purchases a raffle ticket, the time limit for the draw will be reduced by 2% of the remaining time for each new participant. (With a lot of participation, the raffle will end quickly!). The reduction % per new participants can vary. Once the time is up, the smart contract will draw the winners through a random draw, choosing the winning wallets at random. 1 prize per wallet per raffle.
+                </p>
+              </span>
+            </div>
+            <label>
+              <input
+                type="checkbox"
+                checked={onlyActive}
+                onChange={ () => toggleActive(!onlyActive)}
+                className="only-active"
+              />
+              Only Active
+            </label>
           </span>
             {
               isManager ? (
@@ -395,7 +407,7 @@ const Raffle = ({ accountAddress }) => {
               </button>
               ) : ('')
             }
-          <div className="sk-raffle sk-flex sk-column">
+          <div className="sk-raffle-list sk-flex sk-column">
             { raffles && raffles.length > 0 ?
               raffles.map( raf => {
                 let {
@@ -403,26 +415,18 @@ const Raffle = ({ accountAddress }) => {
                   title, 
                   winnersCount, 
                   maxParticipants, 
-                  cost, 
-                  collectionName, 
-                  collectionAddress,
+                  cost,
                   image,
-                  startTimestamp,
                   isParticipant,
                   endTimestamp, 
                   description,
                   participants,
                   winners
                 } = raf
-                /*let raffleDuration = raf.finish - ( new Date() / 1000 );
-                let raffleStart = raf.start - ( new Date() / 1000 );
-                let raffleDurationDate = formatDate(raffleDuration);*/
                 let currentTimestamp = parseInt( new Date( ).getTime() / 1000 )
+                if(  onlyActive && ( winners.length > 0 || endTimestamp < currentTimestamp ) ) return
                 let raffleDuration = currentTimestamp < endTimestamp ? endTimestamp - currentTimestamp : 0
                 let raffleDurationFormatted = formatDate(raffleDuration)
-                let raffleStart = 0;
-                let raffleDurationDate = 0;
-                
                 return (
                   <div className="sk-raffle-item sk-flex sk-row" >
                     <div className="wd-22">
@@ -430,11 +434,11 @@ const Raffle = ({ accountAddress }) => {
                     </div>
                     <div className="raffle-box-1 wd-44 sk-flex sk-column">
                         <span className="sk-raffle-details">
-                          { `${type > 0 ? `Fast Raffle ${type}%` : 'Normal Raffle'} | ${winnersCount} Winners | ${ maxParticipants > 0 ? `${participants}/${maxParticipants}` : participants } Participants` }
+                          { `${type > 0 ? `🔥 Fast Raffle ${type}%` : '☠️ Normal Raffle'} | 🏆 ${winnersCount} Winners | 🤾‍♂️ ${ maxParticipants > 0 ? `${participants}/${maxParticipants}` : participants } Participants` }
                         </span>
                         <h3>{title}</h3>
                         <div
-                          dangerouslySetInnerHTML={{ __html: description }}
+                          dangerouslySetInnerHTML={{ __html: description.replace('<p><br></p>', '').replace('<p><br></p>', '') }}
                         >
                         </div>
                     </div>

@@ -3,9 +3,10 @@ import {
 } from 'ethers';
 import React, { useEffect, useState } from "react";
 import store from "../../redux/store";
-import cryptoIcon from "./crypto-com.svg";
+import { useDispatch } from "react-redux";
 import { connect, disconnect } from "../../redux/blockchain/blockchainActions";
-import {DeFiWeb3Connector } from 'deficonnect';
+import cryptoIcon from "./crypto-com.svg";
+import { DeFiWeb3Connector } from 'deficonnect';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import Web3Modal from 'web3modal';
 import Logo from "./logo-white.png";
@@ -19,7 +20,6 @@ import MetricItem from "./MetricItem";
 import { Link } from "react-router-dom";
 import menuIcon from "./menu-icon.svg";
 import Soul from "./soul.png";
-import { useDispatch } from "react-redux";
 import './navbar.css';
 
 const Navbar = () => {
@@ -28,42 +28,23 @@ const Navbar = () => {
   let { rewardPlusMalus, soulsBalance, userGraveBalance, croSkulls, rewards, croSkullsStaked, daysLastWithdraw } = data
   let { accountAddress, formatEther, contractDetected, loading } = blockchain
   const [isHovered, setIsHovered] = useState(false)
-  let malusPercent = ( 800 - ( 25 * daysLastWithdraw ) ) / 10
-
-  
-    useEffect( () => {
-      if(  window.ethereum && window.ethereum.isConnected() && ! loading && ! contractDetected ){
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        dispatch( connect( provider ))
-      }
-    }, [window.ethereum])
-
   const [menuState, setMenuState] = useState(false)
+  let malusPercent = ( 800 - ( 25 * daysLastWithdraw ) ) / 10
+  
+  useEffect( () => {
+    if( window.ethereum && ! loading && ! contractDetected ){
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      dispatch( connect( provider ))
+    }
+  }, [window.ethereum])
 
   const toggleMenu = () => {
     setMenuState( ! menuState )
   }
-  
-  
 
   const toggleProvidersModal = async () => {
     await web3Modal._toggleModal();
     web3ModalConnection()
-    /*let _provider = await web3Modal.connect()
-    const provider = new ethers.providers.Web3Provider(_provider);
-    dispatch(connect( provider ))*/
-  }
-
-  const autoConnect = async () => {
-    localStorage.clear();
-    const provider = new WalletConnectProvider({
-      chainId: 25,
-      rpc: {25: 'https://gateway.nebkas.ro'}
-    });
-    await provider.enable();
-    const ethersProvider = new ethers.providers.Web3Provider(provider);
-    //const provider = new ethers.providers.Web3Provider(provider);
-    dispatch(connect( ethersProvider ))
   }
 
   const web3ModalConnection = () => {
@@ -188,6 +169,11 @@ const Navbar = () => {
           <li className="nav-item">
             <Link to="/" className="nav-link">
               Home
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to="/bank" className="nav-link">
+              Bank
             </Link>
           </li>
           <li className="nav-item">

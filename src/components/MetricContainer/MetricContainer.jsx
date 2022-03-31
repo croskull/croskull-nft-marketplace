@@ -33,10 +33,14 @@ const MetricContainer = ({
                 className={`metric-icon ${ addClass ? addClass : ''}`}
             >
                 <b>{ value }</b>
-                <img 
-                    className="skull-icon"
-                    src={icon} 
-                />
+                {
+                    icon ? (
+                        <img 
+                            className="skull-icon"
+                            src={icon} 
+                        />
+                    ) : ('')
+                }
             </span>
         </div>
     )

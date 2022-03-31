@@ -33,8 +33,22 @@
 
 .sk-raffle {
   padding: 12px;
-  overflow-y: auto;
+  overflow-y: hidden;
   min-height: 50vh;
+  max-height: 80vh;
+}
+
+.raffle label{
+  margin: 0px;
+}
+
+.only-active{
+  margin-right: 6px;
+}
+
+.sk-raffle-list {
+  max-height: 100%;
+  overflow-y: scroll;
 }
 
 .sk-raffle-item {

@@ -2,6 +2,13 @@ import store from "../store";
 
 const genesisBlock = 1738447;
 
+const requestPlaySound = (payload) => {
+  return {
+    type: "PLAY_SOUND",
+    payload: payload
+  }
+}
+
 const updateMerchant = (payload) => {
   return {
     type: "UPDATE_MERCHANT",
@@ -59,6 +66,15 @@ const notificationRequest = (payload) => {
   return {
     type: "NOTIFICATION_REQUEST",
     payload: payload
+  }
+}
+
+export const playSound = (audioPath ) => {
+  return async (dispatch) => { 
+    if( audioPath ){
+      let newAudioSrc = new Audio(audioPath)
+      newAudioSrc.play()
+    }
   }
 }
 

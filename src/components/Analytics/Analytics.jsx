@@ -157,7 +157,7 @@ const Analytics = () => {
                                 label="Liquidity USD"
                                 value={ `$ ${dexscreener && ( dexscreener.liquidityUsd ).toLocaleString('en-US')}` }
                                 vertical={true}
-                                tooltip="Liquidity Pool Total Value in Dollars."
+                                tooltip="Liquidity Pool Total Value in Dollars (do not include MMF pool)."
                             />
                         </div>
                         <div className="sk-box-content sk-row">
@@ -184,7 +184,7 @@ const Analytics = () => {
                             />
                             <MetricContainer 
                                 label="Burned in USD"
-                                value={ `$ ${ burnedGraves && dexscreener ? ( formatEther(burnedGraves) * dexscreener.croInUsd ).toFixed(0).toLocaleString('en-US') : 0 }` }
+                                value={ `$ ${ burnedGraves && dexscreener ? ( formatEther(burnedGraves) * dexscreener.graveInUsd ).toFixed(0).toLocaleString('en-US') : 0 }` }
                                 vertical={true}
                                 tooltip="Actual Burned Grave Value in USD."
                             />

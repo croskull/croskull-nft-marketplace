@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-
+import store from "../../redux/store";
+import { useDispatch } from "react-redux";
+import { playSound } from "../../redux/data/dataActions";
 import "react-quill/dist/quill.snow.css";
 import Grave from "../Navbar/grave.png";
 import Soul from "../Navbar/soul.png";
@@ -9,16 +11,20 @@ import GraveToRude from "./GraveToRude.png"
 import House from "./house.png"
 import Fountain from "./Fountain.png"
 import Castle from "./castle.png"
+import Rude from "./rude.png"
+import CoinSound from "./collect-coin.mp3";
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleUp, faAngleDown, faQuestionCircle,faHourglassHalf } from '@fortawesome/free-solid-svg-icons';
 import './Bank.css';
 import MetricContainer from "../MetricContainer/MetricContainer";
-import { init } from "react-async";
 const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/";
 const ipfsUri128 = "https://croskull.mypinata.cloud/ipfs/QmZn1HvYE1o1J8LhNpxFTj5k8LQb2bWT49YvbrhB3r19Xx/";
 
 
 const Bank = ({ accountAddress }) => {
+  const dispatch = useDispatch();
+
   const [detailsView, setDetailsView] = useState(false)
   const [detailsView2, setDetailsView2] = useState(false)
   const [apy, setApy] = useState(283)
@@ -33,9 +39,6 @@ const Bank = ({ accountAddress }) => {
   const [angleIconFarm, setAngleIconFarm] = useState([false, false]);
   const [angleIconPool, setAngleIconPool] = useState([false, false]);
   const [enableBuildingButton,setEnableBuildingButton] = useState(false);
-
-
-
 
   const handleFieldChange = (event) => {
     let value = event.target.value
@@ -158,7 +161,6 @@ const contracts = [c1,c2,c3];
   }
   function imgSelector(d)
   {
-
     switch(d){
       case 7:
         return House;
@@ -186,8 +188,7 @@ const contracts = [c1,c2,c3];
   const DAY_IN_SEC = 60 * 60 * 24 *1000;
   const HUNDRED_DAYS_IN_SEC = 100 * DAY_IN_SEC//100 * DAY_IN_SEC;
   function formatDate(data) {
-    let timestamp = data*1000 - new Date( ).getTime()  ;
-
+    let timestamp = data*1000 - new Date( ).getTime()
     let tsHours = timestamp / 60 / 60 / 1000
     let days = parseInt(timestamp / DAY_IN_SEC)
     let hoursDiff = tsHours - (days * 24)
@@ -212,30 +213,24 @@ const contracts = [c1,c2,c3];
 
     <>
       <div className="global-container">
-
         <div className="sk-row sk-flex gd-container">
-          <div className="bank-gd-row">
-            <div className="bank-gd-box">
-              <p><h3>${locked.toFixed(2)}</h3></p>
-              <p>Total Value Locked</p>
+            <div className="sk-box">
+              <span className="details-value">${locked.toFixed(2)}</span>
+              <span className="details-title">Total Value Locked</span>
             </div>
-            <div className="bank-gd-box ">
-              <p><h3>${marketCap.toFixed(2)}</h3></p>
-              <p>Market Cap</p>
+            <div className="sk-box">
+              <span className="details-value">{marketCap.toFixed(2)}</span>
+              <span className="details-title">Total Grave Volume</span>
             </div>
-          </div>
-          <div className="bank-gd-row">
-            <div className="bank-gd-box ">
-              <p><h3>{emission.toFixed(2)} Rude per Grave</h3></p>
-              <p>Emission</p>
+            <div className="sk-box">
+              <span className="details-value">394</span>
+              <span className="details-title">Total Wishbones Used</span>
             </div>
-            <div className="bank-gd-box">
-              <p><h3>Up to {apy.toFixed(2)}%</h3></p>
-              <p>Apy</p>
+            <div className="sk-box">
+              <span className="details-value">39</span>
+              <span className="details-title">Total Contracts Active</span>
             </div>
-          </div>
         </div>
-
         <div class="switcher-container">
           <div className="switcher-wrapper">
             <button
@@ -255,49 +250,115 @@ const contracts = [c1,c2,c3];
               POOLS
             </button>
           </div>
-          <div className='pool-content' hidden={detailsView}>
-
+          <div className='sk-box' hidden={detailsView}>
             <div className="choise-container">
               <div className="simulate-container">
                 <h1>Choose Your Contract</h1>
-                <p>Grave Amount</p>
-                <input type='number' placeholder="0" id='input-grave'></input>
-                <p>Wishbone Amount</p>
-                <input type='number' placeholder="0" step="10" max="300" min="0" className="wishbones" readonly id='input-wishbones'></input>
-                <br />
+                <label>
+                  Grave Amount
+                  <input 
+                    type="number"
+                    placeholder="0"
+                    step="10"
+                    min="10"
+                    max="50000"
+                    id='input-grave'
+                  >
+                  </input>
+                </label>
+                <label>
+                  Wishbone Amount
+                  <input 
+                    type="number"
+                    placeholder="0"
+                    step="10"
+                    min="0" 
+                    max="300"
+                    className="wishbones"
+                    id='input-wishbones'
+                  ></input>
+                </label>
                 <button className="skull-button" onClick={() => enableCalculateButton()}>CALCULATE</button>
               </div>
               <div className="contract-container">
                 <div className="contract-content">
                   <div className="contract-box sk-box">
                     <h1>1 WEEK</h1>
-                    <h3>APY: 129%</h3>
-                    <h3>Rewards: 75000</h3>
-                    <button className="skull-button" disabled={!enableBuildingButton}>HELP BUILDING!</button>
+                    <MetricContainer 
+                      label="APY"
+                      value={ `128%` }
+                    />
+                    <MetricContainer 
+                      label="Rewards"
+                      value={ `4553.4` }
+                      icon={Rude}
+                    />
+                    <button className="skull-button" disabled={!enableBuildingButton}>Subscribe</button>
                   </div>
                   <div className="contract-box sk-box">
-                    <h1>2 WEEK</h1>
-                    <h3>APY: 129%</h3>
-                    <h3>Rewards: 75000</h3>
-                    <button className="skull-button" disabled={!enableBuildingButton}>HELP BUILDING!</button>
+                    <h1>1 WEEK</h1>
+                    <MetricContainer 
+                      label="APY"
+                      value={ `128%` }
+                    />
+                    <MetricContainer 
+                      label="Rewards"
+                      value={ `4553.4` }
+                      icon={Rude}
+                    />
+                    <button className="skull-button" disabled={!enableBuildingButton}>Subscribe</button>
                   </div>
                   <div className="contract-box sk-box">
-                    <h1>3 WEEK</h1>
-                    <h3>APY: 129%</h3>
-                    <h3>Rewards: 75000</h3>
-                    <button className="skull-button" disabled={!enableBuildingButton}>HELP BUILDING!</button>
+                    <h1>1 WEEK</h1>
+                    <MetricContainer 
+                      label="APY"
+                      value={ `128%` }
+                    />
+                    <MetricContainer 
+                      label="Rewards"
+                      value={ `4553.4` }
+                      icon={Rude}
+                    />
+                    <button className="skull-button" disabled={!enableBuildingButton}>Subscribe</button>
                   </div>
                   <div className="contract-box sk-box">
-                    <h1>1 MONTH</h1>
-                    <h3>APY: 129%</h3>
-                    <h3>Rewards: 75000</h3>
-                    <button className="skull-button" disabled={!enableBuildingButton}>HELP BUILDING!</button>
+                    <h1>1 WEEK</h1>
+                    <MetricContainer 
+                      label="APY"
+                      value={ `128%` }
+                    />
+                    <MetricContainer 
+                      label="Rewards"
+                      value={ `4553.4` }
+                      icon={Rude}
+                    />
+                    <button className="skull-button" disabled={!enableBuildingButton}>Subscribe</button>
                   </div>
                   <div className="contract-box sk-box">
-                    <h1>2 MONTH</h1>
-                    <h3>APY: 129%</h3>
-                    <h3>Rewards: 7500</h3>
-                    <button className="skull-button" disabled={!enableBuildingButton}>HELP BUILDING!</button>
+                    <h1>1 WEEK</h1>
+                    <MetricContainer 
+                      label="APY"
+                      value={ `128%` }
+                    />
+                    <MetricContainer 
+                      label="Rewards"
+                      value={ `4553.4` }
+                      icon={Rude}
+                    />
+                    <button className="skull-button" disabled={!enableBuildingButton}>Subscribe</button>
+                  </div>
+                  <div className="contract-box sk-box">
+                    <h1>1 WEEK</h1>
+                    <MetricContainer 
+                      label="APY"
+                      value={ `128%` }
+                    />
+                    <MetricContainer 
+                      label="Rewards"
+                      value={ `4553.4` }
+                      icon={Rude}
+                    />
+                    <button className="skull-button" disabled={!enableBuildingButton}>Subscribe</button>
                   </div>
                 </div>
               </div>
@@ -309,100 +370,64 @@ const contracts = [c1,c2,c3];
               let finish = (ending.days == 0 && ending.hours == 0 && ending.minutes == 0)
            return(
              <>
-            <div className="data-row first">
-              <div className="bank-name">
-                <div className="bank-name-img">
-                  <img src={imgSelector(dateDiff(contract.StartTimeStamp,contract.unluckTimeStamp))} />
+              <div className="contract-details sk-box-content">
+                <div className="bank-name">
+                  <div className="bank-name-img">
+                    <img src={imgSelector(dateDiff(contract.StartTimeStamp,contract.unluckTimeStamp))} />
+                  </div>
+                  <div className="bank-name-text">
+                    <h1>{textSelector(dateDiff(contract.StartTimeStamp,contract.unluckTimeStamp))} Building</h1>
+                    <h3>{dateDiff(contract.StartTimeStamp,contract.unluckTimeStamp)} Days</h3>
+                  </div>
                 </div>
-                <div className="bank-name-text">
-                  <h1>{textSelector(dateDiff(contract.StartTimeStamp,contract.unluckTimeStamp))} Building</h1>
-                  <h3>{dateDiff(contract.StartTimeStamp,contract.unluckTimeStamp)}Days</h3>
-                </div>
+                <MetricContainer
+                  label="Amount Staked"
+                  value={ `833333` }
+                  icon={Grave}
+                  vertical={true}
+                  tooltip="Your Grave Staked in this specific contract."
+                />
+                <MetricContainer 
+                  label="Rewards"
+                  value={ `54.3242` }
+                  vertical={true}
+                  icon={Rude}
+                  tooltip=""
+                />
+                <MetricContainer 
+                  label="APY"
+                  value={ `40,23%` }
+                  vertical={true}
+                  tooltip=""
+                />
+                <MetricContainer 
+                  label="End in"
+                  value={ `${finish ? timeConverter(contract.unluckTimeStamp) : 0 }` }
+                  vertical={true}
+                  tooltip={`Creation: ${timeConverter(contract.StartTimeStamp)} </br>End: ${timeConverter(contract.unluckTimeStamp)}`}
+                />
+                <MetricContainer 
+                  label="Wishbone Used"
+                  value={ `40` }
+                  vertical={true}
+                  icon={Grave}
+                  tooltip="Your Grave Staked in this specific contract."
+                />
+                <button 
+                  onClick={() => dispatch(playSound(CoinSound))}
+                  className="skull-button claim-button"
+                >
+                  Claim
+                </button>
               </div>
-              <div className="data-row-box only-d">
-                <div className="metric-container">
-                  <span>Start
-                    <span className="tooltip-toggle">
-                      <FontAwesomeIcon
-                        icon={faQuestionCircle}
-                        className="tooltip-icon"
-                      />
-                      <span className="sk-tooltip">Cosa fa Earned</span>
-                    </span>
-                  </span>
-                </div>
-                <p>{timeConverter(contract.StartTimeStamp)}</p>
-              </div>
-              <div className="data-row-box only-d">
-                <div className="metric-container">
-                  <span>End
-                    <span className="tooltip-toggle">
-                      <FontAwesomeIcon
-                        icon={faQuestionCircle}
-                        className="tooltip-icon"
-                      />
-                      <span className="sk-tooltip">Cosa fa APR</span>
-                    </span>
-                  </span>
-                </div>
-                <p>{timeConverter(contract.unluckTimeStamp)}</p>
-              </div>
-              <div className="data-row-box ">
-                <div className="metric-container">
-                  <span>Amount Staked
-                    <span className="tooltip-toggle">
-                      <FontAwesomeIcon
-                        icon={faQuestionCircle}
-                        className="tooltip-icon"
-                      />
-                      <span className="sk-tooltip">Cosa Total Staked</span>
-                    </span>
-                  </span>
-                </div>
-                <p>833333<img src={Grave} className='skull-icon' /></p>
-              </div>
-              <div className="data-row-box ">
-                <div className="metric-container">
-                  <span>Wishbones
-                    <span className="tooltip-toggle">
-                      <FontAwesomeIcon
-                        icon={faQuestionCircle}
-                        className="tooltip-icon"
-                      />
-                      <span className="sk-tooltip">Cosa fa End In</span>
-                    </span>
-                  </span>
-                </div>
-                <p>10</p>
-              </div>
-              <div className="data-row-box angle">
-                <p onClick={() => EnableFarm(i)} className="angle"> <FontAwesomeIcon icon={angleIconFarm[i] ? faAngleUp : faAngleDown} /></p>
-              </div>
-            </div>
-
-            <div className="data-container-wrapped" id={'farm-'+(i)}>
-              <div className="farm-box sk-box">
-              <h1 hidden={!finish}>Finished!</h1>
-                <h1 hidden={finish}>Ending in:</h1>
-                <h1  hidden={finish}>{ending.days}D {ending.hours}H {ending.minutes}M <FontAwesomeIcon icon={faHourglassHalf} /></h1>
-                <h3>APY:<span>500%</span></h3>
-                <h3>Rewards: <span>300<img src={Grave} className="skull-icon"/></span></h3>
-                <h4> <span>25<img src={Soul} className="skull-icon"/></span></h4>
-                <button className={finish ? 'skull-button' : 'disabled-button'} disabled={!finish}>CLAIM</button>
-              </div>
-            </div>
             </>
            )
- })}
+          })}
             <div className="data-row-last">
-              <p>To Top <FontAwesomeIcon icon={faAngleUp} /></p>
+              <span>To Top <FontAwesomeIcon icon={faAngleUp} /></span>
             </div>
-
           </div>
-
-
-
-          <div className="farm-content" hidden={!detailsView}>
+          <div className="sk-box" hidden={!detailsView}>
           <div className="data-row first">
               <div className="bank-name">
                 <div className="bank-name-img">
@@ -425,7 +450,7 @@ const contracts = [c1,c2,c3];
                     </span>
                   </span>
                 </div>
-                <p>83</p>
+                <span>83</span>
               </div>
               <div className="data-row-box">
                 <div className="metric-container">
@@ -439,7 +464,7 @@ const contracts = [c1,c2,c3];
                     </span>
                   </span>
                 </div>
-                <p>835%</p>
+                <span>835%</span>
               </div>
               <div className="data-row-box only-d">
                 <div className="metric-container">
@@ -453,7 +478,7 @@ const contracts = [c1,c2,c3];
                     </span>
                   </span>
                 </div>
-                <p>833333$</p>
+                <span>833333$</span>
               </div>
               <div className="data-row-box only-d">
                 <div className="metric-container">
@@ -467,10 +492,10 @@ const contracts = [c1,c2,c3];
                     </span>
                   </span>
                 </div>
-                <p>7D</p>
+                <span>7D</span>
               </div>
               <div className="data-row-box angle">
-                <p onClick={() => EnablePool(1)} className="angle"> <FontAwesomeIcon icon={angleIconPool[0] ? faAngleUp : faAngleDown} /></p>
+                <span onClick={() => EnablePool(1)} className="angle"> <FontAwesomeIcon icon={angleIconPool[0] ? faAngleUp : faAngleDown} /></span>
               </div>
             </div>
 
@@ -499,11 +524,11 @@ const contracts = [c1,c2,c3];
                   <h1><img src={Grave} className="skull-icon"></img>Stake Grave Earn $Rude</h1>
                   <hr></hr>
                   <div className="data-box-content">
-                    <p>APY/APR:<span>906,86/230,94%</span></p>
-                    <p>Staked:<span>{staked.toFixed(2)}<img src={Grave} className="skull-icon"></img></span></p>
-                    <p>Profit:<span>{profit.toFixed(2)}<img src={Rudes} className="skull-icon"></img></span></p>
-                    <p><span>{profit.toFixed(2)}<img src={Soul} className="skull-icon"></img></span></p>
-                    <p className="balance"> {balance.toFixed(2)} Balance</p>
+                    <span>APY/APR:<span>906,86/230,94%</span></span>
+                    <span>Staked:<span>{staked.toFixed(2)}<img src={Grave} className="skull-icon"></img></span></span>
+                    <span>Profit:<span>{profit.toFixed(2)}<img src={Rudes} className="skull-icon"></img></span></span>
+                    <span><span>{profit.toFixed(2)}<img src={Soul} className="skull-icon"></img></span></span>
+                    <span className="balance"> {balance.toFixed(2)} Balance</span>
                     <div className="input-content">
                       <button className="skull-button" onClick={() => getMax()}>MAX</button>
                       <input id="input-grave2" type="number" placeholder="0" onChange={handleFieldChange} step=".0000000001"></input>
@@ -518,11 +543,11 @@ const contracts = [c1,c2,c3];
                   <h1><img src={Grave} className="skull-icon"></img>Stake Grave Earn $Rude</h1>
                   <hr></hr>
                   <div className="data-box-content">
-                    <p>APY/APR:<span>906,86/230,94%</span></p>
-                    <p>Staked:<span>{staked.toFixed(2)}<img src={Grave} className="skull-icon"></img></span></p>
-                    <p>Profit:<span>{profit.toFixed(2)}<img src={Rudes} className="skull-icon"></img></span></p>
-                    <p><span>{profit.toFixed(2)}<img src={Soul} className="skull-icon"></img></span></p>
-                    <p className="balance"> {staked.toFixed(2)} Staked</p>
+                    <span>APY/APR:<span>906,86/230,94%</span></span>
+                    <span>Staked:<span>{staked.toFixed(2)}<img src={Grave} className="skull-icon"></img></span></span>
+                    <span>Profit:<span>{profit.toFixed(2)}<img src={Rudes} className="skull-icon"></img></span></span>
+                    <span><span>{profit.toFixed(2)}<img src={Soul} className="skull-icon"></img></span></span>
+                    <span className="balance"> {staked.toFixed(2)} Staked</span>
                     <div className="input-content">
                       <button className="skull-button" onClick={() => getMaxStaked()}>MAX</button>
                       <input id="input-grave-staked" type="number" placeholder="0" onChange={handleFieldChangeStaked} step=".0000000001"></input>
@@ -539,6 +564,7 @@ const contracts = [c1,c2,c3];
     </>
   )
 }
+
 
 
 export default Bank;

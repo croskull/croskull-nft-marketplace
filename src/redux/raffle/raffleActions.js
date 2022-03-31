@@ -19,12 +19,9 @@ export const loadRaffleData = () => {
     return async (dispatch) => {
         dispatch(fetchRaffleRequest())
         let { accountAddress, croRaffle, croSkullsGrave } = store.getState().blockchain
-        if( ! croRaffle ) return
         let raffleCount = await croRaffle.raffleCounter()
         let raffles = []
-        
         raffleCount = await raffleCount.toString()
-        console.log( raffleCount )
         if( raffleCount ) {
             for( let i = raffleCount-1; i > 1; i--){
                 if( i <= 1 ) return
@@ -74,31 +71,3 @@ export const loadRaffleData = () => {
         } ))
     }
 }
-/*
-export const purchaseItem = ( { _listingId, _cost, _skullId } ) => {
-    return async (dispatch) => {
-        let { ebisusMarketplace } = store.getState().blockchain
-        if( ! ebisusMarketplace || ! _listingId) return
-        let purchaseTx = ebisusMarketplace.makePurchase(_listingId, {
-            value: _cost
-        })
-        await purchaseTx.then(
-            async (tx) => {
-                dispatch(sendNotification({
-                    title: `Transaction Sent`,
-                    message: 'Waiting for confirmation',
-                    tx,
-                    type: "info"
-                }))
-                await tx.wait(2)
-                dispatch(sendNotification({
-                    title: `Success`,
-                    message: `Item #${_skullId} purchased!`,
-                    tx,
-                    type: "success"
-                }))
-                dispatch(getSkullsData())
-            }
-        )
-    }
-}*/

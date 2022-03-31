@@ -2,7 +2,7 @@ import {
   ethers
 } from 'ethers';
 import React, { useEffect, useState } from "react";
-import { getSkullsData, toTavern, toMission, sendNotification, getStakingData, approveStories, refreshSkullsStories } from "../../redux/data/dataActions";
+import { getSkullsData, toTavern, toMission, sendNotification, getStakingData, approveStories, refreshSkullsStories, playSound } from "../../redux/data/dataActions";
 import store from "../../redux/store";
 import { useDispatch } from "react-redux";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,6 +15,8 @@ import eggImage from './egg.png';
 import bluePotionImage from './bluePotionImage.png';
 import redPotionImage from './redPotionImage.png';
 import ReactQuill from "react-quill";
+import AdventureSound from "./skull-in-adventure.mp3";
+import ClickSound from "../../sounds/click-sound.mp3";
 import "react-quill/dist/quill.snow.css";
 import './tavern.css';
 
@@ -217,6 +219,7 @@ const Tavern = () => {
     } else {
       selectedSkulls.push(e);
     }
+    dispatch(playSound(AdventureSound))
     setViewState({
       ...viewState,
       selectedSkulls
@@ -234,6 +237,7 @@ const Tavern = () => {
     } else {
       selectedStakeSkulls.push(e);
     }
+    dispatch(playSound(AdventureSound))
     setViewState({
       ...viewState,
       selectedStakeSkulls
@@ -424,6 +428,7 @@ const Tavern = () => {
                           ...viewState,
                           currentView: 'adventure'
                         } )
+                        
                       }}
                     >
                       { 
@@ -440,6 +445,7 @@ const Tavern = () => {
                       disabled={ blockchain.accountAddress ? false : true}
                       onClick={ () => {
                         setApprovalforAll()
+                        
                       }}
                     >
                       Approve

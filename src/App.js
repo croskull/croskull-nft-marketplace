@@ -9,13 +9,15 @@ import Navbar from "./components/Navbar/Navbar";
 import Notifier from "./components/Notifier/Notifier";
 import Tavern from "./components/Tavern/Tavern";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
+import { useDispatch } from "react-redux";
+import { playSound } from "./redux/data/dataActions";
 import { ethers } from 'ethers';
 import store from "./redux/store";
-import "./App.css";
 import Raffle from "./components/Raffle/Raffle";
-import Story from "./components/Story/Story";
 import Bank from "./components/Bank/Bank";
-import Profile from "./components/Social/Profile";
+import BgMusic from "./utils/bg-music.mp3";
+import ClickSound from "./sounds/click-sound.mp3"
+import "./App.css";
 
 let provider, contract, stakingContract, ethProvider;
 class App extends Component {
@@ -34,9 +36,19 @@ class App extends Component {
     };
   }
 
-  componentDidMount = async () => {
+  componentDidMount() {
     this.subscribe()
-  };
+    let bgSound = new Audio( BgMusic )
+    let clickSound = new Audio(ClickSound)
+    bgSound.loop = true
+    bgSound.volume = 0.2
+    clickSound.volume = 0.5
+    bgSound.play()
+    document.addEventListener('click', () => {
+      clickSound.currentTime = 0
+      clickSound.play()
+    })
+  }
 
   setProvider = (_provider = false) => {
     if (_provider) {
@@ -275,7 +287,6 @@ class App extends Component {
               <Navbar />
               <Route
                 render={({ location }) => (
-
                   <TransitionGroup className={`container-fluid ${location.pathname.replace('/', '')}`}>
                     <CSSTransition
                       key={location.pathname}
@@ -326,30 +337,17 @@ class App extends Component {
                           )}
                         />
                         <Route
-                          path="/story"
-                          render={() => (
-                            <Story />
-                          )}
-                        />
-                        <Route
                           path="/raffle"
                           render={() => (
-                            <Raffle accountAddress={this.state.accountAddress} />
+                            <Raffle />
                           )}
                         />
                         <Route
                           path="/bank"
                           render={() => (
-                            <Bank accountAddress={this.state.accountAddress} />
+                            <Bank />
                           )}
                         />
-                        <Route
-                          path="/profile"
-                          render={() => (
-                            <Profile accountAddress={this.state.accountAddress} />
-                          )}
-                        />
-                        
                       </Switch>
                     </CSSTransition>
                   </TransitionGroup>
