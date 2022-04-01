@@ -9,7 +9,6 @@ import { loadEbisusData } from "../../redux/marketplace/marketplaceActions";
 import { loadDexData } from "../../redux/dexscreener/dexscreenerActions";
 import Grave from "../Navbar/grave.png";
 import GraveBurn from "../Navbar/grave-burn.png";
-import Soul from "../Navbar/soul.png";
 import store from "../../redux/store";
 
 const Analytics = () => {

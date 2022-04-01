@@ -13,20 +13,22 @@ import RedPotion from "../../abis/CroSkullsRedPotions.json";
 import PetEggs from "../../abis/petEggs.json";
 import Souls from "../../abis/Souls.json";
 import Raffle from "../../abis/SkullsRaffle.json";
+import Bank from "../../abis/SkullsBank.json";
 import {
   sendNotification, getSkullsData, cleanData
 } from "../data/dataActions";
 const chainId =  "0x19" || "0x152"; //testnet - 3
-const networkId =  25; //338 || 5777; //25 production, 339 cassini, 5777 ganache local env
+const networkId =  25; //25 || 5777; //25 production, 338 testnet3, 5777 ganache local env
 const stakingAddress = StakingArtifacts.networks[networkId].address;
 const graveAddress = Grave.networks[networkId].address;
-const ContractAddress = CroSkulls.networks[networkId].address;
-const descriptionAddress = Description.networks[networkId].address;
+const ContractAddress = CroSkulls.networks[networkId].address //CroSkulls.networks[networkId].address ||;
+const descriptionAddress =  Description.networks[networkId].address;
 const petEggsAddress = PetEggs.networks[networkId].address;
 const soulsAddress = Souls.networks[networkId].address;
 const blueAddress = BluePotion.networks[networkId].address;
 const redAddress = RedPotion.networks[networkId].address;
 const raffleAddress = Raffle.networks[networkId].address;
+const bankAddress = Bank.networks[networkId].address;
 const ebisusAddress = "0x7a3CdB2364f92369a602CAE81167d0679087e6a3";
 
 const ebisusAbi = [
@@ -118,10 +120,11 @@ export const connect = ( ethProvider = false) => {
             let croSkullsGrave = new ethers.Contract(graveAddress, Grave.abi, signer ? signer : false )
             let croPotionBlue = new ethers.Contract(blueAddress, BluePotion.abi, signer ? signer : false )
             let croPotionRed = new ethers.Contract(redAddress, RedPotion.abi, signer ? signer : false )
-            //let croSkullsDescription = ''
+
             let croSkullsDescription = new ethers.Contract(descriptionAddress, Description.abi, signer ? signer : false )
             let croSkullsPetEggs = new ethers.Contract(petEggsAddress, PetEggs.abi, signer ? signer : false )
             let croSkullsSouls = new ethers.Contract(soulsAddress, Souls.abi, signer ? signer : false )
+            let croSkullsBank = new ethers.Contract(bankAddress, Bank.abi, signer ? signer : false )
             let croRaffle = new ethers.Contract(raffleAddress, Raffle.abi, signer ? signer : false )
             let ebisusMarketplace = new ethers.Contract(ebisusAddress, ebisusAbi, signer ? signer : false )
             let accounts = await ethProvider.provider.request({
@@ -148,6 +151,7 @@ export const connect = ( ethProvider = false) => {
                     croSkullsDescription,
                     croSkullsPetEggs,
                     croSkullsSouls,
+                    croSkullsBank,
                     croPotionBlue,
                     croPotionRed,
                     croRaffle,

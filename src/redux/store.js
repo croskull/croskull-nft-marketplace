@@ -5,13 +5,15 @@ import dataReducer from "./data/dataReducer";
 import marketplaceReducer from "./marketplace/marketplaceReducer";
 import raffleReducer from "./raffle/raffleReducer";
 import dexscreenerReducer from "./dexscreener/dexscreenerReducer";
+import bankReducer from "./bank/bankReducer";
 
 const rootReducer = combineReducers({
   blockchain: blockchainReducer,
   data: dataReducer,
   marketplace: marketplaceReducer,
   raffle: raffleReducer,
-  dexscreener: dexscreenerReducer
+  dexscreener: dexscreenerReducer,
+  bank: bankReducer,
 });
 
 const middleware = [thunk];
