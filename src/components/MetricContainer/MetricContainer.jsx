@@ -7,7 +7,8 @@ const MetricContainer = ({
     label,
     tooltip,
     addClass,
-    vertical = false
+    vertical = false,
+    usdValue,
 }) => {
     return (
         <div className={`metric-container ${vertical ? 'vertical' : ''}`}>
@@ -42,6 +43,12 @@ const MetricContainer = ({
                     ) : ('')
                 }
             </span>
+            { usdValue ? (
+                <span className="metric-usd-value">
+                    ${parseFloat(usdValue).toFixed(2)}
+                </span>
+             ) : ('')
+            }
         </div>
     )
 }

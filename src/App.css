@@ -15,6 +15,14 @@
 body {
   cursor: url(./images/skeleton-hand.cur) !important;
 }
+input {
+  background-color: var(--violet);
+  border-radius: 6px;
+  border: none;
+  padding: 4px 10px;
+  color: #fff;
+  font-weight: 500;
+}
 .navbar{
   grid-area: header;
 }
@@ -703,6 +711,11 @@ label {
 }
 
 .metric-icon {
+  font-weight: 500;
+}
+
+span.metric-usd-value {
+  font-size: 12px;
   font-weight: 500;
 }
 

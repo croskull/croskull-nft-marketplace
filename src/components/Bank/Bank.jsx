@@ -4,49 +4,44 @@ import { useDispatch } from "react-redux";
 import { playSound } from "../../redux/data/dataActions";
 import { ethers } from 'ethers';
 import Grave from "../Navbar/grave.png";
-import Soul from "../Navbar/soul.png";
-import Rudes from "./rude.png";
-import GraveToRude from "./GraveToRude.png"
-import House from "./house.png"
-import Fountain from "./Fountain.png"
-import Castle from "./castle.png"
+import GraveCro from "./grve-cro-pair.png"
 import Rude from "./rude.png"
 import CoinSound from "./collect-coin.mp3";
 import Wishbone from "../../images/wishbone.png"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleUp, faAngleDown, faQuestionCircle, faExternalLink} from '@fortawesome/free-solid-svg-icons';
+import Hut from "./hut.png";
+import House from "./house.png"
+import Villa from "./villa.png"
+import FarmHouse from "./farmhouse.png"
+import Mansion from "./mansion.png"
 import MetricContainer from "../MetricContainer/MetricContainer";
-import { loadBankData } from "../../redux/bank/bankActions";
+import { loadBankData, loadFarmData } from "../../redux/bank/bankActions";
 import { sendNotification } from "../../redux/data/dataActions";
 import { loadDexData } from "../../redux/dexscreener/dexscreenerActions";
 import './Bank.css';
 
+const mmfLink = "https://mm.finance/swap?outputCurrency=0x9885488cd6864df90eeba6c5d07b35f08ceb05e9"
 
 const Bank = ({ accountAddress }) => {
   const dispatch = useDispatch();
 
   const [detailsView, setDetailsView] = useState(false)
   const [detailsView2, setDetailsView2] = useState(false)
-  const [apy, setApy] = useState(283)
-  const [emission, setEmission] = useState(1.523432432423)
-  const [marketCap, setMarketCap] = useState(12897)
-  const [locked, setLocked] = useState(65874.23432432)
-  const [balance, setBalance] = useState(876.9865764875)
-  const [profit, setProfit] = useState(7.938387)
-  const [staked, setStaked] = useState(87.83736)
-  const [inputGrave, setInputGrave] = useState(0)
-  const [inputGraveStaked, setInputGraveStaked] = useState(0)
   const [angleIconFarm, setAngleIconFarm] = useState([]);
   const [angleIconPool, setAngleIconPool] = useState([]);
-  const [enableBuildingButton, setEnableBuildingButton] = useState(false);
-  const [enableCalculategButton, setEnableCalculateButton] = useState(false);
 
   let { blockchain, bank, data, dexscreener } = store.getState()
-  let { croSkullsBank, croSkullsGrave, formatEther } = blockchain
+  let { croSkullsBank, croSkullsGrave, croSkullsFarm, lpPair, formatEther } = blockchain
   let { graveInUsd } = dexscreener
   let { userGraveBalance } = data
 
   const [simulated, setSimulated] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [farmView, setfarmView] = useState({
+    amountToStake: 0,
+    amountToUnstake: 0
+  })
   const [currentContract, setContract] = useState({
     amount: 0,
     wishbones: 0,
@@ -56,13 +51,11 @@ const Bank = ({ accountAddress }) => {
 
   useEffect(() => {
     dispatch(loadBankData())
+    dispatch(loadFarmData())
     if( ! graveInUsd )
       dispatch(loadDexData())
   }, [croSkullsBank])
 
-  useEffect(() => {
-    console.log(currentContract)
-  }, [currentContract])
 
   const handleFieldChange = (event) => {
     let value = event.target ? event.target.value : 0
@@ -72,27 +65,30 @@ const Bank = ({ accountAddress }) => {
       [name]: value
     })
   }
-  const getMax = () => {
-    let d = document.getElementById("input-lp");
-    d.value = balance
-    setInputGrave(balance);
-  }
-  const getMaxStaked = () => {
-    let d = document.getElementById("input-lp-staked");
-    d.value = staked
-    setInputGraveStaked(staked);
+
+  const handleStakeLPChange = (event) => {
+    let value = event.target ? event.target.value : 0
+    let name = event.target ? event.target.id : 0
+    setfarmView({
+      ...farmView,
+      [name]: value
+    })
   }
 
-  const EnableFarm = (i) => {
-    setFarmAngleState(i);
-    let d = document.getElementById("farm-" + i);
-    setDetailsView2(false);
-    if (d.getAttribute('class').includes('wrapped')) {
-      d.setAttribute('class', 'farm-container')
-    } else {
-      d.setAttribute('class', 'data-container-wrapped')
-    }
+  const getMax = () => {
+    console.log( lpPairBalance )
+    setfarmView({
+      ...farmView,
+      amountToStake: formatEther(lpPairBalance)
+    })
   }
+  const getMaxStaked = () => {
+    setfarmView({
+      ...farmView,
+      amountToUnstake: formatEther(stakedAmount)
+    })
+  }
+  
   const EnablePool = (i) => {
     setPoolAngleState(i);
     let d = document.getElementById("pool-" + i);
@@ -134,41 +130,23 @@ const Bank = ({ accountAddress }) => {
     return (d2 - d1) / 1000 / 24 / 3600;
   }
 
-  function textSelector(d) {
-    switch (d) {
-      case 0:
-        return 'House';
-      case 1:
-        return 'Fountain';
-      case 2:
-        return 'Castle';
-    }
-  }
-  function imgSelector(d)
-  {
-    switch(d){
-      case 0:
-        return House;
-      case 1:
-        return Fountain;
-      case 2:
-        return Castle;
-    }
-  }
+  const durations = [14, 30, 60, 180, 365]
 
-  function enableBuilding() {
-    let d = document.getElementById("input-grave");
-    let d2 = document.getElementById("input-wishbones");
-    if (d.value >= balance)
-      d.value = balance
-    console.log(d.value)
-    if ((d2.value % 10 == 0 || d2.value == 0) && d.value > 0)
-      setEnableBuildingButton(true)
-    else {
-      setEnableBuildingButton(false)
-      //dispatch(wishboneError())
-    }
-  }
+  const buildings = [
+    "Hut",
+    "House",
+    "Villa",
+    "FarmHouse",
+    "Mansion"
+  ]
+
+  const buildingImages = [
+    Hut,
+    House,
+    Villa,
+    FarmHouse,
+    Mansion
+  ]
   
   const DAY_IN_SEC = 60 * 60 * 24 * 1000;
   const HUNDRED_DAYS_IN_SEC = 100 * DAY_IN_SEC//100 * DAY_IN_SEC;
@@ -192,17 +170,93 @@ const Bank = ({ accountAddress }) => {
     }
   }
 
-  const closeModal = (i) => {
-    let modal = document.getElementById("modal-pool-"+i);
-    modal.style.display = "none";
+  /**
+   * FARM
+   */
+  const approveFarm = async () => {
+    let approvalTx = lpPair.approve(
+      croSkullsFarm.address,
+      ethers.constants.MaxUint256.toString()
+    )
+    await approvalTx.then(
+      async (tx) => {
+        console.log( tx )
+        dispatch(sendNotification({
+          title: `Transaction Sent`,
+          message: 'Waiting for confirmation...',
+          tx,
+          type: "info"
+        }))
+        await tx.wait(1)
+        dispatch(sendNotification({
+          title: `Approved!`,
+          message: `Now you can use farm.`,
+          tx,
+          type: "success"
+        }))
+        dispatch(playSound(CoinSound))
+        dispatch(loadFarmData())
+      }
+    )
   }
 
-  const openModal = (i) => {
-    let modal = document.getElementById("modal-pool-"+i);
-    modal.style.display = "block";
-    console.log('qua')
+  const stakeLiquidity = async () => {
+    let stakeTX = croSkullsFarm.deposit(
+      0,
+      ethers.utils.parseEther(farmView.amountToStake)
+    )
+    await stakeTX.then(
+      async (tx) => {
+        console.log( tx )
+        dispatch(sendNotification({
+          title: `Transaction Sent`,
+          message: 'Waiting for confirmation...',
+          tx,
+          type: "info"
+        }))
+        await tx.wait(1)
+        dispatch(sendNotification({
+          title: `Staked!`,
+          message: `You staked succesful GRVE/CRO.`,
+          tx,
+          type: "success"
+        }))
+        dispatch(playSound(CoinSound))
+        dispatch(loadFarmData())
+      }
+    )
   }
-
+  
+  const claimLPRewards = async () => {
+    if( ! farmView.amountToUnstake ) return 
+    let claimTx = croSkullsFarm.withdraw(
+      0,
+      ethers.utils.parseEther(farmView.amountToUnstake)
+    )
+    await claimTx.then(
+      async (tx) => {
+        console.log( tx )
+        dispatch(sendNotification({
+          title: `Transaction Sent`,
+          message: 'Waiting for confirmation...',
+          tx,
+          type: "info"
+        }))
+        await tx.wait(1)
+        dispatch(sendNotification({
+          title: `Claimed!`,
+          message: `Claimed succesful GRVE/CRO plus Rewards.`,
+          tx,
+          type: "success"
+        }))
+        dispatch(playSound(CoinSound))
+        dispatch(loadFarmData())
+      }
+    )
+  }
+  /**
+   * BANK
+   */
   const increaseAllowance = async () => {
     let approvalTx = croSkullsGrave.increaseAllowance(
       croSkullsBank.address,
@@ -220,40 +274,38 @@ const Bank = ({ accountAddress }) => {
         await tx.wait(1)
         dispatch(sendNotification({
           title: `Approved!`,
-          message: `Now you can use bank.`,
+          message: `Now you can use Central Bank.`,
           tx,
           type: "success"
         }))
         dispatch(playSound(CoinSound))
         dispatch(loadBankData())
       }
-    )
+    ) 
   }
 
-  const simulateApy =  () => {
+  const simulateApy = async () => {
     let { croSkullsBank } = blockchain
-    if( ! currentContract.amount ) return
+    if( currentContract.amount == 0 ) return
+    setLoading(true)
     let amount = ethers.utils.parseEther(currentContract.amount)
-    let durations = [14, 30, 60, 180, 365]
-    let simulated = []
-    durations.forEach(async (duration, i) => {
+    let tempSimulated = []
+    for(let i = 0; i < durations.length; i++ ){
       let simulatedApy = await croSkullsBank.simulateAPY(
         amount,
-        duration * 86400,
+        durations[i] * 86400,
         currentContract.wishbones
       )
       let rewards = await simulatedApy[0].toString()
       let apy = await simulatedApy[1].toString()
-      simulated.push({
+      tempSimulated.push({
         rewards,
         apy,
-        duration
+        duration: durations[i]
       })
-      if( i+1 == durations.length ){
-        simulated.sort((a,b) => a.duration - b.duration )
-        setSimulated( simulated )
-      }
-    })
+    }
+    setSimulated( tempSimulated )
+    setLoading(false)
   }
 
   const claimRewards = async ( contractId ) => {
@@ -287,11 +339,6 @@ const Bank = ({ accountAddress }) => {
     let { amount, wishbones } = currentContract
     const DAY_IN_SECONDS = 86400
     if( ! duration || duration < 14 || ! amount ) return
-    console.log(
-      ethers.utils.parseEther( amount ),
-      duration * DAY_IN_SECONDS,
-      wishbones
-    )
 
     let newContractTx = croSkullsBank.createContract(
       ethers.utils.parseEther( amount ),
@@ -331,30 +378,39 @@ const Bank = ({ accountAddress }) => {
     wishboneCost,
     bankFee,
     userActiveContracts,
-    userContractsCount
+    userContractsCount,
+    pendingRewards,
+    totalLiquidity,
+    stakedAmount,
+    endBlock,
+    paidOut,
+    rewardPerBlock,
+    lpPairAllowance,
+    lpPairBalance,
+    totalStakedCro
   } = bank
 
-
-
+  let {
+    croInUsd
+  } = store.getState().dexscreener
   return (
-
     <>
       <div className="global-container">
         <div className="sk-row sk-flex gd-container">
             <div className="sk-box">
-              <span className="details-value">${ graveInUsd && depositedGrave ? ethers.utils.formatEther(depositedGrave) * graveInUsd : 0 }</span>
+              <span className="sk-box-content details-value">${ graveInUsd && depositedGrave && totalStakedCro ? parseInt(( totalStakedCro * croInUsd * 2 ) + ( ethers.utils.formatEther(depositedGrave) * graveInUsd )) : 0 }</span>
               <span className="details-title">Total Value Locked</span>
             </div>
             <div className="sk-box">
-              <span className="details-value">{ totalGraveVolume ? formatEther(totalGraveVolume) : 0 }</span>
+              <span className="sk-box-content details-value">{ totalGraveVolume ? formatEther(totalGraveVolume) : 0 }</span>
               <span className="details-title">Total Grave Volume</span>
             </div>
             <div className="sk-box">
-              <span className="details-value">{ totalWishbonesVolume ? totalWishbonesVolume : 0 }</span>
+              <span className="sk-box-content details-value">{ totalWishbonesVolume ? totalWishbonesVolume : 0 }</span>
               <span className="details-title">Total Wishbones Used</span>
             </div>
             <div className="sk-box">
-              <span className="details-value">{ activeContracts ? activeContracts : 0 }</span>
+              <span className="sk-box-content details-value">{ activeContracts ? activeContracts : 0 }</span>
               <span className="details-title">Total Contracts Active</span>
             </div>
         </div>
@@ -366,23 +422,26 @@ const Bank = ({ accountAddress }) => {
                 () => setDetailsView(false)
               }
             >
-              FARMS
+              🏦 CENTRAL BANK
             </button>
             <button
               className={`switcher-button view-button ${!detailsView ? '' : 'active'}`}
               onClick={
-                () => { return; setDetailsView(true) }
+                () => { setDetailsView(true) }
               }
             >
-              POOLS (soon)
+              ⚡️ LP FARM
             </button>
           </div>
           <div className='sk-box' hidden={detailsView}>
-            <div className="choise-container">
+            <div className="contract-details sk-box-content">
               <div className="simulate-container">
-                <h1>Choose Your Contract</h1>
+                <h1>Choose Contract</h1>
                 <label>
-                  Grave Amount
+                  <MetricContainer 
+                    label="Grave Amount"
+                    tooltip="Amount of GRAVE to Stake in the contract."
+                  />
                   <input 
                     type="number"
                     placeholder="0"
@@ -393,7 +452,10 @@ const Bank = ({ accountAddress }) => {
                   </input>
                 </label>
                 <label>
-                  Wishbone Amount
+                  <MetricContainer 
+                    label="Wishbones Amount"
+                    tooltip="1 Wishbone cost 0.3 GRAVE, that will be burned at the creation."
+                  />
                   <input 
                     type="number"
                     placeholder="0"
@@ -404,12 +466,15 @@ const Bank = ({ accountAddress }) => {
                     id='wishbones'
                     onChange={ handleFieldChange }
                   ></input>
+                  <span>Wishbones Cost: { currentContract.wishbones ? `${ parseInt( currentContract.wishbones * 0.3 )}` :  '0'} GRAVE</span>
+                  <span>Total Cost: { currentContract.amount ? `${  parseInt(currentContract.amount) + parseInt( currentContract.wishbones * 0.3 )}` :  '0'} GRAVE</span>
                 </label>
                 <button
                   className="skull-button" 
                   onClick={() => simulateApy()}
+                  disabled={loading ? true : false }
                 >
-                  CALCULATE
+                  { loading ? 'Loading...' : 'Calculate'}
                 </button>
               </div>
               <div className="contract-container">
@@ -418,9 +483,11 @@ const Bank = ({ accountAddress }) => {
                     simulated ? (
                       simulated.map( (simulation,i) => (
                         <div className="contract-box sk-box" key={i}>
-                          <span className="sk-flex sk-row">
-                            <h1>House building</h1>
-                          </span>
+                          <h1>{ buildings[i] }</h1>
+                          <img 
+                            className="building-image"
+                            src={buildingImages[i]}
+                          />
                           <MetricContainer 
                             label="Est. rewards"
                             value={ formatEther(simulation.rewards, true) }
@@ -430,30 +497,31 @@ const Bank = ({ accountAddress }) => {
                             value={ `${simulation.duration} days` }
                           />
                           <MetricContainer 
-                            label="APY"
-                            value={ `${(simulation.apy / 10**5).toFixed(2)}%` }
+                            label="ARY"
+                            tooltip="Annualizated Rude Yield: increase exponentially when reach contract end data."
+                            value={ `${simulation ? (simulation.apy / 10**5).toFixed(2) : 0 }%` }
                           />
                           {
-                            allowance > 0 && ethers.BigNumber.from( allowance ).gte( ethers.utils.parseEther(currentContract.amount) ) ? (
+                            currentContract.amount && allowance == 0 || ethers.BigNumber.from( allowance ).lte( ethers.utils.parseEther(currentContract.amount) ) ? (
+                              <button 
+                                className="skull-button"
+                                onClick={() => increaseAllowance() }
+                              >
+                                Approve
+                              </button>
+                            ) : currentContract.amount && userGraveBalance > 0 && ethers.BigNumber.from( userGraveBalance ).gte( ethers.utils.parseEther(currentContract.amount) ) ? (
                               <button 
                                 className="skull-button"
                                 onClick={() => { subscribeContract(simulation.duration) } }
                               >
                                 Subscribe
                               </button>
-                            ) : userGraveBalance > 0 && ethers.BigNumber.from( userGraveBalance ).gte( ethers.utils.parseEther(currentContract.amount) ) ? (
-                              <button 
-                                className="skull-button"
-                                onClick={() => increaseAllowance() }
-                              >
-                                Approve
-                              </button>
                             ) : (
                               <button 
                                 className="skull-button"
-                                onClick={() => increaseAllowance() }
+                                onClick={ () => window.open(mmfLink) }
                               >
-                                Approve
+                                Buy Grave
                               </button>
                             )
                           }
@@ -466,21 +534,25 @@ const Bank = ({ accountAddress }) => {
                 </div>
               </div>
             </div>
-
+            <h1 
+              className="your-contracts"
+            >
+              Your Contracts ( { userActiveContracts.length ? userActiveContracts.length : '0' } )
+            </h1>
             {
             userActiveContracts.length > 0 ? (
               userActiveContracts.map((contract, i) => {
                 let ending = formatDate(contract.unlockTimestamp)
-                let finish = (ending.days == 0 && ending.hours == 0 && ending.minutes == 0)
+                let currentContractId = durations.indexOf(contract.duration/86400)
                 return(
                   <>
                     <div className="contract-details sk-box-content">
                       <div className="bank-name">
                         <div className="bank-name-img">
-                          <img src={imgSelector(dateDiff(contract.StartTimestamp,contract.unlockTimestamp))} />
+                          <img src={ buildingImages[currentContractId] } />
                         </div>
                         <div className="bank-name-text">
-                          <h1>{textSelector(dateDiff(contract.startTimestamp,contract.unlockTimestamp))} Building</h1>
+                          <h1>{ buildings[currentContractId] } Building</h1>
                           <h3>{dateDiff(contract.startTimestamp,contract.unlockTimestamp)} Days</h3>
                         </div>
                       </div>
@@ -492,23 +564,23 @@ const Bank = ({ accountAddress }) => {
                         tooltip="Your Grave Staked in this specific contract."
                       />
                       <MetricContainer 
-                        label="Rewards"
+                        label="RUDE Rewards"
                         value={ formatEther(contract.rewards, true ) }
                         vertical={true}
                         icon={Rude}
-                        tooltip=""
+                        tooltip="Generated RUDE rewards until now."
                       />
                       <MetricContainer 
-                        label="APY"
+                        label="ARY"
                         value={ `${(contract.apy / 10 ** 5).toFixed(2)}%` }
                         vertical={true}
-                        tooltip=""
+                        tooltip="Annualizated Rude Yield: increase exponentially when reach contract end data."
                       />
                       <MetricContainer 
-                        label="End in"
+                        label="End"
                         value={ `${ ! contract.isClaimable ? timeConverter(contract.unlockTimestamp) : 0 }` }
                         vertical={true}
-                        tooltip={`Creation: ${timeConverter(contract.startTimestamp)} </br>End: ${timeConverter(contract.unlockTimestamp)}`}
+                        tooltip={`Created: ${timeConverter(contract.startTimestamp)}`}
                       />
                       <MetricContainer 
                         label="Wishbone Used"
@@ -518,7 +590,7 @@ const Bank = ({ accountAddress }) => {
                         tooltip="Your Grave Staked in this specific contract."
                       />
                       <button 
-                        onClick={() => { return }}
+                        onClick={() => { claimRewards(contract.contractId) }}
                         className="skull-button claim-button"
                         disabled={ contract.isClaimable ? false : true}
                       >
@@ -530,158 +602,180 @@ const Bank = ({ accountAddress }) => {
               })
             ) : ('')
             }
-            <div className="data-row-last">
-              <span>To Top <FontAwesomeIcon icon={faAngleUp} /></span>
-            </div>
           </div>
           <div className="sk-box" hidden={!detailsView}>
-          <div className="data-row first">
-              <div className="bank-name">
-                <div className="bank-name-img">
-                  <img src={GraveToRude} />
-                </div>
-                <div className="bank-name-text">
-                  <h1 onClick={() => { openModal(1) }}>GRVE-CRO <FontAwesomeIcon icon={faQuestionCircle}/></h1>
-                </div>
-              </div>
-              <div className="data-row-box">
-                <div className="metric-container">
-                  <span>Earned
-                    <span className="tooltip-toggle">
-                      <FontAwesomeIcon
-                        icon={faQuestionCircle}
-                        className="tooltip-icon"
-                      />
-                      <span className="sk-tooltip">Cosa fa Earned</span>
-                    </span>
-                  </span>
-                </div>
-                <span>83</span>
-              </div>
-              <div className="data-row-box">
-                <div className="metric-container">
-                  <span>APR
-                    <span className="tooltip-toggle">
-                      <FontAwesomeIcon
-                        icon={faQuestionCircle}
-                        className="tooltip-icon"
-                      />
-                      <span className="sk-tooltip">Cosa fa APR</span>
-                    </span>
-                  </span>
-                </div>
-                <span>835%</span>
-              </div>
-              <div className="data-row-box only-d">
-                <div className="metric-container">
-                  <span>Total Staked
-                    <span className="tooltip-toggle">
-                      <FontAwesomeIcon
-                        icon={faQuestionCircle}
-                        className="tooltip-icon"
-                      />
-                      <span className="sk-tooltip">Cosa Total Staked</span>
-                    </span>
-                  </span>
-                </div>
-                <span>833333$</span>
-              </div>
-              <div className="data-row-box only-d">
-                <div className="metric-container">
-                  <span>End in
-                    <span className="tooltip-toggle">
-                      <FontAwesomeIcon
-                        icon={faQuestionCircle}
-                        className="tooltip-icon"
-                      />
-                      <span className="sk-tooltip">Cosa fa End In</span>
-                    </span>
-                  </span>
-                </div>
-                <span>7D</span>
-              </div>
-              <div className="data-row-box angle">
-                <span onClick={() => EnablePool(1)} className="angle"> <FontAwesomeIcon icon={angleIconPool[0] ? faAngleUp : faAngleDown} /></span>
-              </div>
+            <div className="sk-box-content sk-row lp-head-details">
+              <h1>GRVE-CRO</h1>
+              <span>
+                <a 
+                  href="https://mm.finance/add/0x9885488cD6864DF90eeBa6C5d07B35f08CEb05e9/0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23"
+                  target="_blank"
+                >
+                  Get LP <FontAwesomeIcon icon={faExternalLink}/>
+                </a>
+              </span>
+              <span>
+                <a 
+                  href="https://cronoscan.com/address/0x4672d3d945700cc3bdf4a2b6704e429d567dc52c"
+                >
+                  Contract <FontAwesomeIcon icon={faExternalLink}/>
+                </a>
+              </span>
+              <span>
+                <a 
+                  href="https://dexscreener.com/cronos/0x4672d3d945700cc3bdf4a2b6704e429d567dc52c"
+                >
+                  Pair Info <FontAwesomeIcon icon={faExternalLink}/>
+                </a>
+              </span>
             </div>
-            <div className="data-container-wrapped" id="pool-1">
-              <div class="sk-row switcher-container">
-                <div className="switcher-wrapper">
-                  <button
-                    className={`switcher-button view-button ${detailsView2 ? '' : 'active'}`}
-                    onClick={
-                      () => setDetailsView2(false)
-                    }
-                  >
-                    Stake
-                  </button>
-                  <button
-                    className={`switcher-button view-button ${!detailsView2 ? '' : 'active'}`}
-                    onClick={
-                      () => setDetailsView2(true)
-                    }
-                  >
-                    Unstake
-                  </button>
+            <div className="contract-details sk-box-content">
+                <img src={GraveCro} />
+                <span className="lpTitle">GRVE-CRO</span>
+                <MetricContainer 
+                  label="Rewards"
+                  value={ formatEther(pendingRewards, true ) }
+                  vertical={true}
+                  icon={Grave}
+                  usdValue={ formatEther(pendingRewards, true ) * graveInUsd }
+                />
+                <MetricContainer 
+                  label="Staked"
+                  value={ formatEther(stakedAmount, true ) }
+                  vertical={true}
+                  icon={GraveCro}
+                  usdValue={ stakedAmount ? `${ (totalStakedCro * croInUsd * 2 * ( 100 / totalLiquidity * stakedAmount ) / 100) }` : 0}
+                />
+                <MetricContainer 
+                  label="Liquidity"
+                  value={ totalLiquidity ? `${formatEther(totalLiquidity)}` : 'Loading' }
+                  vertical={true}
+                  tooltip={`${formatEther(totalLiquidity, true)} GRVE/CRO LP`}
+                  usdValue={(totalStakedCro * croInUsd * 2)}
+                />
+                <MetricContainer 
+                  label="RPB"
+                  value={ totalLiquidity ? formatEther(rewardPerBlock, true) : 'Loading' }
+                  vertical={true}
+                  tooltip={`Rewards per Block: total amount of GRAVE released for each block.`}
+                  usdValue={ formatEther(rewardPerBlock, true) * graveInUsd }
+                />
+                <MetricContainer 
+                  label="End Block"
+                  value={ endBlock ? endBlock : 'Loading' }
+                  vertical={true}
+                />
+                <div className="data-row-box angle">
+                  <span onClick={() => EnablePool(1)} className="angle"> <FontAwesomeIcon icon={angleIconPool[0] ? faAngleUp : faAngleDown} /></span>
                 </div>
-
-                <div className="sk-box data-box" hidden={detailsView2}>
-                  <h1><img src={Grave} className="skull-icon"></img>Stake Grave Earn $Rude </h1>
-                  <hr></hr>
-                  <div className="data-box-content">
-                    <span>APY/APR:<span>906,86/230,94%</span></span>
-                    <span>Staked:<span>{staked.toFixed(2)}<img src={Grave} className="skull-icon"></img></span></span>
-                    <span>Profit:<span>{profit.toFixed(2)}<img src={Rudes} className="skull-icon"></img></span></span>
-                    <span><span>{profit.toFixed(2)}<img src={Soul} className="skull-icon"></img></span></span>
-                    <span className="balance"> {balance.toFixed(2)} Balance</span>
-                    <div className="input-content">
-                      <button className="skull-button" onClick={() => getMax()}>MAX</button>
-                      <input id="input-lp" type="number" placeholder="0" onChange={() => handleFieldChange} step=".0000000001"></input>
+              </div>
+              <div className="data-container-wrapped" id="pool-1">
+                <div class="sk-row switcher-container">
+                  <div className="switcher-wrapper">
+                    <button
+                      className={`switcher-button view-button ${detailsView2 ? '' : 'active'}`}
+                      onClick={
+                        () => setDetailsView2(false)
+                      }
+                    >
+                      Stake
+                    </button>
+                    <button
+                      className={`switcher-button view-button ${!detailsView2 ? '' : 'active'}`}
+                      onClick={
+                        () => setDetailsView2(true)
+                      }
+                    >
+                      Unstake
+                    </button>
+                  </div>
+                  <div className="sk-box data-box" hidden={detailsView2}>
+                    <h1><img src={Grave} className="skull-icon"></img> Stake Grave Earn $Rude </h1>
+                    <div className="sk-box-content sk-column">
+                      <MetricContainer
+                        label="Staked LP"
+                        value={ formatEther(stakedAmount, true) }
+                        icon={GraveCro}
+                      />
+                      <MetricContainer
+                        label="Pending Rewards"
+                        value={ formatEther(pendingRewards, true) }
+                        icon={Grave}
+                      />
+                      <MetricContainer
+                        label="Balance LP"
+                        value={ formatEther(lpPairBalance, true) }
+                        icon={GraveCro}
+                      />
+                      <div className="input-content">
+                        <button 
+                          className="skull-button" 
+                          onClick={() => getMax()}
+                        >
+                          MAX
+                        </button>
+                        <input 
+                          id="amountToStake" 
+                          type="number" 
+                          placeholder="0" 
+                          value={farmView.amountToStake}
+                          onChange={ handleStakeLPChange } 
+                          step=".0000000001"
+                        >
+                        </input>
+                      </div>
+                      {
+                        lpPairAllowance > 0 ? (
+                          <button 
+                            className={'skull-button stake-button'} 
+                            disabled={ farmView.amountToStake <= formatEther(lpPairBalance, true) ? false : true}
+                            onClick={ () => stakeLiquidity() }
+                          >
+                            STAKE
+                          </button>
+                        ) : (
+                          <button
+                            className={'skull-button stake-button'} 
+                            onClick={ () => approveFarm() }
+                          >
+                            Approve
+                          </button>
+                        )
+                      }
                     </div>
-                    <button className={inputGrave > 0 ? 'skull-button stake-button' : 'disabled-button'} disabled={inputGrave < 0 ? true : false}>STAKE</button>
-                    <button className={profit > 0 ? 'skull-button claim-button' : 'disabled-button'} disabled={profit < 0 ? true : false}>CLAIM</button>
-                    <button className={staked > 0 ? 'skull-button unstake-button' : 'disabled-button'} disabled={staked < 0 ? true : false}>UNSTAKE ALL {"&"} CLAIM</button>
                   </div>
-                </div>
-
-                <div className="sk-box data-box" hidden={!detailsView2}>
-                  <h1><img src={Grave} className="skull-icon"></img>Stake Grave Earn $Rude</h1>
-                  <hr></hr>
-                  <div className="data-box-content">
-                    <span>APY/APR:<span>906,86/230,94%</span></span>
-                    <span>Staked:<span>{staked.toFixed(2)}<img src={Grave} className="skull-icon"></img></span></span>
-                    <span>Profit:<span>{profit.toFixed(2)}<img src={Rudes} className="skull-icon"></img></span></span>
-                    <span><span>{profit.toFixed(2)}<img src={Soul} className="skull-icon"></img></span></span>
-                    <span className="balance"> {staked.toFixed(2)} Staked</span>
-                    <div className="input-content">
-                      <button className="skull-button" onClick={() => getMaxStaked()}>MAX</button>
-                      <input id="input-lp-staked" type="number" placeholder="0" onChange="" step=".0000000001"></input>
+                  <div className="sk-box data-box" hidden={!detailsView2}>
+                    <h1><img src={Grave} className="skull-icon"></img>Stake Grave Earn $Rude</h1>
+                    <div className="data-box-content">
+                      <span className="balance"> { formatEther(stakedAmount, true) } Staked</span>
+                      <div className="input-content">
+                        <button 
+                          className="skull-button" 
+                          onClick={() => getMaxStaked()}
+                        >
+                          MAX
+                        </button>
+                        <input
+                          id="amountToUntake" 
+                          type="number"
+                          placeholder="0"
+                          value={ farmView.amountToUnstake }
+                          onChange={ handleStakeLPChange } 
+                          step=".0000000001"></input>
+                      </div>
+                      <button 
+                        className={ 'skull-button claim-button' } 
+                        disabled={pendingRewards < 0 ? true : false}
+                        onClick={() => claimLPRewards() }
+                      >
+                        { `Unstake & Claim` }
+                      </button>
                     </div>
-                    <button className={inputGraveStaked > 0 ? 'skull-button stake-button' : 'disabled-button'} disabled={inputGraveStaked < 0 ? true : false}>UNSTAKE</button>
-                    <button className={staked > 0 ? 'skull-button unstake-button' : 'disabled-button'} disabled={staked < 0 ? true : false}>UNSTAKE ALL {"&"} CLAIM</button>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="modal" id="modal-pool-1">
-              <div className="modal-w-content">
-                  <div class="modal-pool-head sk-flex">
-                    <h1>GRVE-CRO</h1>
-                    <span class="close-btn" onClick={() => { closeModal(1) }}>
-                      &times;
-                    </span>
-                  </div>
-                  <div className="info-list">
-                    <p><a href="https://mm.finance/add/0x9885488cD6864DF90eeBa6C5d07B35f08CEb05e9/0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23">GET GRVE-WCRO <FontAwesomeIcon icon={faExternalLink}/></a></p>
-                    <p><a>View Contract <FontAwesomeIcon icon={faExternalLink}/></a></p>
-                    <p><a href='https://dexscreener.com/cronos/0x4672d3d945700cc3bdf4a2b6704e429d567dc52c'>See Pair Info <FontAwesomeIcon icon={faExternalLink}/></a></p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
           </div>
-
         </div>
       </>
       )

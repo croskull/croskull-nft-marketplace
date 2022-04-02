@@ -5,8 +5,8 @@ const nftDescription = artifacts.require("nftDescription");*/
 //const CroSkullsStaking = artifacts.require("croSkullStaking");
 
 //const Grave = artifacts.require("Grave");
-const SkullBank = artifacts.require("SkullsBank");
-//const SkullsRaffle = artifacts.require("SkullsRaffle");
+//const SkullBank = artifacts.require("SkullsBank");
+const SkullsFarm = artifacts.require("SkullsFarm");
 const fs = require('fs');
 const readline = require('readline');
 
@@ -22,12 +22,12 @@ const toWei = web3.utils.toWei;
 module.exports = async function (deployer, network, accounts) {
 
   let owner = accounts[0] || "0x297b0eC2EF5EB41b724DB54c0555b2E3Ae348701";
-  let skullBank;
+  let skullFarm;
 
-  await deployer.deploy(SkullBank, {
+  await deployer.deploy(SkullsFarm, "0x9885488cD6864DF90eeBa6C5d07B35f08CEb05e9", "100000000000000000", 2176755, {
     from: owner
   }).then( async () => {
-    skullBank = await SkullBank.deployed();
+    skullFarm = await SkullsFarm.deployed();
   })
   /*
   let grave, croSkullsAmbassador, croSkullsStaking;

@@ -40,10 +40,10 @@ class App extends Component {
     this.subscribe()
     let bgSound = new Audio( BgMusic )
     bgSound.loop = true
-    bgSound.volume = 0.2
+    bgSound.volume = 0.1
     bgSound.play()
     let clickSound = new Audio(ClickSound)
-    clickSound.volume = 0.5
+    clickSound.volume = 0.1
     document.addEventListener('click', () => {
       clickSound.currentTime = 0
       clickSound.play()

@@ -2,7 +2,7 @@ const initialState = {
     loading: false,
     //grave related
     allowance: 0,
-    //global state
+    //global bank state
     maxApy: 0,
     totalGraveVolume: 0,
     totalWishbonesVolume: 0,
@@ -16,6 +16,17 @@ const initialState = {
     userContractsCount: 0,
     userActiveContracts: [],
     userContracts: [],
+    //global farm state
+    lpPairAllowance: 0,
+    rewardPerBlock: 0,
+    paidOut: 0,
+    endBlock: 0,
+    stakedAmount: 0,
+    pendingRewards: 0,
+    totalLiquidity: 0,
+    lpPairBalance: 0,
+    totalPending: 0,
+    totalStakedCro: 0
 };
 
 const bankReducer = (state = initialState, action) => {
@@ -45,6 +56,20 @@ const bankReducer = (state = initialState, action) => {
                 userActiveContracts: payload.userActiveContracts,
                 userContracts: payload.userContracts,
             };
+        case "FETCH_FARM_SUCCESS":
+            return {
+                ...state,
+                rewardPerBlock: payload.rewardPerBlock,
+                paidOut: payload.paidOut,
+                endBlock: payload.endBlock,
+                lpPairAllowance: payload.lpPairAllowance,
+                stakedAmount: payload.stakedAmount,
+                totalLiquidity: payload.totalLiquidity,
+                pendingRewards: payload.pendingRewards,
+                lpPairBalance: payload.lpPairBalance,
+                totalPending: payload.totalPending,
+                totalStakedCro: payload.totalStakedCro
+            }
         default:
             return state;
     }
