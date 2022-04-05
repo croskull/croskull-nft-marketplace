@@ -1,0 +1,118 @@
+.container-fluid {
+    background-image: url(home-bg.jpeg);
+    overflow-y: overlay;
+}
+
+.sk-welcome  {
+    flex-direction: row !important;
+    flex-wrap: nowrap;
+    align-items: center;
+    column-gap: 12px;
+}
+.welcome {
+    padding: 12px 20px !important;
+    flex-grow: 6;
+}
+.welcome-image {
+    border-radius: 6px;
+    max-width: 75px;
+    flex-grow: 1;
+}
+.no-welcome-image {
+    cursor: pointer;
+    width: 75px;
+    border-radius: 6px;
+    height: 75px;
+    background: rgb(85, 85, 85);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.welcome-message {
+    font-size: 18px
+}
+.buy-cta {
+    flex-grow: 1;
+    align-items: stretch;
+    max-width: 10vw;
+}
+.card-container {
+    flex-wrap: wrap;
+    row-gap: 6px;
+}
+.card-image {
+    max-width: 100%;
+    border-radius: 6px;
+    transition: transform 0.62s ease 0s;
+}
+.card-image:hover {
+    transform: scale(1.1);
+}
+.home-card:hover .card-description {
+    margin: 20px;
+}
+
+.home-card {
+    cursor: pointer;
+    width: 49%;
+    position: relative;
+    padding: 0px !important;
+    overflow: clip !important;
+}
+
+.card-title {
+    font-size: 24px;
+    font-weight: 700;
+    background: var(--purple);
+    position: absolute;
+    padding: 0px 12px 0px 12px;
+    border-bottom-right-radius: 12px;
+    border-top-left-radius: 6px;
+}
+
+.card-description {
+    position: absolute;
+    bottom: 0;
+    padding: 3px 6px;
+    background: var(--blue);
+    font-weight: 500;
+    border-radius: 6px;
+    margin: 6px;
+    transition: all .6s ease;
+}
+.skull-button.icon{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 6px;
+}
+.button-icon {
+    max-width: 20px;
+}
+
+/* FLEX */
+.fg-1 {
+    flex-grow: 1;
+}
+
+@media (min-width:320px) and (max-width:640px) { 
+    .home-card{
+        width: 100%;
+    }
+    .sk-welcome{
+        flex-direction: column !important;
+    }
+    .welcome-image {
+        max-width: 100% !important;
+    }
+    .no-welcome-image{
+        display: none;
+    }
+    .buy-cta {
+        max-width: 100%;
+        column-gap: 6px;
+        flex-direction: row !important;
+    }
+  }

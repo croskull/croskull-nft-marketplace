@@ -1,14 +1,5 @@
 import store from "../store";
 
-const genesisBlock = 1738447;
-
-const requestPlaySound = (payload) => {
-  return {
-    type: "PLAY_SOUND",
-    payload: payload
-  }
-}
-
 const updateMerchant = (payload) => {
   return {
     type: "UPDATE_MERCHANT",
@@ -95,9 +86,7 @@ export const refreshSkullsStories = () => {
       updateState( { key: "storyAllowance", value: storyAllowance >= storyCost ? true : false } 
     ))
     let { storiesLoading, storyLastBlock, skullsStories } = store.getState().data
-      console.log( storiesLoading )
     if( storiesLoading ) return;
-    console.log('refreshSkullsStories')
     dispatch(updateState({
       key: 'storiesLoading',
       value: true
@@ -143,8 +132,6 @@ export const refreshSkullsStories = () => {
     newSkullsStories.sort( (a, b) => {
       return  b.blocknumber - a.blocknumber
     })
-
-    console.log( newSkullsStories )
 
     dispatch(updateState({
       key: 'skullsStories',
@@ -378,6 +365,18 @@ export const getStakingData =  () => {
     }else{
       dispatch(stakingDisabled())
     }
+  }
+}
+
+export const updateUserBalance = () => {
+  return async (dispatch) => {
+    let { croSkullsGrave, accountAddress} = store.getState().blockchain
+    let userGraveBalance = await croSkullsGrave.balanceOf(accountAddress)
+    userGraveBalance = userGraveBalance.toString()
+    dispatch(updateState({
+      key: 'userGraveBalance',
+      value: userGraveBalance
+    }))
   }
 }
 

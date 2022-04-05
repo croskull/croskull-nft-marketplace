@@ -14,6 +14,7 @@ import { playSound } from "./redux/data/dataActions";
 import { ethers } from 'ethers';
 import store from "./redux/store";
 import Raffle from "./components/Raffle/Raffle";
+import Home from "./components/Home/Home";
 import Bank from "./components/Bank/Bank";
 import BgMusic from "./utils/bg-music.mp3";
 import ClickSound from "./sounds/click-sound.mp3"
@@ -38,10 +39,6 @@ class App extends Component {
 
   componentDidMount() {
     this.subscribe()
-    let bgSound = new Audio( BgMusic )
-    bgSound.loop = true
-    bgSound.volume = 0.1
-    bgSound.play()
     let clickSound = new Audio(ClickSound)
     clickSound.volume = 0.1
     document.addEventListener('click', () => {
@@ -303,10 +300,7 @@ class App extends Component {
                           path="/"
                           exact
                           render={() => (
-                            <AccountDetails
-                              accountAddress={this.state.accountAddress}
-                              accountBalance={this.state.accountBalance}
-                            />
+                            <Home></Home>
                           )}
                         />
                         <Route

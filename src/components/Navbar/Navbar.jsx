@@ -175,6 +175,7 @@ const Navbar = () => {
             <Link to="/bank" className="nav-link">
               Bank
             </Link>
+            {  }
           </li>
           <li className="nav-item">
             <Link to="/marketplace" className="nav-link">

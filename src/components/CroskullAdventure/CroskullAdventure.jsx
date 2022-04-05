@@ -148,6 +148,7 @@ const CroskullAdventure = () => {
 
   let totalSkulls = croSkullsStaked.length > 0 ? croSkullsStaked.length + croSkulls.length : 0
   let globalStartTimestamp = startStakeTimestamp;
+  console.log(startStakeTimestamp)
   let finishStake = parseInt(globalStartTimestamp) + HUNDRED_DAYS_IN_SEC;
   let diffStake = finishStake - blockTimestamp;
   let malusPercent = ( 800 - ( 25 * daysLastWithdraw ) ) / 10
@@ -280,7 +281,7 @@ const CroskullAdventure = () => {
                       aria-valuemin="0"
                       aria-valuemax="80"
                     > 
-                      { malusPercent }%
+                      { malusPercent > 0 ? malusPercent : 0 }%
                     </div>
                   </div>
                 </div>
@@ -320,14 +321,14 @@ const CroskullAdventure = () => {
                   <MetricContainer 
                     label="Current Malus"
                     addClass="negative"
-                    value={malusAmount}
+                    value={malusPercent > 0 ? malusAmount : 0 }
                     icon={GraveBurn}
                     tooltip="Amount of Grave you'll burn based on Mined Grave and current Malus Burn Fee."
                   />
                   <MetricContainer 
                     label="Available to Withdraw"
                     addClass="positive"
-                    value={formatEther(rewardPlusMalus)}
+                    value={malusPercent > 0 ? formatEther(rewardPlusMalus) : formatEther(rewards)}
                     icon={GraveAvailable}
                     tooltip="Amount of Grave you'll recieve based on Mined Grave and current Malus Burn Fee."
                   />

@@ -58,7 +58,7 @@
 .adventure-image {
     padding: 15px 25px;
 }
-.adventure{
+.container-fluid.adventure{
     background-image: url(bonefire.jpg);
 }
 .adventure .details{

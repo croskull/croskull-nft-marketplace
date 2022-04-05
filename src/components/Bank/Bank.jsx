@@ -17,7 +17,7 @@ import FarmHouse from "./farmhouse.png"
 import Mansion from "./mansion.png"
 import MetricContainer from "../MetricContainer/MetricContainer";
 import { loadBankData, loadFarmData } from "../../redux/bank/bankActions";
-import { sendNotification } from "../../redux/data/dataActions";
+import { sendNotification, updateUserBalance } from "../../redux/data/dataActions";
 import { loadDexData } from "../../redux/dexscreener/dexscreenerActions";
 import './Bank.css';
 
@@ -222,6 +222,7 @@ const Bank = ({ accountAddress }) => {
           type: "success"
         }))
         dispatch(playSound(CoinSound))
+        dispatch(updateUserBalance())
         dispatch(loadFarmData())
       }
     )
@@ -250,6 +251,7 @@ const Bank = ({ accountAddress }) => {
           type: "success"
         }))
         dispatch(playSound(CoinSound))
+        dispatch(updateUserBalance())
         dispatch(loadFarmData())
       }
     )
@@ -330,6 +332,7 @@ const Bank = ({ accountAddress }) => {
           type: "success"
         }))
         dispatch(playSound(CoinSound))
+        dispatch(updateUserBalance())
         dispatch(loadBankData())
       }
     )
@@ -361,6 +364,7 @@ const Bank = ({ accountAddress }) => {
           type: "success"
         }))
         dispatch(playSound(CoinSound))
+        dispatch(updateUserBalance())
         dispatch(loadBankData())
       }
     )
@@ -393,6 +397,9 @@ const Bank = ({ accountAddress }) => {
   let {
     croInUsd
   } = store.getState().dexscreener
+
+  let dailyBlockNumber = 15000;
+
   return (
     <>
       <div className="global-container">
@@ -414,7 +421,7 @@ const Bank = ({ accountAddress }) => {
               <span className="details-title">Total Contracts Active</span>
             </div>
         </div>
-        <div class="sk-row switcher-container">
+        <div className="sk-row switcher-container">
           <div className="switcher-wrapper">
             <button
               className={`switcher-button view-button ${detailsView ? '' : 'active'}`}
@@ -502,7 +509,7 @@ const Bank = ({ accountAddress }) => {
                             value={ `${simulation ? (simulation.apy / 10**5).toFixed(2) : 0 }%` }
                           />
                           {
-                            currentContract.amount && allowance == 0 || ethers.BigNumber.from( allowance ).lte( ethers.utils.parseEther(currentContract.amount) ) ? (
+                            currentContract.amount && allowance == 0  ? (
                               <button 
                                 className="skull-button"
                                 onClick={() => increaseAllowance() }
@@ -546,7 +553,7 @@ const Bank = ({ accountAddress }) => {
                 let currentContractId = durations.indexOf(contract.duration/86400)
                 return(
                   <>
-                    <div className="contract-details sk-box-content">
+                    <div className="contract-details sk-box-content" key={i}>
                       <div className="bank-name">
                         <div className="bank-name-img">
                           <img src={ buildingImages[currentContractId] } />
@@ -608,7 +615,7 @@ const Bank = ({ accountAddress }) => {
               <h1>GRVE-CRO</h1>
               <span>
                 <a 
-                  href="https://mm.finance/add/0x9885488cD6864DF90eeBa6C5d07B35f08CEb05e9/0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23"
+                  href="https://mm.finance/add/CRO/0x9885488cD6864DF90eeBa6C5d07B35f08CEb05e9"
                   target="_blank"
                 >
                   Get LP <FontAwesomeIcon icon={faExternalLink}/>
@@ -640,6 +647,11 @@ const Bank = ({ accountAddress }) => {
                   usdValue={ formatEther(pendingRewards, true ) * graveInUsd }
                 />
                 <MetricContainer 
+                  label="APY"
+                  value={ totalStakedCro ? `${(100 / (totalStakedCro * croInUsd * 2) * (dailyBlockNumber * formatEther(rewardPerBlock, true) * graveInUsd * 365 ) ).toFixed(2)}%` : 'Loading' }
+                  vertical={true}
+                />
+                <MetricContainer 
                   label="Staked"
                   value={ formatEther(stakedAmount, true ) }
                   vertical={true}
@@ -648,7 +660,7 @@ const Bank = ({ accountAddress }) => {
                 />
                 <MetricContainer 
                   label="Liquidity"
-                  value={ totalLiquidity ? `${formatEther(totalLiquidity)}` : 'Loading' }
+                  value={ totalLiquidity ? `${formatEther(totalLiquidity, true)}` : 'Loading' }
                   vertical={true}
                   tooltip={`${formatEther(totalLiquidity, true)} GRVE/CRO LP`}
                   usdValue={(totalStakedCro * croInUsd * 2)}
@@ -670,7 +682,7 @@ const Bank = ({ accountAddress }) => {
                 </div>
               </div>
               <div className="data-container-wrapped" id="pool-1">
-                <div class="sk-row switcher-container">
+                <div className="sk-row switcher-container">
                   <div className="switcher-wrapper">
                     <button
                       className={`switcher-button view-button ${detailsView2 ? '' : 'active'}`}
@@ -690,7 +702,7 @@ const Bank = ({ accountAddress }) => {
                     </button>
                   </div>
                   <div className="sk-box data-box" hidden={detailsView2}>
-                    <h1><img src={Grave} className="skull-icon"></img> Stake Grave Earn $Rude </h1>
+                    <h1><img src={Grave} className="skull-icon"></img> Stake GRVE/CRO Earn GRVE</h1>
                     <div className="sk-box-content sk-column">
                       <MetricContainer
                         label="Staked LP"
@@ -745,7 +757,7 @@ const Bank = ({ accountAddress }) => {
                     </div>
                   </div>
                   <div className="sk-box data-box" hidden={!detailsView2}>
-                    <h1><img src={Grave} className="skull-icon"></img>Stake Grave Earn $Rude</h1>
+                    <h1><img src={Grave} className="skull-icon"></img> Stake GRVE/CRO Earn GRVE</h1>
                     <div className="data-box-content">
                       <span className="balance"> { formatEther(stakedAmount, true) } Staked</span>
                       <div className="input-content">

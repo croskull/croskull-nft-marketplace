@@ -4,11 +4,13 @@
   --dark-violet: #16112daf;
   --violet: #221b4633;
   --light-violet: #605ee8;
+  --violet-border: #4644ad;
   --white: #E1E9FF;
   --yellow: #fdc158;
   --orange: #f0ad4e;
   --red: #b6403c;
   --red-hover: #d9534f;
+  --red-border: #813431;
   --green: #4bbf73;
   --button-gradient: linear-gradient(117deg, rgba(255,172,26,1) 0%, rgba(237,162,54,1) 100%);
 }
@@ -278,11 +280,14 @@ a:hover {
 /** ACTION BUTTON */
 
 .skull-button{
-  font-size: 14px;
+  background-color: var(--light-violet);
+  color: #fff;
+  letter-spacing: 0.1em;
+  font-size: 16px;
   padding: 4px 12px !important;
   border-radius: 6px !important;
   border: none;
-  font-size: 13px;
+  border-bottom: 2px var(--violet-border) solid;
   text-transform: uppercase;
   font-weight: 700;
   cursor: pointer;
@@ -307,9 +312,6 @@ a:hover {
 .skull-button.view-button {
   padding: 6px 12px !important;
   background: #65587e;
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0px;
   position: relative;
 }
 
@@ -327,12 +329,12 @@ a:hover {
 }
 
 .skull-button.view-button.active {
-  border: 2px solid var(--white);
   background: var(--light-violet);
 }
 
 .sell-button {
-  background: #F5E144;
+  background: var(--danger);
+  border-bottom: solid 2px var(--red-border);
 }
 
 .story-button{
@@ -342,12 +344,11 @@ a:hover {
   align-items: center;
   column-gap: 6px;
   justify-content: space-between;
-  background: var(--orange);
-  color: var(--dark-violet);
 }
 
 .mission-button, .approve {
   background-color: var(--green) !important;
+  border-color: #358952 !important;
   color: var(--white) !important;
 }
 
@@ -369,6 +370,7 @@ button[disabled], .disabled{
 }
 .retire-button{
   background: var(--red);
+  border-bottom: 2px solid var(--red-border);
   color: #fff;
 }
 

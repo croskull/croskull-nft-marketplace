@@ -1,5 +1,5 @@
-.tavern{
-    background-image: url(tavern.jpg);
+.container-fluid.tavern{
+    background-image: url(tavern.jpeg) !important;
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
@@ -236,7 +236,7 @@
 .icon-menu.active{
     transform: scale(0.9);
     background: var(--light-violet);
-    border: 2px solid;
+    border-bottom: 2px solid var(--violet-border);
     transition: transform .54s cubic-bezier(0,.52,.47,.98) 0s;
 }
 .list-head {

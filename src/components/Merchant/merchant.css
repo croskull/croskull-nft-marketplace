@@ -1,4 +1,4 @@
-.merchant {
+.container-fluid.merchant {
   background-image: url(merchant.png);
   justify-content: center !important;
 }
@@ -14,10 +14,29 @@
 .trip{
   transform: translateX(200%);
 }
+.pet-egg-thumb{
+  max-width: 100%;
+  border-radius: 6px;
+  display: none;
+}
+
 
 @media (min-width:320px) and (max-width:640px) { 
   .container-fluid.merchant{
-    max-height: 100% !important;
+    max-height: 100vh !important;
     height: 100% !important;
+  }
+  .trip {
+    display: none;
+  }
+  .merchant .sk-box{
+    overflow-y: overlay;
+    max-height: 85vh;
+  }
+  .pet-egg-thumb{
+    display: inline;
+  }
+  .merchant-egg{
+    display: none;
   }
 }

@@ -16,7 +16,6 @@ import bluePotionImage from './bluePotionImage.png';
 import redPotionImage from './redPotionImage.png';
 import ReactQuill from "react-quill";
 import AdventureSound from "./skull-in-adventure.mp3";
-import ClickSound from "../../sounds/click-sound.mp3";
 import "react-quill/dist/quill.snow.css";
 import './tavern.css';
 

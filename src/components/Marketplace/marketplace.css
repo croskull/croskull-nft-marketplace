@@ -1,19 +1,20 @@
-.marketplace{
-    background-image: url(bg-marketplace.jpeg);
+.container-fluid.marketplace{
+    background-image: url(bg-marketplace.jpeg) !important;
     overflow-y: hidden;
 }
 
 
 /*SKULL MODAL*/
 .marketplace #skull-modal{
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100vw;
-        min-height: 100vh;
-        text-align: center;
-        z-index: 10;
-        background: #00000065 !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    text-align: center;
+    z-index: 10;
+    background: #00000065 !important;
+    overflow-y: overlay;
 }
 .marketplace .mSkull-container{
     width: 30%;
@@ -83,13 +84,12 @@ padding: 3%  !important;
 }
 .marketplace .mission-button{
     width: 100% !important;
-    font-size: 1vh !important;
 }
 
 /*FILTER CONTAINER*/
 .marketplace .filter-container{
     height: 100%;
-    overflow-y: auto;
+    overflow-y: overlay;
     width: 25%;
     max-height: 65vh;
 }
@@ -117,10 +117,7 @@ padding: 3%  !important;
     margin: 0 !important;
 }
 .marketplace .filter-container .filter-box{
-    width: 98%;
-    font-size: 1.3vh;
-    font-weight: 100;
-    border:1px solid black;
+    border: 1px solid var(--violet);
 }
 .marketplace .filter-container .filter-header{
     padding: 10px;

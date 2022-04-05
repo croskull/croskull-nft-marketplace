@@ -5,20 +5,18 @@ import store from "../../redux/store";
 import { loadRaffleData } from '../../redux/raffle/raffleActions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHourglassHalf, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import { sendNotification } from "../../redux/data/dataActions";
+import { sendNotification, updateUserBalance } from "../../redux/data/dataActions";
 import IpfsHttpClient from "ipfs-http-client";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Grave from "../Navbar/grave.png";
-import Rune from "../Navbar/grave-burn.png";
-import Soul from "../Navbar/soul.png";
 import "react-quill/dist/quill.snow.css";
 import './Raffle.css';
 
-const Raffle = ({ accountAddress }) => {
+const Raffle = () => {
   let dispatch = useDispatch()
   let { blockchain, raffle, data } = store.getState()
-  let { formatEther } = blockchain
+  let { formatEther, accountAddress, croRaffle, croSkullsGrave } = blockchain
   let { userGraveBalance } = data
   let { isManager, raffles, allowance } = raffle
   const [hasData, toggleData] = useState(false)
@@ -109,8 +107,6 @@ const Raffle = ({ accountAddress }) => {
 
 
   const participateRaffle = async (raffleId) => {
-    let { croRaffle, accountAddress } = blockchain
-    console.log(raffleId)
     let participateTx = croRaffle.participateRaffle(
       raffleId
     )
@@ -130,20 +126,19 @@ const Raffle = ({ accountAddress }) => {
           tx,
           type: "success"
         }))
+        dispatch(updateUserBalance())
         dispatch(loadRaffleData())
       }
     )
   }
 
   const increaseAllowance = async () => {
-    let { croRaffle, croSkullsGrave, accountAddress } = blockchain
     let approvalTx = croSkullsGrave.increaseAllowance(
       croRaffle.address,
       ethers.constants.MaxUint256.toString()
     )
     await approvalTx.then(
       async (tx) => {
-        console.log( tx )
         dispatch(sendNotification({
           title: `Transaction Sent`,
           message: 'Waiting for confirmation...',
@@ -163,7 +158,6 @@ const Raffle = ({ accountAddress }) => {
   }
 
   const addRaffle = async ( ) => {
-    let { croRaffle } = blockchain
     setRaffleCreator({
       ...raffleCreator,
       startTimestamp: parseInt( new Date( ).getTime() / 1000 ),
@@ -192,7 +186,6 @@ const Raffle = ({ accountAddress }) => {
             //return;
             await addRaffleTx.then(
               async (tx) => {
-                console.log( tx )
                 dispatch(sendNotification({
                   title: `Transaction Sent`,
                   message: 'Waiting for confirmation...',
@@ -217,6 +210,31 @@ const Raffle = ({ accountAddress }) => {
     } catch (error) {
       console.log(error.message);
     }
+  }
+
+  const generateWinners = async (raffleId) => {
+    let generateTx = croRaffle.generateWinners(
+      raffleId
+    )
+    await generateTx.then(
+      async (tx) => {
+        console.log( tx )
+        dispatch(sendNotification({
+          title: `Transaction Sent`,
+          message: 'Waiting for confirmation...',
+          tx,
+          type: "info"
+        }))
+        await tx.wait(1)
+        dispatch(sendNotification({
+          title: `Generated!`,
+          message: `Winners generated succesful`,
+          tx,
+          type: "success"
+        }))
+        dispatch(loadRaffleData())
+      }
+    )
   }
 
 
@@ -421,14 +439,15 @@ const Raffle = ({ accountAddress }) => {
                   endTimestamp, 
                   description,
                   participants,
-                  winners
+                  winners,
+                  id
                 } = raf
                 let currentTimestamp = parseInt( new Date( ).getTime() / 1000 )
                 if(  onlyActive && ( winners.length > 0 || endTimestamp < currentTimestamp ) ) return
                 let raffleDuration = currentTimestamp < endTimestamp ? endTimestamp - currentTimestamp : 0
                 let raffleDurationFormatted = formatDate(raffleDuration)
                 return (
-                  <div className="sk-raffle-item sk-flex sk-row" >
+                  <div className="sk-raffle-item sk-flex sk-row" key={id} >
                     <div className="wd-22">
                       <img src={String(image).replace('ipfs://', 'https://ipfs.infura.io/ipfs/')} className="img-raffle" />
                     </div>
@@ -457,7 +476,34 @@ const Raffle = ({ accountAddress }) => {
                                 View Winners
                               </button>
                             </>
-                          ): isParticipant ? (
+                          ) : ! winners.length && endTimestamp < currentTimestamp ? (
+                              isManager ? (
+                              <>
+                                <div className="raffle-info">
+                                  <span>End <FontAwesomeIcon icon={faHourglassHalf} /></span>
+                                </div>
+                                <button
+                                  className="skull-button participated-button"
+                                  onClick={ () => generateWinners(id)}
+                                >
+                                  Generate Winners
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <div className="raffle-info">
+                                  <span>End <FontAwesomeIcon icon={faHourglassHalf} /></span>
+                                </div>
+                                <button
+                                  className="skull-button participated-button"
+                                  disabled
+                                >
+                                  Finished
+                                </button>
+                                <span>A community manage will Generate the Winners, please wait...</span>
+                              </>
+                            )
+                          ) : isParticipant ? (
                             <>
                               <div className="raffle-info">
                                 <span>Cost: { cost }<img src={Grave} className="skull-icon" /></span>

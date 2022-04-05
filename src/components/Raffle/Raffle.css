@@ -1,4 +1,4 @@
-.raffle {
+.container-fluid.raffle {
   background-image: url(bg-raffle.jpeg);
   background-repeat: no-repeat;
   background-position: center;
@@ -64,8 +64,9 @@
 
 .participate-button {
   width: 80%;
-  background-color: #B20000;
-  color: white;
+  background-color: #B20000 !important;
+  color: white !important;
+  border-bottom: 2px solid var(--red-border) !important;
 }
 
 .joined-button {
@@ -76,13 +77,15 @@
 
 .soon-button {
   width: 80%;
-  background-color: #B20000;
+  background-color: #B20000 !important;
+  border-bottom: 2px solid var(--red-border);
   color: white;
 }
 
 .winners-button {
   width: 80%;
-  background-color: #36a25b;
+  background-color: #36a25b !important;
+  border-bottom: 2px solid #008000 !important;
   color: white;
 }
 

@@ -2,8 +2,9 @@ import React  from "react";
 import { useDispatch } from "react-redux";
 import store from "../../redux/store";
 import './merchant.css';
-import { sendNotification, getStakingData } from "../../redux/data/dataActions";
+import { sendNotification, getStakingData, updateUserBalance } from "../../redux/data/dataActions";
 import MerchantAvatar from "./merchant-avatar.png";
+import PetEgg from "./egg_broken.jpg"
 import MerchantEmpty from "./merchant-empty.png";
 
 const MAX_APPROVE = "115792089237316195423570985008687907853269984665640564039457584007913129639935"
@@ -32,6 +33,7 @@ const Merchant = () => {
                 tx,
                 type: "success"
             }))
+            dispatch(updateUserBalance())
             dispatch(getStakingData())
         })
     }
@@ -58,20 +60,28 @@ const Merchant = () => {
             dispatch( getStakingData() )
         })
     }
-
+    
     let canMint = petEggsMintedByUser < petEggsLimit
     let hasBalance = parseInt(petEggsCost) <= parseInt(userGraveBalance)
+    let currentDate = parseInt(new Date() / 1000)
+    let endDate = 1654903359;
+    let diffDate = endDate > currentDate ? endDate - currentDate : false;
+    let diffDateFormatted = formatDate(diffDate)
     return (
         <>
             <div className="sk-flex sk-row">
                 <div className="sk-container">
                     <div className={`sk-box`}>
-                        <h2>Merchant</h2>
-                        <div className="sk-box-content sk-column">
-                            <span>Minted</span>
-                            <span className="highlight">{petEggsSupply} of {petEggsMaxSupply}</span>
+                        <h2>Mint Pet Eggs Gen 1</h2>
+                        <img className="pet-egg-thumb" src={PetEgg}/>
+                        <div className="sk-box-content sk-row">
+                            <div className="sk-flex sk-column">
+                                <span>Minted</span>
+                                <span className="highlight">{petEggsSupply} of {petEggsMaxSupply}</span>
+                                <b>Ends in: {diffDateFormatted.days}d {diffDateFormatted.hours}h {diffDateFormatted.minutes}m</b>
+                            </div>
                         </div>
-                        <span>Burn your <b>GRAVE</b> to receive a limited and super-rare Pet Eggs.</span>
+                        <span>Burn your <b>GRAVE</b> to receive a limited and super-rare NFT Seasonal Pet Eggs Generation 1.</span>
                         <div className="sk-box-content sk-column">
                             <span>Cost: { formatEther(petEggsCost) } <b>GRAVE</b></span>
                             <span>Limit: Max 2 Eggs per Address</span>
@@ -90,7 +100,7 @@ const Merchant = () => {
                                         }
                                     }
                                 >
-                                    Approve
+                                    Approve Contract
                                 </button>
                             ) : (
                                 <button 
@@ -109,7 +119,7 @@ const Merchant = () => {
                                         'Limit Reached' : 
                                             ! hasBalance ?
                                             'You need more Grave' :
-                                        'Purchase'
+                                        'Mint Rare Pet Egg'
                                     }
                                 </button>
                             )
@@ -127,4 +137,22 @@ const Merchant = () => {
         </>
     )
 };
+
+const DAY_IN_SEC = 60 * 60 * 24;
+const HUNDRED_DAYS_IN_SEC = 100 * DAY_IN_SEC//100 * DAY_IN_SEC;
+
+const formatDate = ( timestamp ) => {
+    let tsHours = timestamp / 60 / 60
+    let days =  parseInt( timestamp / DAY_IN_SEC )
+    let hoursDiff = tsHours - ( days * 24 )
+    let hours = parseInt(hoursDiff)
+    let tsMinutes = hoursDiff * 60
+    let minutes = parseInt( tsMinutes - ( hours * 60 ) )
+    return {
+        days,
+        hours,
+        minutes
+    }
+}
+
 export default Merchant;

@@ -434,8 +434,7 @@ const Marketplace = () => {
                                                                             handlePurchase(index, 'skull')
                                                                         }}
                                                                     >
-                                                                        <FontAwesomeIcon icon={faDungeon} />
-                                                                        Purchase
+                                                                        Buy
                                                                     </button>
                                                                 </div>
                                                                 <div className='rank-container'>
@@ -476,8 +475,7 @@ const Marketplace = () => {
                                                                         handlePurchase(index, 'blue')
                                                                     }}
                                                                 >
-                                                                    <FontAwesomeIcon icon={faDungeon} />
-                                                                    Purchase
+                                                                    Buy
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -530,8 +528,7 @@ const Marketplace = () => {
                                                                         handlePurchase(index, 'red')
                                                                     }}
                                                                 >
-                                                                    <FontAwesomeIcon icon={faDungeon} />
-                                                                    Purchase
+                                                                    Buy
                                                                 </button>
                                                             </div>
                                                         </div>
