@@ -29,7 +29,7 @@ const updateState = (payload) => {
     }
 }
 
-export const loadEbisusData = () => {
+export const loadEbisusData = (sort) => {
     return async (dispatch) => {
         dispatch(fetchEbisusRequest())
         let rawSkullData = await (await fetch('https://api.ebisusbay.com/collections?collection=0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F')).json();
@@ -61,6 +61,7 @@ export const loadEbisusData = () => {
             }))
         }
         dispatch(loadEbisusSkulls())
+        dispatch(loadEbisusSkullsNew(sort))
         dispatch(loadEbisusBlue())
         dispatch(loadEbisusRed())
     }
@@ -88,6 +89,104 @@ export const loadEbisusSkulls = () => {
         }))
     }
 }
+
+export const loadEbisusSkullsNew = (i) => {
+    return async (dispatch) => {
+        let { marketplace } = store.getState()
+        let skullList;
+        console.log('skullist:'+skullList)
+        let rawSkullData;
+        switch (i){
+            case 0:
+            rawSkullData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F&state=0&page=1&pageSize=6666`)).json();
+            skullList = rawSkullData.listings;
+            break;
+            case 1:
+            rawSkullData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F&state=0&page=1&pageSize=6666`)).json();
+            skullList = rawSkullData.listings;
+            break;
+            case 2:
+                rawSkullData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F&state=0&sortBy=price&page=1&pageSize=6666`)).json();
+            skullList = rawSkullData.listings;
+            break;
+            case 3:
+                rawSkullData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F&state=0&sortBy=price&page=1&pageSize=6666`)).json();
+            skullList = rawSkullData.listings;
+            skullList = skullList.reverse();
+            break;
+            case 4:
+                rawSkullData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F&state=0&sortBy=rank&page=1&pageSize=6666`)).json();
+            skullList = rawSkullData.listings;
+            break;
+            case 5:
+                rawSkullData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F&state=0&sortBy=rank&page=1&pageSize=6666`)).json();
+            skullList = rawSkullData.listings;
+            skullList = skullList.reverse();
+            break;
+            default:
+                skullList=null;
+            break;
+        }
+
+        dispatch(updateState({
+            key: "skullList",
+            value: skullList
+        }))
+    }
+}
+
+export const getAttribute = () =>{
+    return async (dispatch) => {
+    const rawResult = await fetch( 'https://croskull.mypinata.cloud/ipfs/QmSrjCsmQ9e5m1HFYXRSYgxHi9K6u9a6DXRsWz7KWW5i6p/_metadata' );
+    let skullsList = await rawResult.json();
+    let attributeList = [
+        {name:'Background',value:[]},
+        {name:'Skull',value:[]},
+        {name:'Body',value:[]},
+        {name:'Nose',value:[]},
+        {name:'Eyes',value:[]},
+        {name:'Hat',value:[]},
+        {name:'Trait',value:[5,6]}
+        ];
+        console.log(skullsList);
+    skullsList.map(skull =>{
+        (skull.attributes).map( at =>{
+            switch (at.trait_type) {
+                case 'Background':
+                    if (!attributeList[0].value.includes(at.value))
+                        attributeList[0].value.push(at.value);
+                    break;
+                case 'Skull':
+                    if (!attributeList[1].value.includes(at.value))
+                        attributeList[1].value.push(at.value);
+                    break;
+                case 'Body':
+                    if (!attributeList[2].value.includes(at.value))
+                        attributeList[2].value.push(at.value);
+                    break;
+                case 'Nose':
+                    if (!attributeList[3].value.includes(at.value))
+                        attributeList[3].value.push(at.value);
+                    break;
+                case 'Eyes':
+                    if (!attributeList[4].value.includes(at.value))
+                        attributeList[4].value.push(at.value);
+                    break;
+                case 'Hat':
+                    if (!attributeList[5].value.includes(at.value))
+                        attributeList[5].value.push(at.value);
+                    break;
+                default:
+                    break;
+            }
+        })
+    })
+    dispatch(updateState({
+        key: "attributesList",
+        value: attributeList
+    }))
+    }
+  }
 
 export const loadEbisusBlue = () => {
     return async (dispatch) => {

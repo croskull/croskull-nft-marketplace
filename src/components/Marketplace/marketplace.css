@@ -1,3 +1,210 @@
 .marketplace{
     background-image: url(bg-marketplace.jpeg);
+    overflow-y: hidden;
 }
+
+
+/*SKULL MODAL*/
+.marketplace #skull-modal{
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        min-height: 100vh;
+        text-align: center;
+        z-index: 10;
+        background: #00000065 !important;
+}
+.marketplace .mSkull-container{
+    width: 30%;
+    margin: auto !important;
+    text-align: center;
+    border-radius: 15px;
+    margin-top: 5% !important;
+    margin-bottom: 5% !important;
+}
+.marketplace .mSkull-container .skull-box{
+    background-color: rgba(15, 0, 83, 0.63);
+    border-radius: 15px;
+    padding: 2%;
+}
+.marketplace .mSkull-container .skull-details{
+    width: 50%;
+    margin: auto;
+
+}
+.marketplace .mSkull-container .skull-details h1{
+    margin-top: 5%  !important;
+    margin-bottom: 5% !important;
+}
+.marketplace .mSkull-container .img-modal{
+    width: 50%;
+    border-radius: 15px;
+    margin: auto;
+}
+.marketplace .mSkull-container .attribute-container p{
+    margin: auto;
+}
+.marketplace .mSkull-container .attribute-container .attribute{
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    padding: 15px;
+    margin: 1%;
+    border-radius: 15px;
+    background-color: rgba(15, 0, 83, 0.63);
+}
+
+/*SKULL CONTAINER*/
+.marketplace .rank-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: right;
+    flex-wrap: nowrap;
+    grid-row-gap: 6px;
+    row-gap: 6px;
+    padding: 12px;
+    border-radius: 12px;
+    right: 0px;
+    bottom: 0px;
+    overflow-y: clip;
+    z-index: 9;
+}
+.marketplace .sk-box-content .skull-box{
+    height: 100%;
+    overflow-y: scroll;
+    width: 75% !important;
+}
+.marketplace .bottom-actions{
+width: 50% !important;
+padding: 3%  !important;
+}
+.marketplace .mission-button{
+    width: 100% !important;
+    font-size: 1vh !important;
+}
+
+/*FILTER CONTAINER*/
+.marketplace .filter-container{
+    height: 100%;
+    overflow-y: auto;
+    width: 25%;
+    max-height: 65vh;
+}
+.marketplace .filter-button{
+    display: none;
+    margin-top: 1% ;
+    margin-bottom: 1%;
+}
+.marketplace .sort-container{
+    width: 98%;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+}
+.marketplace .select-div{
+    width: 50%;
+    justify-content: flex-start;
+}
+.marketplace .button-div{
+    width: 50%;
+    justify-content: flex-end;
+}
+.marketplace .clear-button{
+    float: right;
+    margin: 0 !important;
+}
+.marketplace .filter-container .filter-box{
+    width: 98%;
+    font-size: 1.3vh;
+    font-weight: 100;
+    border:1px solid black;
+}
+.marketplace .filter-container .filter-header{
+    padding: 10px;
+    border-bottom:1px solid black;
+}
+.marketplace .filter-container .filter-box h1{
+    font-size: 1.5vh;
+    font-weight: 100;
+    text-transform: uppercase;
+}
+.marketplace .filter-container .filter-box span{
+    float: right;
+}
+.marketplace .filter-container .filter-checkbox label{
+    margin-left: 10px;
+}
+.marketplace .filter-container .checkbox{
+    padding: 10px;
+}
+.marketplace #sortBy{
+    font-size: 14px;
+    padding: 4px 12px !important;
+    border-radius: 6px !important;
+    border: none;
+    font-size: 13px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-right: 10%;
+}
+.marketplace option, .marketplace optgroup{
+    font-size: 14px;
+    padding: 4px 12px !important;
+    border-radius: 6px !important;
+    border: none;
+    font-size: 13px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin: auto;
+}
+.marketplace .checkbox label{
+    text-transform: capitalize;
+}
+.marketplace .loading-div {
+    background-image: url(loading.gif);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+}
+
+/*MOBILE*/
+@media (min-width:320px) and (max-width:640px) {
+    .marketplace .mSkull-container {
+        width: 100%;
+    }
+    .marketplace .mFilter-container{
+        width: 100%;
+    }
+    .marketplace #filter-modal .filter-box{
+        width: 100%;
+    }
+    .marketplace .filter-container{
+        width: 100%;
+        margin-bottom: 1%;
+    }
+    .marketplace #filter-container{
+        display: none;
+    }
+    .marketplace #skull-box{
+        display: block;
+    }
+    .marketplace .sk-box-content .skull-box{
+        overflow-y: auto;
+        width: 100% !important;
+    }
+    .skull-container{
+        max-height: 65vh;
+    }
+    .marketplace .filter-button{
+        display: block;
+    }
+    .marketplace .filter-container .filter-box{
+        font-size: 2vh;
+
+    }
+  }

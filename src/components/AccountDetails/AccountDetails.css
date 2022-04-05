@@ -39,3 +39,70 @@
     {
         color: #00b0f5;
     }
+    #croskull-container{
+        
+    }
+
+    #croskull-title
+    {
+        height: auto;
+        transition: all 1s ease-in;
+        opacity: 0;
+        transform: translateY(-50%);
+        font-size: 5vh !important;
+        text-align: center;
+    }
+    #croskull-desc
+    {
+        transition: 1s;
+        width: 50%;
+        transform: translate(150%,10%);
+        transition: all 1s ease-in;
+        opacity: 0;
+        padding: 15px;
+    }
+    #croskull-img{
+        width: 50%;
+        text-align: left;
+       transform: translateX(-50%);
+       opacity: 0;
+       transition: all 1s ease-in;
+    }
+
+
+
+
+    #tavern-title
+    {
+        height: auto;
+        transition: all 1s ease-in;
+        opacity: 0;
+        transform: translateY(-50%);
+        font-size: 5vh !important;
+        text-align: center;
+    }
+    #tavern-desc
+    {
+        transition: 1s;
+        width: 50%;
+        transform: translateX(150%);
+        transition: all 1s ease-in;
+        opacity: 0;
+        padding: 15px;
+    }
+    #tavern-img{
+        width: 50%;
+        text-align: left;
+       transform: translateX(-50%);
+       opacity: 0;
+       transition: all 1s ease-in;
+    }
+    #croskull-div{
+        height: 800px;
+    }
+    #tavern-div{
+        height: 800px;
+    }
+    #adventure-div{
+        height: 800px;
+    }

@@ -461,4 +461,6 @@ export const getSkullsData = () => {
           ebisusData: ebisusData
       }))
   }
+  
 }
+

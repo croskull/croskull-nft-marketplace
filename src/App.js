@@ -106,8 +106,10 @@ class App extends Component {
     })
   }
 
-  setMetaData = async () => {
+   setMetaData = async () => {
+    /*
     const { croSkulls } = this.state
+    console.log('qua'+croSkulls)
     if (croSkulls.length !== 0) {
       let traits = []
       let traitsTypes = []
@@ -152,8 +154,9 @@ class App extends Component {
           }
         })
       }
-
-    }
+      console.log('traits:'+this.state.traits)
+      console.log('traitsType:'+this.state.traitsTypes)
+    }*/
   };
 
   handleStatusNFTFilter = (ev) => {
