@@ -300,7 +300,6 @@ export const getStakingData =  () => {
       }else{
         let malusFee = await croSkullsStaking.calculateMalusFee()
         malusFee = malusFee.toString()
-        console.log(malusFee)
 
         let rewardPlusMalus = await croSkullsStaking.calculateRewardsPlusMalus()
         rewardPlusMalus = rewardPlusMalus[0]
@@ -415,7 +414,6 @@ export const getSkullsData = () => {
       const rawEbisusData = await fetch( 'https://api.ebisusbay.com/collections?collection=0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F' );
       let ebisusData = await rawEbisusData.json();
       ebisusData = ebisusData.collections[0]
-      console.log(ebisusData)
       const rawResult = await fetch( 'https://croskull.mypinata.cloud/ipfs/QmSrjCsmQ9e5m1HFYXRSYgxHi9K6u9a6DXRsWz7KWW5i6p/_metadata' );
       let metaData = await rawResult.json();
       let rarityPerTrait = []

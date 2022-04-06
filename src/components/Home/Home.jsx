@@ -32,39 +32,11 @@ const Home = () => {
     }, [])
 
     let {
-        totalSkullsStaked,
-        burnedGraves,
         croSkulls,
         croSkullsStaked
     } = data
 
-
-    let {
-        saleSkulls,
-        saleBlue,
-        saleRed,
-        //skull stats
-        skullAvgPrice,
-        skullFloorPrice,
-        skullForSales,
-        skullSolds,
-        skullTotalVolume,
-        //bluepotion stats
-        blueAvgPrice,
-        blueFloorPrice,
-        blueForSales,
-        blueSolds,
-        blueTotalVolume,
-        //redpotion stats
-        redAvgPrice,
-        redFloorPrice,
-        redForSales,
-        redSolds,
-        redTotalVolume,
-    } = marketplace
-
     let allSkulls = croSkulls.concat(croSkullsStaked)
-    console.log(allSkulls)
     let randImage = Math.floor((Math.random() * (allSkulls.length - 1)) + 1)
     return (
         <>
@@ -105,13 +77,14 @@ const Home = () => {
                                 <img className="button-icon" src={Skull} />
                                 <span>Buy Skull</span>
                             </button>
-                            <button
+                            <a
                                 className="icon skull-button"
-                                onClick={() => window.open = 'https://mm.finance/swap?outputCurrency=0x9885488cD6864DF90eeBa6C5d07B35f08CEb05e9' } 
+                                href={ 'https://mm.finance/swap?outputCurrency=0x9885488cD6864DF90eeBa6C5d07B35f08CEb05e9' } 
+                                target="_blank"
                             >
                                 <img className="button-icon" src={Grave} />
                                 <span>Buy Grave</span>
-                            </button>
+                            </a>
                         </div>
                     </div>
                     <div className="sk-box">
