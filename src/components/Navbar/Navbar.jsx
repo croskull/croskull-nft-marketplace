@@ -21,6 +21,9 @@ import { Link } from "react-router-dom";
 import menuIcon from "./menu-icon.svg";
 import Soul from "./soul.png";
 import './navbar.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDiscord, faTwitter, faMedium } from '@fortawesome/free-brands-svg-icons'
+import { faBook } from '@fortawesome/free-solid-svg-icons'
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -208,6 +211,22 @@ const Navbar = () => {
             </Link>
           </li>
         </ul>
+        <div
+          className="social-list"
+        >
+          <a href="https://discord.gg/Z2EbH9fFM8" target="_blank">
+            <FontAwesomeIcon icon={faDiscord} />
+          </a>
+          <a href="https://twitter.com/CroskullNFT" target="_blank">
+            <FontAwesomeIcon icon={faTwitter} />
+          </a>
+          <a href="https://croskull-nft.gitbook.io/croskull/" target="_blank">
+            <FontAwesomeIcon icon={faBook} />
+          </a> 
+          <a href="http://medium.com/@croskullnft" target="_blank">
+            <FontAwesomeIcon icon={faMedium} />
+          </a>
+        </div>
       </div>
       <div 
         className="flex-v"

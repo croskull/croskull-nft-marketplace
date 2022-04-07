@@ -9,8 +9,6 @@ import Navbar from "./components/Navbar/Navbar";
 import Notifier from "./components/Notifier/Notifier";
 import Tavern from "./components/Tavern/Tavern";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
-import { useDispatch } from "react-redux";
-import { playSound } from "./redux/data/dataActions";
 import { ethers } from 'ethers';
 import store from "./redux/store";
 import Raffle from "./components/Raffle/Raffle";

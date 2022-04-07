@@ -12,7 +12,7 @@ import {loadingGif} from './loading.gif';
 import { faAngleUp, faAngleDown, faQuestionCircle, faExternalLink } from '@fortawesome/free-solid-svg-icons';
 
 const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/"
-const ipfsUri128 = "https://croskull.mypinata.cloud/ipfs/QmZn1HvYE1o1J8LhNpxFTj5k8LQb2bWT49YvbrhB3r19Xx/"
+const ipfsUri =  "https://croskull.mypinata.cloud/ipfs/QmZA9idEBomqsYBvA9ZH5JzuirmyQ414UBaqBGaEk2w69x/"
 const blueImage = "https://croskull.mypinata.cloud/ipfs/QmPvie22kUv9A7PcXFLbGtGBYuNiFdvQdUvVZZLNA59tbG/bluepotion.gif";
 const redImage = "https://croskull.mypinata.cloud/ipfs/QmRdN5CQTpogBtjtnXq3PLrF7A4LezZ1TPt3ynXybcNNZP/redpotion.gif";
 const Marketplace = () => {
@@ -93,7 +93,8 @@ const Marketplace = () => {
         selectedStakeSkulls: []
     })
 
-    function openSkullModal(croskull) {
+    function openSkullModal(croskull, index) {
+        croskull['index'] = index
         setModalData(croskull);
         setSkullModal(true);
     }
@@ -272,19 +273,33 @@ const Marketplace = () => {
                                 <span class="close-btn" onClick={() => { closeSkullModal() }}>
                                     &times;
                                 </span>
-                                <div className='sk-row sk-flex skull-box'>
-                                    <div className='skull-details'>
+                                <div className='sk-row sk-flex sk-box-content sk-details-wrapper'>
+                                    <div className='skull-details sk-column sk-flex'>
                                         <h1>{modalData.nft.name}</h1>
-                                        <h1>Seller: {modalData.seller.substr(0, 4)}...{modalData.seller.substr(39, 41)}</h1>
-                                        <h1>Price: {modalData.price}CRO</h1>
-                                        <h1>Rank: {modalData.nft.rank}</h1>
+                                        <span>Seller: {modalData.seller.substr(0, 4)}...{modalData.seller.substr(39, 41)}</span>
+                                        <span>Price: {modalData.price}CRO</span>
+                                        <span>Rank: {modalData.nft.rank}</span>
+                                        <a
+                                            href={ipfsUri + modalData.nft.edition + '.png'}
+                                            target="_blank"
+                                        >
+                                            Original Image (ipfs) >>
+                                        </a>
+                                        <button
+                                            className="skull-button mission-button"
+                                            onClick={() => {
+                                                handlePurchase(modalData.index, 'skull')
+                                            }}
+                                        >
+                                            Buy
+                                        </button>
                                     </div>
                                     <img src={ipfsUri480 + modalData.nft.edition + '.webp'} className='img-modal'></img>
                                 </div>
-                                <div className='attribute-container row'>
+                                <div className='attribute-container sk-flex sk-column'>
                                     {modalData.nft.attributes.map(at => {
                                         return (
-                                            <div className='attribute'>
+                                            <div className='sk-box-content sk-row'>
                                                 <p>{at.trait_type}</p>
                                                 <p>{at.value}</p>
                                                 <p>{(at.occurrence * 100).toFixed(0) + '%'}</p>
@@ -416,7 +431,7 @@ const Marketplace = () => {
                                             (skullList).map((cr, index) => {
                                                 if (checkFilter(cr))
                                                     return (
-                                                        <div key={index} className="skull-item" onClick={() => openSkullModal(cr)}>
+                                                        <div key={index} className="skull-item" onClick={() => openSkullModal(cr, index)}>
                                                             <div
                                                                 className="card"
                                                             >

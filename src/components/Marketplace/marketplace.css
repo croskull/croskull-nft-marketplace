@@ -85,6 +85,9 @@ padding: 3%  !important;
 .marketplace .mission-button{
     width: 100% !important;
 }
+.skull-details span{
+    font-weight: 500;
+}
 
 /*FILTER CONTAINER*/
 .marketplace .filter-container{
@@ -203,5 +206,9 @@ padding: 3%  !important;
     .marketplace .filter-container .filter-box{
         font-size: 2vh;
 
+    }
+    .sk-details-wrapper{
+        flex-direction: row;
+        column-gap: 9px;
     }
   }

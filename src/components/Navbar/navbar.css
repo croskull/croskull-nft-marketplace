@@ -20,10 +20,29 @@
     height: 80%;
 }
 
+.social-list{
+    display: flex;
+    flex-direction: row;
+    column-gap: 9px;
+    margin-left: 12px;
+    font-size: 18px;
+}
+.social-list svg {
+    cursor: pointer;
+    transition: transform .4s ease;
+}
+.social-list svg:hover {
+    transform: scale(1.1);
+}
 
 @media screen and (max-width: 992px) {
     .header{
         min-width: 100vw;
+    }
+    .social-list{
+        margin-top: 12px;
+        column-gap: 22px;
+        font-size: 22px;
     }
 }
 
