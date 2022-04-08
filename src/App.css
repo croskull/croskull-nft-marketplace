@@ -771,9 +771,12 @@ span.metric-usd-value {
   transition: opacity .54s cubic-bezier(0,.52,.47,.98) 0.2s, transform 0s 0;
   z-index: 1;
 }
+.nav-item {
+  margin-right: 0px !important;
+}
 .nav-link {
     letter-spacing: 0.03em;
-    font-weight: 500;
+    font-weight: 700;
 }
 
 

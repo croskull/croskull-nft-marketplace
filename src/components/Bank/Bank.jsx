@@ -60,10 +60,18 @@ const Bank = ({ accountAddress }) => {
   const handleFieldChange = (event) => {
     let value = event.target ? event.target.value : 0
     let name = event.target ? event.target.id : 0
-    setContract({
-      ...currentContract,
-      [name]: value
-    })
+    if( name == 'wishbones' && value > 300 ){
+      console.log( 'superiore 300' )
+      setContract({
+        ...currentContract,
+        wishbones: 300
+      })
+    }else{
+      setContract({
+        ...currentContract,
+        [name]: value
+      })
+    }
   }
 
   const handleStakeLPChange = (event) => {
@@ -471,6 +479,7 @@ const Bank = ({ accountAddress }) => {
                     max="300"
                     className="wishbones"
                     id='wishbones'
+                    value={currentContract.wishbones}
                     onChange={ handleFieldChange }
                   ></input>
                   <span>Wishbones Cost: { currentContract.wishbones ? `${ parseInt( currentContract.wishbones * 0.3 )}` :  '0'} GRAVE</span>
@@ -505,7 +514,7 @@ const Bank = ({ accountAddress }) => {
                           />
                           <MetricContainer 
                             label="ARY"
-                            tooltip="Annualizated Rude Yield: increase exponentially when reach contract end data."
+                            tooltip="Annualizated Rude Yield: increases exponentially when reach contract end date."
                             value={ `${simulation ? (simulation.apy / 10**5).toFixed(2) : 0 }%` }
                           />
                           {
@@ -581,7 +590,7 @@ const Bank = ({ accountAddress }) => {
                         label="ARY"
                         value={ `${(contract.apy / 10 ** 5).toFixed(2)}%` }
                         vertical={true}
-                        tooltip="Annualizated Rude Yield: increase exponentially when reach contract end data."
+                        tooltip="Annualizated Rude Yield: increases exponentially when reach contract end date."
                       />
                       <MetricContainer 
                         label="End"
@@ -624,6 +633,7 @@ const Bank = ({ accountAddress }) => {
               <span>
                 <a 
                   href="https://cronoscan.com/address/0x4672d3d945700cc3bdf4a2b6704e429d567dc52c"
+                  target="_blank"
                 >
                   Contract <FontAwesomeIcon icon={faExternalLink}/>
                 </a>
@@ -631,6 +641,7 @@ const Bank = ({ accountAddress }) => {
               <span>
                 <a 
                   href="https://dexscreener.com/cronos/0x4672d3d945700cc3bdf4a2b6704e429d567dc52c"
+                  target="_blank"
                 >
                   Pair Info <FontAwesomeIcon icon={faExternalLink}/>
                 </a>

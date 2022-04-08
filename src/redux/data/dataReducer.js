@@ -140,7 +140,6 @@ const dataReducer = (state = initialState, action) => {
                 graveTotalSupply: payload.graveTotalSupply
             }
         case "UPDATE_STATE":
-            console.log( payload )
             return {
                 ...state,
                 [payload.key]: payload.value
