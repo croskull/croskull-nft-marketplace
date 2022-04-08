@@ -10,6 +10,7 @@ import './marketplace.css';
 import { sendNotification } from '../../redux/data/dataActions';
 import {loadingGif} from './loading.gif';
 import { faAngleUp, faAngleDown, faQuestionCircle, faExternalLink } from '@fortawesome/free-solid-svg-icons';
+import AttributeMap from '../AttributeMap/AttributeMap';
 
 const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/"
 const ipfsUri128 = "https://croskull.mypinata.cloud/ipfs/QmZn1HvYE1o1J8LhNpxFTj5k8LQb2bWT49YvbrhB3r19Xx/"
@@ -33,7 +34,7 @@ const Marketplace = () => {
     ]);
     let [angleIconFilter, setAngleIconFilter] = useState([]);
     let [filterModal, setFilterModal] = useState(false);
-    let [skullModal, setSkullModal] = useState(false);
+    let [skullModal, setSkullModal] = useState(true);
     let [spinner, setSpinner] = useState(true);
     let [skullArr, setSkullArr] = useState();
     let { accountAddress, contractDetected } = blockchain
@@ -44,6 +45,7 @@ const Marketplace = () => {
         dispatch(loadEbisusData(sort))
         dispatch(getAttribute())
         toggleData(true)
+        setSkullModal(false)
     }, [])
 
     const handlePurchase = async (id, type) => {
@@ -209,9 +211,37 @@ const Marketplace = () => {
         let flag = true;
         filter.map(f => {
             if (f.value.length > 0 && flag) {
+                if(f.name == 'Trait')
+            {
+               
+                if(f.value.includes(5))
+                {   console.log(5)
+                    cr.nft.attributes.map(at => {
+                        if (at.trait_type == 'Hat' && flag) {
+                            if (at.value.includes('none'))
+                                flag = true
+                            else {
+                                flag = false;
+                            }
+                        }
+                    })
+                }
+                if(f.value.includes(6))
+                {
+                    console.log(6)
+                    cr.nft.attributes.map(at => {
+                        if (at.trait_type == 'Hat' && flag) {
+                            if (at.value.includes('none'))
+                                flag = false
+                            else {
+                                flag = true;
+                            }
+                        }
+                    })
+                } 
+            }else{
                 cr.nft.attributes.map(at => {
                     if (at.trait_type == f.name && flag) {
-                        console.log('secondo if')
                         if (f.value.includes(at.value))
                             flag = true
                         else {
@@ -219,6 +249,7 @@ const Marketplace = () => {
                         }
                     }
                 })
+            }
 
             }
         })
@@ -286,7 +317,7 @@ const Marketplace = () => {
                                         return (
                                             <div className='attribute'>
                                                 <p>{at.trait_type}</p>
-                                                <p>{at.value}</p>
+                                                <p>{ at.value ? <AttributeMap value={at.value} /> : ''}</p>
                                                 <p>{(at.occurrence * 100).toFixed(0) + '%'}</p>
                                             </div>
                                         )
@@ -391,13 +422,14 @@ const Marketplace = () => {
                                                             </div>
                                                             <div className='filter-checkbox' id={'filter-checkbox-' + i} hidden={!angleIconFilter[i]}>
                                                                 {
-                                                                    attribute.value.map((value, i) => {
-                                                                        return (
-                                                                            <div className='checkbox'>
-                                                                                <input type="checkbox" id={attribute.name + '-' + value} name={attribute.name + '-' + value} onChange={() => addFilter(attribute.name, value)} />
-                                                                                <label for={attribute.name + '-' + value}> {value}</label>
-                                                                            </div>
-                                                                        )
+                                                                    
+                                                                        attribute.value.map((value, i) => {
+                                                                                return (
+                                                                                    <div className='checkbox'>
+                                                                                        <input type="checkbox" id={attribute.name + '-' + value} name={attribute.name + '-' + value} onChange={() => addFilter(attribute.name, value)} />
+                                                                                        <label for={attribute.name + '-' + value}> { value ? <AttributeMap value={value} /> : ''} </label>
+                                                                                    </div>
+                                                                                )
                                                                     })
                                                                 }
                                                             </div>

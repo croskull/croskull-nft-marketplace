@@ -16,6 +16,7 @@ import store from "./redux/store";
 import Raffle from "./components/Raffle/Raffle";
 import Home from "./components/Home/Home";
 import Bank from "./components/Bank/Bank";
+import Graveyard from "./components/Graveyard/Graveyard";
 import BgMusic from "./utils/bg-music.mp3";
 import ClickSound from "./sounds/click-sound.mp3"
 import "./App.css";
@@ -306,7 +307,7 @@ class App extends Component {
                         <Route
                           path="/marketplace"
                           render={() => (
-                            <Marketplace></Marketplace>
+                            <Marketplace/>
                           )}
                         />
                         <Route
@@ -343,6 +344,12 @@ class App extends Component {
                           path="/bank"
                           render={() => (
                             <Bank />
+                          )}
+                        />
+                        <Route
+                          path="/graveyard"
+                          render={() => (
+                            <Graveyard />
                           )}
                         />
                       </Switch>

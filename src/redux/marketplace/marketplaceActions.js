@@ -195,12 +195,12 @@ export const loadEbisusBlue = () => {
         if( saleBlue.length >= blueForSales) return
         if( saleBlue.length > 0 ) {
             let newPage = parseInt(saleBlue.length / 20) + 1
-            let rawBlueData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0xB929D3002208f405180D3C07616F88EDa45F3e14&state=0&page=${newPage}&pageSize=20`)).json();
+            let rawBlueData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0xB929D3002208f405180D3C07616F88EDa45F3e14&state=0&sortBy=price&page=${newPage}&pageSize=20`)).json();
             saleBlue = saleBlue.concat(
                 rawBlueData.listings
             ) 
         }else{
-            let rawBlueData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0xB929D3002208f405180D3C07616F88EDa45F3e14&state=0&page=1&pageSize=20`)).json();
+            let rawBlueData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0xB929D3002208f405180D3C07616F88EDa45F3e14&state=0&sortBy=price&page=1&pageSize=20`)).json();
             saleBlue = rawBlueData.listings
         }
         dispatch(updateState({
@@ -216,12 +216,12 @@ export const loadEbisusRed = () => {
         let { saleRed } = marketplace
         if( saleRed.length > 0 ) {
             let newPage = parseInt(saleRed.length / 20) + 1
-            let rawRedData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0x508378E99F5527Acb6eB4f0fc22f954c5783e5F9&state=0&page=${newPage}&pageSize=20`)).json();
+            let rawRedData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0x508378E99F5527Acb6eB4f0fc22f954c5783e5F9&state=0&sortBy=price&page=${newPage}&pageSize=20`)).json();
             saleRed = saleRed.concat(
                 rawRedData.listings
             ) 
         }else{
-            let rawRedData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0x508378E99F5527Acb6eB4f0fc22f954c5783e5F9&state=0&page=1&pageSize=20`)).json();
+            let rawRedData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0x508378E99F5527Acb6eB4f0fc22f954c5783e5F9&state=0&sortBy=price&page=1&pageSize=20`)).json();
             saleRed = rawRedData.listings
         }
         dispatch(updateState({

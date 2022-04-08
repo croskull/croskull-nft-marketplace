@@ -43,13 +43,16 @@
     border-radius: 15px;
     margin: auto;
 }
+.marketplace .mSkull-container .attribute-container {
+
+}
 .marketplace .mSkull-container .attribute-container p{
     margin: auto;
 }
 .marketplace .mSkull-container .attribute-container .attribute{
     display: flex;
     flex-direction: column;
-    width: 30%;
+    width: 31%;
     padding: 15px;
     margin: 1%;
     border-radius: 15px;
@@ -168,7 +171,9 @@ padding: 3%  !important;
     width: 100%;
     height: 100%;
 }
-
+.marketplace .row{
+    padding-left: 1%;
+  }
 /*MOBILE*/
 @media (min-width:320px) and (max-width:640px) {
     .marketplace .mSkull-container {

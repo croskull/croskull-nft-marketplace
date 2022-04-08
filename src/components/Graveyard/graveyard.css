@@ -1,0 +1,621 @@
+.graveyard{
+  background-color: aliceblue !important;
+  background: fixed;
+  color: black !important;
+  overflow: hidden;
+}
+.graveyard a{
+  color: black !important;
+}
+.graveyard .header{
+  width: 90%;
+  max-width: 1920px;
+  margin-top: 1%;
+  flex-direction: row;
+  display: flex;
+  background-color: aliceblue !important;
+}
+.graveyard #filter-header{
+width: 23%;
+margin-right: 2%;
+color: black;
+font-size: 3vh !important;
+border-bottom: 1px solid black;
+}
+.graveyard .skull-header{
+  width: 75%;
+  margin-left: 3%;
+  border-bottom: 1px solid black;
+}
+/*GALLERY MODAL*/
+.graveyard .skull-modal{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  text-align: center;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.356)  !important;
+  overflow-y: hidden;
+}
+.graveyard .modal-container{
+  margin: auto;
+  width: 40%;
+  transition: 1s;
+  background-color: aliceblue;
+  animation: 1s slideInFromTop;
+  transform: translateY(80%);
+  box-shadow: 0 1px 1px hsl(0deg 0% 0% / 8%), 0 2px 2px hsl(0deg 0% 0% / 8%), 0 4px 4px hsl(0deg 0% 0% / 8%), 0 8px 8px hsl(0deg 0% 0% / 8%), 0 16px 16px hsl(0deg 0% 0% / 8%);
+  border-radius: 15px;
+  display: flex;
+  flex-direction: row;
+}
+.graveyard .modal-container .logo{
+  position: absolute;
+  width: 5%;
+  right: 0;
+  bottom: 0;
+}
+.graveyard .modal-container .modal-img img{
+  border-radius: 15px 0px 0px 15px;
+  width: 100% !important;
+  margin: auto;
+}
+.graveyard .modal-container .modal-img{
+  border-radius:15px 0px 0px 15px;
+  width: 40%;
+  justify-content: center;
+  align-items: center;
+  vertical-align: middle;
+  border-right: 2px solid black;
+}
+
+.graveyard .modal-container .modal-desc{
+  margin: auto;
+  text-align: left;
+  width: 50%;
+}
+.graveyard .modal-container .modal-desc p{
+  color: rgb(0, 0, 0);
+  margin: 0  !important;
+}
+.graveyard .modal-container .modal-desc h1{
+  color: rgb(0, 0, 0);
+  margin: 0  !important;
+  font-size: 2vh !important;
+}
+.graveyard .modal-container .modal-desc .desc-header{
+  width: 96%;
+  flex-direction: row;
+  display: flex;
+  margin-left: 2%;
+  margin-right: 2%;
+}
+.graveyard .modal-container .modal-desc .desc-title{
+  width: 80%;
+}
+.graveyard .modal-container .modal-desc .desc-icons{
+  width: 20%;
+  font-size: 2vh;
+  margin: auto;
+  padding-right: 3%;
+  text-align: right;
+}
+.graveyard .modal-container .modal-desc .desc-icons a{
+  margin: auto;
+}
+
+.graveyard .modal-container .modal-desc .attribute-container{
+  width: 100% !important;
+}
+.graveyard .modal-container .modal-desc .attribute{
+  width: 46%;
+  margin-right: 2%;
+  margin-left: 2%;
+  margin-top: 2%;
+  padding: 1%;
+  border-radius: 6px;
+  flex-direction: row;
+  display: flex;
+}
+.graveyard .modal-container .modal-desc .attribute .attribute-icon{
+    width: 20%;
+    margin: auto;
+}
+.graveyard .modal-container .modal-desc .attribute .attribute-icon img{
+  width: 100%;
+}
+.graveyard .modal-container .modal-desc .attribute .attribute-desc .type{
+  color: rgb(0, 0, 0);
+}
+.graveyard .modal-container .modal-desc .attribute .attribute-desc .value{
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+}
+.graveyard .modal-container .modal-desc .attribute .attribute-desc{
+  width: 75%;
+  margin-left: 5%;
+}
+.graveyard .modal-container .modal-desc .row{
+  padding-left: 15px;
+}
+
+
+@keyframes slideInFromTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(80%);
+  }
+}
+
+/*GALLERY CONTAINER*/
+.graveyard .gallery-container{
+  width: 90%;
+  max-width: 1920px;
+  justify-content: center;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+/*FILTER CONTAINER*/
+.graveyard .filter-container{
+  width: 23%;
+  height: 90%;
+  margin-right: 2%;
+  color: rgb(0, 0, 0) !important;
+  overflow: auto !important;
+}
+.graveyard .filter-container h1{
+  color: rgb(0, 0, 0) !important;
+  font-size: 3vh !important;
+  font-weight: bold;
+  border-bottom: 1px solid black;
+}
+.graveyard .filter-bar{
+  display: flex;
+  flex-direction: row;
+}
+.graveyard .select-div{
+  width: 50%;
+  justify-content: flex-start;
+}
+.graveyard .button-div{
+  width: 50%;
+  justify-content: flex-end;
+}
+.graveyard #clear-button{
+float: right;
+}
+.graveyard .filter-container .filter-header{
+  padding: 10px;
+  padding-left: 0;
+  border-bottom:1px solid black;
+  flex-direction: row;
+  display: flex;
+}
+.graveyard .filter-container .filter-header .filter-icon {
+  width: 10%;
+}
+.graveyard .filter-container .filter-header .filter-icon img{
+  width: 100%;
+}
+.graveyard .filter-container .filter-header .filter-name {
+  width: 90%;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.graveyard .filter-container .filter-box h1{
+  font-size: 2vh !important;
+  font-weight: 100;
+  text-transform: uppercase;
+  border-bottom: none !important;
+  margin-left: 5% !important;
+}
+
+.graveyard .filter-container .filter-box span{
+  float: right;
+}
+.graveyard .filter-container .filter-checkbox label{
+  margin-left: 10px;
+}
+.graveyard .filter-container .checkbox{
+  padding: 10px;
+  font-size: 1.3vh;
+}
+
+.graveyard .checkbox label{
+  text-transform: capitalize;
+}
+.graveyard .checkbox span{
+  color: grey;
+  margin-left: 5px;
+}
+.graveyard .div-clear{
+  display: none;
+}
+/*SKULL CONTAINER*/
+.graveyard .skull-container{
+  width: 75%;
+  height: 90%;
+  overflow: auto;
+}
+.graveyard .skull-header h1{
+  color: black;
+  font-size: 3vh !important;
+}
+.graveyard .skull-header span{
+  color: rgb(73, 73, 73);
+  font-size: 3vh !important;
+}
+.graveyard .skull-row{
+  width: 100%;
+  padding-left: 15px;
+  overflow: hidden;
+}
+.graveyard .skull-row .skull-card{
+  width: 18%;
+  margin: 1%;
+  margin-left: 1%;
+  border-radius: 6px;
+}
+.graveyard .skull-row .skull-card .skull-img{
+  width: 100%;
+  border-radius: 6px;
+  box-shadow: 0 1px 1px hsl(0deg 0% 0% / 8%), 0 2px 2px hsl(0deg 0% 0% / 8%), 0 4px 4px hsl(0deg 0% 0% / 8%), 0 8px 8px hsl(0deg 0% 0% / 8%), 0 16px 16px hsl(0deg 0% 0% / 8%);
+}
+.graveyard .skull-row .skull-card .skull-img img{
+  width: 100%;
+  border-radius: 6px;
+}
+.graveyard .skull-row  .skull-card img:hover{
+  transition: 0.5s;
+  box-shadow: 0 1px 1px hsl(0deg 0% 0% / 8%), 0 2px 2px hsl(0deg 0% 0% / 8%), 0 4px 4px hsl(0deg 0% 0% / 8%), 0 8px 8px hsl(0deg 0% 0% / 8%), 0 16px 16px hsl(0deg 0% 0% / 8%);
+  transform: scale(1.05);
+}
+
+.graveyard .skull-row .skull-card .skull-desc{
+  width: 100%;
+  margin-top: 5%;
+  color: black;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.graveyard .skull-row .skull-card .skull-desc p{
+  margin: 0;
+  padding: 0;
+}
+.graveyard .skull-row .skull-card .skull-desc .type{
+  color: rgb(100, 100, 100);
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+}
+.graveyard .skull-row .skull-card .skull-desc .number{
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+}
+.graveyard #filter-button{
+display: none;
+}
+.graveyard .filter-title{
+  display: none;
+}
+.graveyard .search-skull {
+  background-color: aliceblue;
+  width: 100%;
+  color: black;
+  border: none;
+  outline: none;
+}
+.graveyard .search-skull::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0;
+}
+
+.graveyard  .Red{
+  background-color: #F94E4D;
+}
+.graveyard .modal-container .modal-desc .attribute-Red{
+ background-color: #f86e6e;
+}
+.graveyard .Green{
+  background-color: #23CA7F;
+}
+.graveyard .modal-container .modal-desc .attribute-Green{
+  background-color: #3feb9d;
+ }
+.graveyard .Blue{
+  background-color: #36A5FF;
+}
+.graveyard .modal-container .modal-desc .attribute-Blue{
+  background-color: #68bbff;
+ }
+.graveyard  .Redtheme{
+  background-color: #702B30;
+}
+.graveyard .modal-container .modal-desc .attribute-Redtheme{
+  background-color: #9b3e44;
+ }
+ .graveyard  .Bluetheme{
+  background-color: #315181;
+}
+.graveyard .modal-container .modal-desc .attribute-Bluetheme{
+  background-color: #5177af;
+ }
+ .graveyard  .Purpletheme{
+  background-color: #453275;
+}
+.graveyard .modal-container .modal-desc .attribute-Purpletheme{
+  background-color: #604b96;
+ }
+ .graveyard  .Greentheme{
+  background-color: #0D5C36;
+}
+.graveyard .modal-container .modal-desc .attribute-Greentheme{
+  background-color: #278156;
+ }
+ .graveyard  .Whitetheme{
+  background-color: #FDFFFF;
+}
+.graveyard .modal-container .modal-desc .attribute-Whitetheme{
+  background-color: #F0F8FF;
+ }
+ .graveyard  .Hacker{
+  background-color: #9162BD;
+}
+.graveyard .modal-container .modal-desc .attribute-Hacker{
+  background-color: #b38dd6;
+ }
+ .graveyard  .Dark{
+  background-color: #000000;
+}
+.graveyard  .Dark .desc-title h1{
+  color: white;
+}
+.graveyard  .Dark .desc-icons a{
+  color: white !important;
+}
+.graveyard  .Dark .desc-title p{
+  color: white !important;
+}
+.graveyard .modal-container .modal-desc .attribute-Dark{
+  background-color: #E30886;
+ }
+ .graveyard  .Holo{
+  background-color: #3960FE;
+}
+.graveyard .modal-container .modal-desc .attribute-Holo{
+  background-color: #06DDDB;
+ }
+ 
+/*MOBILE*/
+@media (min-width:320px) and (max-width:640px) {
+  .graveyard .header{
+    width: 90%;
+    height: 7%;
+    margin: auto;
+  }
+  .graveyard #filter-header{
+    width: 0%;
+    visibility: hidden;
+    }
+    .graveyard .skull-header{
+      width: 100%;
+      padding: 0;
+      margin: 0;
+      margin-top: 5%;
+      padding-left: 3%;
+      border-bottom: 1px solid black;
+    }
+    .graveyard .gallery-container{
+      width: 100%;
+      justify-content: center;
+      margin-top: 1%;
+    }
+    .graveyard .filter-title{
+      display: block;
+      margin: 1%;
+      margin-top: -10%;
+    }
+    .graveyard .filter-title h1{
+      font-size: 5vh !important;
+      margin: 1%;
+    }
+.graveyard #sidebar{
+  height: 90%; /* 100% Full-height */
+  width: 0; /* 0 width - change this with JavaScript */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Stay on top */
+  top: 0;
+  left: 0;
+  background-color: aliceblue; /* Black*/
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 60px; /* Place content 60px from the top */
+  transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
+}
+.graveyard .filter-box{
+  margin: 1%;
+}
+.graveyard .skull-container{
+  width: 97%;
+  margin-left: 1%;
+  height: 100% !important;
+}
+.graveyard .skull-card{
+  width: 48% !important;
+}
+.graveyard #filter-button{
+  display: block;
+  float: right;
+  margin-right: 3%;
+  }
+  .graveyard .filter-container .checkbox label{
+    font-size: 1.75vh;
+    display: contents ;
+      }
+      .graveyard .clear-button{
+        float: left;
+
+        margin-left: 1% !important;
+      }
+    /*MODAL*/
+    .graveyard .skull-modal{
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      text-align: center;
+      z-index: 1;
+      background: rgba(0, 0, 0, 0.356)  !important;
+      overflow-y: overlay;
+    }
+    .graveyard .modal-container{
+      margin: auto;
+      width: 98%;
+      transition: 1s;
+      background-color: aliceblue;
+      animation: 1s;
+      transform: none;
+      margin-top: 20%;
+      box-shadow: 0 1px 1px hsl(0deg 0% 0% / 8%), 0 2px 2px hsl(0deg 0% 0% / 8%), 0 4px 4px hsl(0deg 0% 0% / 8%), 0 8px 8px hsl(0deg 0% 0% / 8%), 0 16px 16px hsl(0deg 0% 0% / 8%);
+      border-radius: 15px;
+      flex-direction: column;
+    }
+    .graveyard .modal-container .logo{
+      position: absolute;
+      width: 10%;
+      right: 0;
+      bottom: 0;
+    }
+    .graveyard .modal-container .modal-img img{
+      border-radius: 15px;
+      width: 100% !important;
+      margin: auto;
+    }
+    .graveyard .modal-container .modal-img{
+
+      border-radius:15px;
+      width: 60%;
+      justify-content: center;
+      align-items: center;
+      vertical-align: middle;
+      border: 1px solid black;
+      margin: auto;
+      margin-top: 3%;
+    }
+    .graveyard .modal-container .modal-desc{
+      margin: auto;
+      text-align: left;
+      width: 94%;
+      margin-bottom: 1%;
+    }
+    .graveyard .modal-container .modal-desc .attribute{
+  width: 46%;
+  margin-right: 2%;
+  margin-left: 2%;
+  margin-top: 2%;
+  padding: 1%;
+  border-radius: 6px;
+  flex-direction: row;
+  display: flex;
+}
+    @keyframes slideInFromTop {
+      0% {
+        opacity: 0;
+        transform: translateY(-100%);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(10%);
+      }
+    }
+    .graveyard .modal-container .logo{
+      position: relative;
+      width: 10%;
+      float: right;
+      text-align: right;
+      left: 85%;
+      margin-bottom: 5%;
+    }
+    .graveyard  .Red{
+      background-color: #F94E4D;
+    }
+    .graveyard .modal-container .modal-desc .attribute-Red{
+     background-color: #f86e6e;
+    }
+    .graveyard .Green{
+      background-color: #23CA7F;
+    }
+    .graveyard .modal-container .modal-desc .attribute-Green{
+      background-color: #3feb9d;
+     }
+    .graveyard .Blue{
+      background-color: #36A5FF;
+    }
+    .graveyard .modal-container .modal-desc .attribute-Blue{
+      background-color: #68bbff;
+     }
+    .graveyard  .Redtheme{
+      background-color: #702B30;
+    }
+    .graveyard .modal-container .modal-desc .attribute-Redtheme{
+      background-color: #9b3e44;
+     }
+     .graveyard  .Bluetheme{
+      background-color: #315181;
+    }
+    .graveyard .modal-container .modal-desc .attribute-Bluetheme{
+      background-color: #5177af;
+     }
+     .graveyard  .Purpletheme{
+      background-color: #453275;
+    }
+    .graveyard .modal-container .modal-desc .attribute-Purpletheme{
+      background-color: #604b96;
+     }
+     .graveyard  .Greentheme{
+      background-color: #0D5C36;
+    }
+    .graveyard .modal-container .modal-desc .attribute-Greentheme{
+      background-color: #278156;
+     }
+     .graveyard  .Whitetheme{
+      background-color: #FDFFFF;
+    }
+    .graveyard .modal-container .modal-desc .attribute-Whitetheme{
+      background-color: #F0F8FF;
+     }
+     .graveyard  .Hacker{
+      background-color: #9162BD;
+    }
+    .graveyard .modal-container .modal-desc .attribute-Hacker{
+      background-color: #b38dd6;
+     }
+     .graveyard  .Dark{
+      background-color: #000000;
+    }
+    .graveyard  .Dark .desc-title h1{
+      color: white;
+    }
+    .graveyard  .Dark .desc-icons a{
+      color: white !important;
+    }
+    .graveyard .modal-container .modal-desc .attribute-Dark{
+      background-color: #E30886;
+     }
+     .graveyard  .Holo{
+      background-color: #3960FE;
+    }
+    .graveyard .modal-container .modal-desc .attribute-Holo{
+      background-color: #06DDDB;
+     }
+  }
