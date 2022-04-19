@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { HashRouter, Route, Switch } from "react-router-dom";
 import Marketplace from "./components/Marketplace/Marketplace";
 import AccountDetails from "./components/AccountDetails/AccountDetails";
-import CroskullAdventure from "./components/CroskullAdventure/CroskullAdventure";
+import CroskullAdventure from "./components/Adventure/Adventure";
 import Merchant from "./components/Merchant/Merchant";
 import Analytics from "./components/Analytics/Analytics";
 import Navbar from "./components/Navbar/Navbar";

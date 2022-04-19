@@ -5,7 +5,7 @@ import store from "../../redux/store";
 import { loadRaffleData } from '../../redux/raffle/raffleActions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHourglassHalf, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import { sendNotification, updateUserBalance } from "../../redux/data/dataActions";
+import { sendNotification, fetchBalances } from "../../redux/data/dataActions";
 import IpfsHttpClient from "ipfs-http-client";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -126,7 +126,7 @@ const Raffle = () => {
           tx,
           type: "success"
         }))
-        dispatch(updateUserBalance())
+        dispatch(fetchBalances())
         dispatch(loadRaffleData())
       }
     )

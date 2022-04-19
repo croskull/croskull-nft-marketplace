@@ -8,10 +8,12 @@ const initialState = {
     advancedMetadata: [],
     rarities: [],
     //grave
-    userGraveBalance: 0,
+    graveBalance: 0,
     graveTotalSupply: 0,
     //soul
     soulsBalance: 0,
+    //rude
+    rudeBalance: 0,
     //staking
     approval: false,
     alreadyClaimed: 0,
@@ -112,6 +114,14 @@ const dataReducer = (state = initialState, action) => {
                 advancedMetadata: payload.advancedMetadata,
                 ebisusData: payload.ebisusData
             }
+        case "FETCH_BALANCES_SUCCESS": {
+            return {
+                ...state,
+                graveBalance: payload.graveBalance,
+                rudeBalance: payload.rudeBalance,
+                soulsBalance: payload.soulsBalance
+            }
+        }
         case "FETCH_STAKING_SUCCESS":
             return {
                 ...state,
@@ -134,7 +144,6 @@ const dataReducer = (state = initialState, action) => {
                 totalWithdrawedGraves: payload.totalWithdrawedGraves,
                 totalWithdrawedSouls: payload.totalWithdrawedSouls,
                 lastWithdrawTimestamp: payload.lastWithdrawTimestamp,
-                soulsBalance: payload.soulsBalance,
                 daysLastWithdraw: payload.daysLastWithdraw,
                 burnedGraves: payload.burnedGraves,
                 graveTotalSupply: payload.graveTotalSupply
@@ -196,7 +205,7 @@ const dataReducer = (state = initialState, action) => {
                 rewards: 0,
                 cyclesLastWithdraw: 0,
                 soulsGenerated: 0,
-                userGraveBalance: 0,
+                graveBalance: 0,
                 rarities: [],
                 title: "",
                 message: "",
@@ -231,7 +240,6 @@ const dataReducer = (state = initialState, action) => {
                 petEggsMaxSupply: payload.petEggsMaxSupply, 
                 petEggsCost: payload.petEggsCost,
                 approvedEggs: payload.approvedEggs,
-                userGraveBalance: payload.userGraveBalance,
             }
         default:
             return state;

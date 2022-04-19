@@ -13,6 +13,13 @@ const fetchDataRequest = () => {
   };
 };
 
+const fetchBalancesSuccess = (payload) => {
+  return {
+    type: "FETCH_BALANCES_SUCCESS",
+    payload
+  }
+}
+
 const updateState = ( payload ) => {
   return {
     type: "UPDATE_STATE",
@@ -66,6 +73,24 @@ export const playSound = (audioPath ) => {
       let newAudioSrc = new Audio(audioPath)
       newAudioSrc.play()
     }
+  }
+}
+
+export const fetchBalances = () => {
+  return async (dispatch) => {
+    let { croSkullsGrave, croSkullsSouls, croSkullsRude, accountAddress } = store.getState().blockchain
+
+    let graveBalance = await croSkullsGrave.balanceOf(accountAddress)
+    let rudeBalance = await croSkullsRude.balanceOf(accountAddress)
+    let soulsBalance = await croSkullsSouls.balanceOf(accountAddress)
+    graveBalance = graveBalance.toString()
+    rudeBalance = rudeBalance.toString()
+    soulsBalance = soulsBalance.toString()
+    dispatch( fetchBalancesSuccess({
+      graveBalance,
+      rudeBalance,
+      soulsBalance
+    }))
   }
 }
 
@@ -281,18 +306,13 @@ export const getStakingData =  () => {
       petEggsCost = petEggsCost.toString()
       approvedEggs = approvedEggs.toString() >= parseInt(petEggsCost)
 
-
-      let userGraveBalance = await croSkullsGrave.balanceOf(accountAddress)
-      userGraveBalance = userGraveBalance.toString()
-
       dispatch(updateMerchant({
         petEggsLimit,
         petEggsMintedByUser,
         petEggsSupply,
         petEggsMaxSupply,
         petEggsCost,
-        approvedEggs,
-        userGraveBalance
+        approvedEggs
       }))
 
       if( ! isApproved ){
@@ -313,7 +333,6 @@ export const getStakingData =  () => {
         let totalSkullsStaked = await croSkullsStaking.stakedSkullsCount()
         let totalWithdrawedGraves = await croSkullsStaking.poolWithdrawedAmount()
         let totalWithdrawedSouls = await croSkullsStaking.poolWithdrawedSouls()
-        let soulsBalance = await croSkullsSouls.balanceOf(accountAddress)
         let daysLastWithdraw = await croSkullsStaking.daysSinceLastWithdraw()
         let graveTotalSupply = await croSkullsGrave.totalSupply();
         let burnedGraves = await croSkullsGrave.burnedAmount()
@@ -336,7 +355,6 @@ export const getStakingData =  () => {
         totalSkullsStaked = totalSkullsStaked.toString()
         totalWithdrawedGraves = totalWithdrawedGraves.toString()
         totalWithdrawedSouls = totalWithdrawedSouls.toString()
-        soulsBalance = soulsBalance.toString()
         graveTotalSupply = graveTotalSupply.toString()
         
         dispatch(fetchStakingSuccess({
@@ -350,12 +368,10 @@ export const getStakingData =  () => {
           blockTimestamp,
           userDetails,
           alreadyClaimed,
-          soulsGenerated,
           totalSkullsStaked,
           totalWithdrawedGraves,
           totalWithdrawedSouls,
           lastWithdrawTimestamp,
-          soulsBalance,
           daysLastWithdraw,
           burnedGraves,
           graveTotalSupply
@@ -367,22 +383,11 @@ export const getStakingData =  () => {
   }
 }
 
-export const updateUserBalance = () => {
-  return async (dispatch) => {
-    let { croSkullsGrave, accountAddress} = store.getState().blockchain
-    let userGraveBalance = await croSkullsGrave.balanceOf(accountAddress)
-    userGraveBalance = userGraveBalance.toString()
-    dispatch(updateState({
-      key: 'userGraveBalance',
-      value: userGraveBalance
-    }))
-  }
-}
-
 export const getSkullsData = () => {
   return async (dispatch) => {
       console.log('getSkullsData')
       dispatch(fetchDataRequest());
+      dispatch(fetchBalances())
       let {
           croSkullsContract,
           croSkullsStaking,

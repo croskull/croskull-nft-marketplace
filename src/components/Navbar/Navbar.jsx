@@ -13,6 +13,7 @@ import Logo from "./logo-white.png";
 import Grave from "./grave.png";
 import GraveBurn from "./grave-burn.png";
 import Skull from "./skull.png";
+import Rude from "../Bank/rude.png";
 import GraveMined from "./grave-mined.png";
 import GraveAvailable from "./grave-available.png";
 import SkullAdventure from './skull-adventure.png';
@@ -28,7 +29,7 @@ import { faBook } from '@fortawesome/free-solid-svg-icons'
 const Navbar = () => {
   const dispatch = useDispatch();
   let { blockchain, data } = store.getState();
-  let { rewardPlusMalus, soulsBalance, userGraveBalance, croSkulls, rewards, croSkullsStaked, daysLastWithdraw } = data
+  let { rewardPlusMalus, soulsBalance, graveBalance, rudeBalance, croSkulls, rewards, croSkullsStaked, daysLastWithdraw } = data
   let { accountAddress, formatEther, contractDetected, loading } = blockchain
   const [isHovered, setIsHovered] = useState(false)
   const [menuState, setMenuState] = useState(false)
@@ -96,15 +97,23 @@ const Navbar = () => {
               src={Skull}
             />
             { `${croSkulls.length ? croSkulls.length : 0}` }
-            <span className="sk-tooltip">Free skulls</span>
+            <span className="sk-tooltip">Available CroSkulls</span>
           </span>
           <span>
             <img 
               className="skull-icon"
               src={Grave}
             />
-            { `${formatEther(userGraveBalance, true)}` }
-            <span className="sk-tooltip">Owned Grave</span>
+            { `${formatEther(graveBalance, true)}` }
+            <span className="sk-tooltip">Current GRAVE Balance</span>
+          </span>
+          <span>
+            <img 
+              className="skull-icon"
+              src={Rude}
+            />
+            { `${formatEther(rudeBalance, true)}` }
+            <span className="sk-tooltip">Current RUDE Balance</span>
           </span>
           <span>
             <img 
@@ -112,7 +121,7 @@ const Navbar = () => {
               src={Soul}
             />
             { `${ soulsBalance }` }
-            <span className="sk-tooltip">Owned Soul</span>
+            <span className="sk-tooltip">Current SOULS Balance</span>
           </span>
         </div>
         <div className="balances-offcanvas">

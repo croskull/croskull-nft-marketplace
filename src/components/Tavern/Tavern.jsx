@@ -17,7 +17,7 @@ import redPotionImage from './redPotionImage.png';
 import ReactQuill from "react-quill";
 import AdventureSound from "./skull-in-adventure.mp3";
 import "react-quill/dist/quill.snow.css";
-import './Tavern.css';
+import './tavern.css';
 
 const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/"
 const ipfsUri128 = "https://croskull.mypinata.cloud/ipfs/QmZn1HvYE1o1J8LhNpxFTj5k8LQb2bWT49YvbrhB3r19Xx/"
@@ -473,7 +473,7 @@ const Tavern = () => {
                           onClick={() => dispatch(toMission(viewState.selectedSkulls))}
                           disabled={ approval ? false : true}
                         >
-                          Send Selected in Mission { viewState.selectedSkulls.length }
+                          Send Selected on Adventure { viewState.selectedSkulls.length }
                         </button>
                       </>
                     ) : ('') 
@@ -496,8 +496,6 @@ const Tavern = () => {
                         />
                         <div className="floating-badges-container">
                           <span className="badge id">{cr}</span>
-                          <span className="badge rank">Rank {data ? data.rank : ''}</span>
-                          <span className="badge rank">Rarity { data ? String(data.rarityPercent).substr(0, 3) : '' }%</span>
                         </div>
                         <div className="bottom-actions">
                           <button 
@@ -507,7 +505,7 @@ const Tavern = () => {
                             }}
                           > 
                             <FontAwesomeIcon icon={faDungeon} /> 
-                            Mission
+                            Adventure
                           </button>
                           <button
                             className="skull-button sell-button"

@@ -339,10 +339,10 @@ const CroskullAdventure = () => {
                     tooltip="Amount of Grave you've already harvested from the Adventure."
                   />
                   <MetricContainer 
-                    label="Mined Soul"
+                    label="Mined Souls"
                     value={soulsGenerated}
                     icon={Soul}
-                    tooltip="Total amount of Soul mined since the adventure start. It actually reflect the amount of Soul you'll recieve once claim done."
+                    tooltip="Total amount of Souls mined since the adventure start. It actually reflect the amount of Souls you'll recieve once claim done."
                   />
                 </div>
                 <div className={`sk-box-content sk-column ${ detailsView ? 'show' : 'hide'}`}>
@@ -365,10 +365,10 @@ const CroskullAdventure = () => {
                     tooltip="Total Burned Grave amount base on the total supply, not only Adventure burn. ( total percent of burn )."
                   />
                   <MetricContainer 
-                    label="Mined Soul"
+                    label="Mined Souls"
                     value={totalWithdrawedSouls}
                     icon={Soul}
-                    tooltip="Total amount of all the Soul withdrawed since the start. Don't reflect total generated Soul, but just withdrawed."
+                    tooltip="Total amount of all the Souls withdrawed since the start. Don't reflect total generated Souls, but just withdrawed."
                   />
                 </div>
               </div>

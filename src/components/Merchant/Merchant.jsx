@@ -2,7 +2,7 @@ import React  from "react";
 import { useDispatch } from "react-redux";
 import store from "../../redux/store";
 import './merchant.css';
-import { sendNotification, getStakingData, updateUserBalance } from "../../redux/data/dataActions";
+import { sendNotification, getStakingData, fetchBalances } from "../../redux/data/dataActions";
 import MerchantAvatar from "./merchant-avatar.png";
 import PetEgg from "./egg_broken.jpg"
 import MerchantEmpty from "./merchant-empty.png";
@@ -11,7 +11,7 @@ const MAX_APPROVE = "11579208923731619542357098500868790785326998466564056403945
 const Merchant = () => {
     const dispatch = useDispatch();
     let { blockchain, data } = store.getState();
-    let { petEggsSupply, petEggsMaxSupply, petEggsLimit, petEggsMintedByUser, petEggsCost, userGraveBalance, approvedEggs } = data
+    let { petEggsSupply, petEggsMaxSupply, petEggsLimit, petEggsMintedByUser, petEggsCost, graveBalance, approvedEggs } = data
     let { croSkullsGrave, croSkullsPetEggs, accountAddress, formatEther } = blockchain
 
 
@@ -33,7 +33,7 @@ const Merchant = () => {
                 tx,
                 type: "success"
             }))
-            dispatch(updateUserBalance())
+            dispatch(fetchBalances())
             dispatch(getStakingData())
         })
     }
@@ -62,7 +62,7 @@ const Merchant = () => {
     }
     
     let canMint = petEggsMintedByUser < petEggsLimit
-    let hasBalance = parseInt(petEggsCost) <= parseInt(userGraveBalance)
+    let hasBalance = parseInt(petEggsCost) <= parseInt(graveBalance)
     let currentDate = parseInt(new Date() / 1000)
     let endDate = 1654903359;
     let diffDate = endDate > currentDate ? endDate - currentDate : false;

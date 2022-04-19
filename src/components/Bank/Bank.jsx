@@ -17,7 +17,7 @@ import FarmHouse from "./farmhouse.png"
 import Mansion from "./mansion.png"
 import MetricContainer from "../MetricContainer/MetricContainer";
 import { loadBankData, loadFarmData } from "../../redux/bank/bankActions";
-import { sendNotification, updateUserBalance } from "../../redux/data/dataActions";
+import { sendNotification, fetchBalances } from "../../redux/data/dataActions";
 import { loadDexData } from "../../redux/dexscreener/dexscreenerActions";
 import './Bank.css';
 
@@ -34,7 +34,7 @@ const Bank = ({ accountAddress }) => {
   let { blockchain, bank, data, dexscreener } = store.getState()
   let { croSkullsBank, croSkullsGrave, croSkullsFarm, lpPair, formatEther } = blockchain
   let { graveInUsd } = dexscreener
-  let { userGraveBalance } = data
+  let { graveBalance } = data
 
   const [simulated, setSimulated] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -230,7 +230,7 @@ const Bank = ({ accountAddress }) => {
           type: "success"
         }))
         dispatch(playSound(CoinSound))
-        dispatch(updateUserBalance())
+        dispatch(fetchBalances())
         dispatch(loadFarmData())
       }
     )
@@ -259,7 +259,7 @@ const Bank = ({ accountAddress }) => {
           type: "success"
         }))
         dispatch(playSound(CoinSound))
-        dispatch(updateUserBalance())
+        dispatch(fetchBalances())
         dispatch(loadFarmData())
       }
     )
@@ -340,7 +340,7 @@ const Bank = ({ accountAddress }) => {
           type: "success"
         }))
         dispatch(playSound(CoinSound))
-        dispatch(updateUserBalance())
+        dispatch(fetchBalances())
         dispatch(loadBankData())
       }
     )
@@ -372,7 +372,7 @@ const Bank = ({ accountAddress }) => {
           type: "success"
         }))
         dispatch(playSound(CoinSound))
-        dispatch(updateUserBalance())
+        dispatch(fetchBalances())
         dispatch(loadBankData())
       }
     )
@@ -525,7 +525,7 @@ const Bank = ({ accountAddress }) => {
                               >
                                 Approve
                               </button>
-                            ) : currentContract.amount && userGraveBalance > 0 && ethers.BigNumber.from( userGraveBalance ).gte( ethers.utils.parseEther(currentContract.amount) ) ? (
+                            ) : currentContract.amount && graveBalance > 0 && ethers.BigNumber.from( graveBalance ).gte( ethers.utils.parseEther(currentContract.amount) ) ? (
                               <button 
                                 className="skull-button"
                                 onClick={() => { subscribeContract(simulation.duration) } }

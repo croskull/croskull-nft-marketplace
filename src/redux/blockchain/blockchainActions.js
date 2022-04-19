@@ -14,23 +14,29 @@ import PetEggs from "../../abis/petEggs.json";
 import Souls from "../../abis/Souls.json";
 import Raffle from "../../abis/SkullsRaffle.json";
 import Bank from "../../abis/SkullsBank.json";
-import Farm from "../../abis/SkullsFarm.json";
+import Farm from "../../abis/SkullsFarm.json"
+import Rude from "../../abis/Rude.json";
 import {
   sendNotification, getSkullsData, cleanData
 } from "../data/dataActions";
 const chainId =  "0x19" || "0x152"; //testnet - 3
 const networkId =  25; //25 || 5777; //25 production, 338 testnet3, 5777 ganache local env
-const stakingAddress = StakingArtifacts.networks[networkId].address;
-const graveAddress = Grave.networks[networkId].address;
-const ContractAddress = CroSkulls.networks[networkId].address //CroSkulls.networks[networkId].address ||;
-const descriptionAddress =  Description.networks[networkId].address;
-const petEggsAddress = PetEggs.networks[networkId].address;
-const soulsAddress = Souls.networks[networkId].address;
+//ERC721
+const croskullAddress = CroSkulls.networks[networkId].address //CroSkulls.networks[networkId].address ||;
 const blueAddress = BluePotion.networks[networkId].address;
 const redAddress = RedPotion.networks[networkId].address;
-const raffleAddress = Raffle.networks[networkId].address;
+const petEggsAddress = PetEggs.networks[networkId].address;
+//ERC20 Tokens 
+const graveAddress = Grave.networks[networkId].address;
+const soulsAddress = Souls.networks[networkId].address;
+const rudeAddress = Rude.networks[networkId].address;
+//Skulls Ecosystem
 const bankAddress = Bank.networks[networkId].address;
 const farmAddress = Farm.networks[networkId].address;
+const stakingAddress = StakingArtifacts.networks[networkId].address;
+const descriptionAddress =  Description.networks[networkId].address;
+const raffleAddress = Raffle.networks[networkId].address;
+//external
 const lpPairAddress = "0x4672D3D945700cc3BDf4a2b6704e429d567DC52c";
 const ebisusAddress = "0x7a3CdB2364f92369a602CAE81167d0679087e6a3";
 
@@ -46,7 +52,7 @@ const lpPairAbi = [
     "function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)"
 ];
 
-//const ContractAddress = CroSkulls.networks[networkId].address;
+//const croskullAddress = CroSkulls.networks[networkId].address;
 
 const connectRequest = () => {
     return {
@@ -126,7 +132,7 @@ export const connect = ( ethProvider = false) => {
         dispatch(handleProviderChanges(ethProvider))
         if (ethProvider.provider.chainId == chainId || ethProvider.provider.chainId == networkId ) {
             let signer = ethProvider.getSigner()
-            let croSkullsContract = new ethers.Contract(ContractAddress, CroSkulls.abi, signer ? signer : false )
+            let croSkullsContract = new ethers.Contract(croskullAddress, CroSkulls.abi, signer ? signer : false )
             let croSkullsStaking = new ethers.Contract(stakingAddress, StakingArtifacts.abi, signer ? signer : false )
             let croSkullsGrave = new ethers.Contract(graveAddress, Grave.abi, signer ? signer : false )
             let croPotionBlue = new ethers.Contract(blueAddress, BluePotion.abi, signer ? signer : false )
@@ -137,6 +143,7 @@ export const connect = ( ethProvider = false) => {
             let croSkullsSouls = new ethers.Contract(soulsAddress, Souls.abi, signer ? signer : false )
             let croSkullsBank = new ethers.Contract(bankAddress, Bank.abi, signer ? signer : false )
             let croRaffle = new ethers.Contract(raffleAddress, Raffle.abi, signer ? signer : false )
+            let croSkullsRude = new ethers.Contract(rudeAddress, Rude.abi, signer ? signer : false ) 
             let ebisusMarketplace = new ethers.Contract(ebisusAddress, ebisusAbi, signer ? signer : false )
             let lpPair = new ethers.Contract(lpPairAddress, lpPairAbi, signer ? signer : false )
             let accounts = await ethProvider.provider.request({
@@ -167,6 +174,7 @@ export const connect = ( ethProvider = false) => {
                     croPotionBlue,
                     croPotionRed,
                     croSkullsFarm,
+                    croSkullsRude,
                     croRaffle,
                     lpPair,
                     ebisusMarketplace
