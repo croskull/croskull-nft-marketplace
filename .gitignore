@@ -63,3 +63,4 @@ src/components/AccountDetails/AccountDetails.css
 src/components/AccountDetails/AccountDetails.css
 src/components/AccountDetails/AccountDetails.jsx
 src/components/AccountDetails/IsInViewPort.jsx
+src/components/Tavern/Tavern.jsx

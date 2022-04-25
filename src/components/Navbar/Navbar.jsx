@@ -219,6 +219,11 @@ const Navbar = () => {
               Raffle
             </Link>
           </li>
+          <li className="nav-item merchant-menu">
+            <Link to="/laboratory" className="nav-link">
+              Laboratory
+            </Link>
+          </li>
         </ul>
         <div
           className="social-list"

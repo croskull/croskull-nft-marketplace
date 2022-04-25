@@ -14,9 +14,10 @@ import store from "./redux/store";
 import Raffle from "./components/Raffle/Raffle";
 import Home from "./components/Home/Home";
 import Bank from "./components/Bank/Bank";
-import Graveyard from "./components/Graveyard/Graveyard";
+import Laboratory from "./components/Laboratory/Laboratory";
 import BgMusic from "./utils/bg-music.mp3";
 import ClickSound from "./sounds/click-sound.mp3"
+import PotionLab from "./components/Laboratory/PotionLab/PotionLab";
 import "./App.css";
 
 let provider, contract, stakingContract, ethProvider;
@@ -345,9 +346,15 @@ class App extends Component {
                           )}
                         />
                         <Route
-                          path="/graveyard"
+                          path="/laboratory"
                           render={() => (
-                            <Graveyard />
+                            <Laboratory />
+                          )}
+                        />
+                                                <Route
+                          path="/laboratory-potion"
+                          render={() => (
+                            <PotionLab />
                           )}
                         />
                       </Switch>
