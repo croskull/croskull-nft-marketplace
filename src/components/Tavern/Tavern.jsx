@@ -17,7 +17,7 @@ import redPotionImage from './redPotionImage.png';
 import ReactQuill from "react-quill";
 import AdventureSound from "./skull-in-adventure.mp3";
 import "react-quill/dist/quill.snow.css";
-import './Tavern.css';
+import './tavern.css';
 
 const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/"
 const ipfsUri128 = "https://croskull.mypinata.cloud/ipfs/QmZn1HvYE1o1J8LhNpxFTj5k8LQb2bWT49YvbrhB3r19Xx/"
