@@ -22,6 +22,9 @@ const initialState = {
     redForSales: 0,
     redSolds: 0,
     redTotalVolume:0,
+    //
+    attributesList: [],
+    skullList: []
 };
 
 const marketplaceReducer = (state = initialState, action) => {

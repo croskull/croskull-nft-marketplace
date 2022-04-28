@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { ethers } from 'ethers';
 import './analytics.css'
-import CROIcon from '../Navbar/crypto-com.svg';
 import { useDispatch } from "react-redux";
-import Skull from '../Navbar/skull.png';
 import MetricContainer from '../MetricContainer/MetricContainer';
 import { loadEbisusData } from "../../redux/marketplace/marketplaceActions";
 import { loadDexData } from "../../redux/dexscreener/dexscreenerActions";
-import Grave from "../Navbar/grave.png";
-import GraveBurn from "../Navbar/grave-burn.png";
 import store from "../../redux/store";
+import CROIcon from '../images/crypto-com.svg';
+import Grave from "../images/grave.png";
+import GraveBurn from "../images/grave-burn.png";
+import Skull from '../images/skull.png';
 
 const Analytics = () => {
     let dispatch = useDispatch()

@@ -2,15 +2,19 @@ import { ethers } from 'ethers';
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import store from "../../redux/store";
-import { loadEbisusData, loadEbisusSkulls, loadEbisusBlue, loadEbisusRed, purchaseItem, loadEbisusSkullsNew, getAttribute } from "../../redux/marketplace/marketplaceActions";
+import { loadEbisusData, loadEbisusBlue, loadEbisusRed, purchaseItem, loadEbisusSkullsNew, getAttribute } from "../../redux/marketplace/marketplaceActions";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDungeon } from '@fortawesome/free-solid-svg-icons';
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import './marketplace.css';
-import { sendNotification } from '../../redux/data/dataActions';
-import {loadingGif} from './loading.gif';
-import { faAngleUp, faAngleDown, faQuestionCircle, faExternalLink } from '@fortawesome/free-solid-svg-icons';
+import { faAngleUp, faAngleDown } from '@fortawesome/free-solid-svg-icons';
+import MetricContainer from '../MetricContainer/MetricContainer';
 import AttributeMap from '../AttributeMap/AttributeMap';
+import { sendNotification } from '../../redux/data/dataActions';
+import CroIcon from "../images/crypto-com.svg";
+import SkullIcon from "../images/skull.png"
+import RedIcon from "../images/redPotionImage.png"
+import BlueIcon from "../images/bluePotionImage.png"
+import PurpleIcon from "../images/purplePotionImage.png"
+import './marketplace.css';
 
 const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/"
 const ipfsUri =  "https://croskull.mypinata.cloud/ipfs/QmZA9idEBomqsYBvA9ZH5JzuirmyQ414UBaqBGaEk2w69x/"
@@ -20,7 +24,6 @@ const Marketplace = () => {
     let dispatch = useDispatch()
     let { blockchain, marketplace } = store.getState()
     let [modalData, setModalData] = useState()
-    const [viewInventory, toggleInventory] = useState(false)
     const [hasData, toggleData] = useState(false)
     let [sort, setSort] = useState(0);
     let [filter, setFilter] = useState([
@@ -33,12 +36,21 @@ const Marketplace = () => {
         { name: 'Trait', value: [] }
     ]);
     let [angleIconFilter, setAngleIconFilter] = useState([]);
-    let [filterModal, setFilterModal] = useState(false);
     let [skullModal, setSkullModal] = useState(true);
-    let [spinner, setSpinner] = useState(true);
-    let [skullArr, setSkullArr] = useState();
-    let { accountAddress, contractDetected } = blockchain
-    let { saleSkulls, saleBlue, saleRed, blueForSales, redForSales, skullAvgPrice, skullFloorPrice, skullForSales, skullSolds, skullTotalVolume, loading, skullList, attributesList } = marketplace
+    let {
+        saleSkulls,
+        saleBlue,
+        saleRed,
+        //skull stats
+        skullForSales,
+        //bluepotion stats
+        blueForSales,
+        //redpotion stats
+        redForSales,
+        loading, 
+        skullList, 
+        attributesList
+    } = marketplace
 
     useEffect(() => {
         if (hasData) return
@@ -49,7 +61,7 @@ const Marketplace = () => {
     }, [])
 
     const handlePurchase = async (id, type) => {
-        let { contractDetected, ebisusMarketplace, accountBalance } = blockchain
+        let { accountBalance } = blockchain
         let { saleSkulls, saleBlue, saleRed } = marketplace
         let items;
         switch (type) {
@@ -112,11 +124,6 @@ const Marketplace = () => {
         setSort(value);
 
         loadSkullFilter();
-
-    }
-    function openFilterModal() {
-        document.getElementById('filter-modal').style.visibility = 'visible';
-        setFilterModal(true);
 
     }
 
@@ -294,6 +301,51 @@ const Marketplace = () => {
         loadSkullFilter();
     }
 
+    let icons = {
+        "skull": SkullIcon,
+        "red": RedIcon,
+        "blue": BlueIcon,
+        "purple": PurpleIcon,
+    }
+
+    const RenderCollectionDetails = ({type}) => {
+        let name = type[0].toUpperCase() + type.slice(1)
+        return (
+            <div className="collection-details sk-box-content sk-row">
+                <MetricContainer 
+                    label="Floor"
+                    value={parseFloat(marketplace[`${type}FloorPrice`]).toFixed(2)}
+                    vertical="true"
+                    icon={CroIcon}
+                />
+                <MetricContainer 
+                    label="Avg. Sale"
+                    value={parseFloat(marketplace[`${type}AvgPrice`]).toFixed(2)}
+                    vertical="true"
+                    icon={CroIcon}
+                />
+                <MetricContainer 
+                    label="Total Volume"
+                    value={parseFloat(marketplace[`${type}TotalVolume`]).toFixed(2)}
+                    vertical="true"
+                    icon={CroIcon}
+                />
+                <MetricContainer 
+                    label={`${name} Sales`}
+                    value={marketplace[`${type}Solds`]}
+                    vertical="true"
+                    icon={icons[type]}
+                />
+                <MetricContainer 
+                    label={`Active Listings`}
+                    value={marketplace[`${type}ForSales`]}
+                    vertical="true"
+                    icon={icons[type]}
+                />
+            </div>
+        )
+    }
+
     return (
         <>
             <div id='skull-modal' hidden={!skullModal}>
@@ -455,11 +507,13 @@ const Marketplace = () => {
                                         }
                                 </div>
                                 <div className="sk-row skull-grid skull-box" id='skull-box'>
-                                <div className='loading'>
-                                                    <img src={loadingGif} />
-                                                </div>
+                                    { 
+                                        <RenderCollectionDetails
+                                            type="skull"
+                                        />
+                                    }
                                     {
-                                        skullList ?
+                                        skullList.length ?
                                             (skullList).map((cr, index) => {
                                                 if (checkFilter(cr))
                                                     return (
@@ -493,6 +547,7 @@ const Marketplace = () => {
                                             })
                                             : (
                                                 <div className='loading-div'>
+                                                    <span>Loading...</span>
                                                 </div>
                                             )
                                     }
@@ -500,6 +555,9 @@ const Marketplace = () => {
                             </div>
                             <div className={` `} hidden={viewState.currentView.includes('bluepotion') ? false : true}>
                                 <div className="sk-row skull-grid">
+                                    <RenderCollectionDetails
+                                        type="blue"
+                                    />
                                     {
                                         saleBlue.length > 0 ?
                                             (saleBlue).map((cr, index) => {
@@ -536,7 +594,7 @@ const Marketplace = () => {
                                             )
                                     }
                                     {
-                                        saleSkulls.length < skullForSales ? (
+                                        saleBlue.length < blueForSales ? (
                                             <button
                                                 className="skull-button load-more"
                                                 onClick={() => {
@@ -553,6 +611,9 @@ const Marketplace = () => {
                             </div>
                             <div className={``} hidden={viewState.currentView.includes('redpotion') ? false : true}>
                                 <div className="sk-row skull-grid">
+                                    <RenderCollectionDetails
+                                        type="red"
+                                    />
                                     {
                                         saleRed.length > 0 ?
                                             (saleRed).map((cr, index) => {
@@ -589,7 +650,7 @@ const Marketplace = () => {
                                             )
                                     }
                                     {
-                                        saleSkulls.length < skullForSales ? (
+                                        saleRed.length < redForSales ? (
                                             <button
                                                 className="skull-button load-more"
                                                 onClick={() => {

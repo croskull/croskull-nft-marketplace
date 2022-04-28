@@ -14,6 +14,13 @@ const fetchRaffleSuccess = (payload) => {
       payload: payload
     }
 }
+export const updateState = ( payload ) => {
+    return {
+      type: "UPDATE_STATE",
+      payload: payload
+    }
+  }
+  
 
 export const loadRaffleData = () => {
     return async (dispatch) => {
@@ -22,8 +29,9 @@ export const loadRaffleData = () => {
         let raffleCount = await croRaffle.raffleCounter()
         let raffles = []
         raffleCount = await raffleCount.toString()
+        let raffleLimit = raffleCount > 6 ? 6 : 0
         if( raffleCount ) {
-            for( let i = raffleCount-1; i > 1; i--){
+            for( let i = raffleCount-1; i > raffleCount - raffleLimit; i--){
                 if( i <= 1 ) return
                 let raffle = await croRaffle.getRaffle(i)
                 let winners = await croRaffle.getWinners(i)

@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from "react";
 import './home.css'
 import { useDispatch } from "react-redux";
-import Skull from '../Navbar/skull.png';
-import MetricContainer from '../MetricContainer/MetricContainer';
+import Skull from '../images/skull.png';
 import HomeCard from "../HomeCard/HomeCard";
 import { loadEbisusData } from "../../redux/marketplace/marketplaceActions";
 import { loadDexData } from "../../redux/dexscreener/dexscreenerActions";
-import Grave from "../Navbar/grave.png";
-import MarketplaceCard from "./marketplace-card.jpeg";
-import TavernCard from "./tavern-card.jpeg";
-import BankCard from "./bank-card.jpeg";
-import AdventureCard from "./adventure-card.jpeg";
-import MerchantCard from "./merchant-card.jpeg";
-import RaffleCard from "./raffle-card.jpeg";
+import Grave from "../images/grave.png";
+import MarketplaceCard from "./cards/marketplace-card.jpeg";
+import TavernCard from "./cards/tavern-card.jpeg";
+import BankCard from "./cards/bank-card.jpeg";
+import AdventureCard from "./cards/adventure-card.jpeg";
+import MerchantCard from "./cards/merchant-card.jpeg";
+import RaffleCard from "./cards/raffle-card.jpeg";
 import store from "../../redux/store";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
@@ -22,8 +21,8 @@ const ipfsUriFull = "https://croskull.mypinata.cloud/ipfs/"
 const Home = () => {
     let dispatch = useDispatch()
     const [detailsView, setDetailsView] = useState('skulls')
-    let { blockchain, marketplace, data, dexscreener } = store.getState()
-    let { formatEther, accountAddress } = blockchain
+    let { blockchain, marketplace, data } = store.getState()
+    let { accountAddress } = blockchain
 
     useEffect( () => {
         if( marketplace.redSolds ) return 
@@ -125,7 +124,7 @@ const Home = () => {
                             <HomeCard 
                                 image={RaffleCard}
                                 title="Raffle"
-                                description="Partecipate and Win Amazing Prizes!"
+                                description="Participate and Win Amazing Prizes!"
                                 location="raffle"
                             />
                         </div>

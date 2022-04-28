@@ -5,22 +5,21 @@ import React, { useEffect, useState } from "react";
 import store from "../../redux/store";
 import { useDispatch } from "react-redux";
 import { connect, disconnect } from "../../redux/blockchain/blockchainActions";
-import cryptoIcon from "./crypto-com.svg";
+import cryptoIcon from "../images/crypto-com.svg";
 import { DeFiWeb3Connector } from 'deficonnect';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import Web3Modal from 'web3modal';
 import Logo from "./logo-white.png";
-import Grave from "./grave.png";
-import GraveBurn from "./grave-burn.png";
-import Skull from "./skull.png";
-import Rude from "../Bank/rude.png";
-import GraveMined from "./grave-mined.png";
-import GraveAvailable from "./grave-available.png";
-import SkullAdventure from './skull-adventure.png';
-import MetricItem from "./MetricItem";
+import Grave from "../images/grave.png";
+import GraveBurn from "../images/grave-burn.png";
+import Skull from "../images/skull.png";
+import Rude from "../images/rude.png";
+import GraveMined from "../images/grave-mined.png";
+import GraveAvailable from "../images/grave-available.png";
+import SkullAdventure from '../images/skull-adventure.png';
 import { Link } from "react-router-dom";
 import menuIcon from "./menu-icon.svg";
-import Soul from "./soul.png";
+import Soul from "../images/soul.png";
 import './navbar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiscord, faTwitter, faMedium } from '@fortawesome/free-brands-svg-icons'
@@ -204,26 +203,28 @@ const Navbar = () => {
               Adventure
             </Link>
           </li>
-          <li className="nav-item merchant-menu">
+          <li className="nav-item">
             <Link to="/merchant" className="nav-link">
               Merchant
             </Link>
           </li>
-          <li className="nav-item merchant-menu">
+          <li className="nav-item">
             <Link to="/analytics" className="nav-link">
               Analytics
             </Link>
           </li>
-          <li className="nav-item merchant-menu">
+          <li className="nav-item">
             <Link to="/raffle" className="nav-link">
               Raffle
             </Link>
           </li>
-          <li className="nav-item merchant-menu">
-            <Link to="/laboratory" className="nav-link">
+          {
+          /*<li className="nav-item merchant-menu">
+            <Link to="/laboratory-potion" className="nav-link">
               Laboratory
             </Link>
-          </li>
+          </li>*/
+          }
         </ul>
         <div
           className="social-list"

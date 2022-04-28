@@ -3,7 +3,6 @@
     overflow-y: hidden;
 }
 
-
 /*SKULL MODAL*/
 .marketplace #skull-modal{
     position: absolute;
@@ -167,7 +166,6 @@ padding: 3%  !important;
     text-transform: capitalize;
 }
 .marketplace .loading-div {
-    background-image: url(loading.gif);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -211,6 +209,9 @@ padding: 3%  !important;
     .marketplace .filter-container .filter-box{
         font-size: 2vh;
 
+    }
+    .collection-details {
+        flex-wrap: wrap;
     }
     .sk-details-wrapper{
         flex-direction: row;

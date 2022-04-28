@@ -20,7 +20,7 @@ const fetchBalancesSuccess = (payload) => {
   }
 }
 
-const updateState = ( payload ) => {
+export const updateState = ( payload ) => {
   return {
     type: "UPDATE_STATE",
     payload: payload
@@ -76,20 +76,24 @@ export const playSound = (audioPath ) => {
   }
 }
 
+
 export const fetchBalances = () => {
   return async (dispatch) => {
-    let { croSkullsGrave, croSkullsSouls, croSkullsRude, accountAddress } = store.getState().blockchain
+    let { croSkullsGrave, croSkullsSouls, croSkullsRude, croSkullsPetEggs, accountAddress } = store.getState().blockchain
 
     let graveBalance = await croSkullsGrave.balanceOf(accountAddress)
     let rudeBalance = await croSkullsRude.balanceOf(accountAddress)
     let soulsBalance = await croSkullsSouls.balanceOf(accountAddress)
+    let petEggsBalance = await croSkullsPetEggs.balanceOf(accountAddress)
     graveBalance = graveBalance.toString()
     rudeBalance = rudeBalance.toString()
     soulsBalance = soulsBalance.toString()
+    petEggsBalance = petEggsBalance.toString()
     dispatch( fetchBalancesSuccess({
       graveBalance,
       rudeBalance,
-      soulsBalance
+      soulsBalance,
+      petEggsBalance
     }))
   }
 }
@@ -294,13 +298,13 @@ export const getStakingData =  () => {
       
       let isApproved = await croSkullsStaking.approvalStatus()
       let petEggsLimit = await croSkullsPetEggs.eggsPerAddress()
-      let petEggsMintedByUser = await croSkullsPetEggs.minterList( accountAddress )
+      let petEggsBalance = await croSkullsPetEggs.minterList( accountAddress )
       let petEggsMaxSupply = await croSkullsPetEggs.eggsLimit()
       let petEggsSupply = await croSkullsPetEggs.eggsCounter()
       let petEggsCost = await croSkullsPetEggs.eggCost()
       let approvedEggs = await croSkullsGrave.allowance( accountAddress, croSkullsPetEggs.address )
       petEggsLimit = petEggsLimit.toString()
-      petEggsMintedByUser = petEggsMintedByUser.toString()
+      petEggsBalance = petEggsBalance.toString()
       petEggsMaxSupply = petEggsMaxSupply.toString()
       petEggsSupply = petEggsSupply.toString()
       petEggsCost = petEggsCost.toString()
@@ -308,7 +312,7 @@ export const getStakingData =  () => {
 
       dispatch(updateMerchant({
         petEggsLimit,
-        petEggsMintedByUser,
+        petEggsBalance,
         petEggsSupply,
         petEggsMaxSupply,
         petEggsCost,
@@ -370,6 +374,7 @@ export const getStakingData =  () => {
           alreadyClaimed,
           totalSkullsStaked,
           totalWithdrawedGraves,
+          soulsGenerated,
           totalWithdrawedSouls,
           lastWithdrawTimestamp,
           daysLastWithdraw,
@@ -394,19 +399,56 @@ export const getSkullsData = () => {
           accountAddress,
           croPotionBlue,
           croPotionRed,
-          ethProvider
+          croPotionPurple,
+          croSkullsGrave
       } = store.getState().blockchain
       if( ! croSkullsContract )
         return
       dispatch(refreshSkullsStories())
       let redCount = await croPotionRed.balanceOf(accountAddress)
       let blueCount = await croPotionBlue.balanceOf(accountAddress)
+      let purpleCount = await croPotionPurple.balanceOf(accountAddress)
+
       redCount = redCount.toString()
       blueCount = blueCount.toString()
+      purpleCount = purpleCount.toString()
+
+      let redId = [];
+      for( let i = 0; i < redCount; i++) {
+        let tokenId = await croPotionRed.tokenOfOwnerByIndex(accountAddress, i)
+        redId.push( tokenId.toString() )
+      }
+      let blueId = [];
+      for( let i = 0; i < redCount; i++) {
+        let tokenId = await croPotionBlue.tokenOfOwnerByIndex(accountAddress, i)
+        blueId.push( tokenId.toString() )
+      }
+      let purpleId = [];
+      for( let i = 0; i < purpleCount; i++) {
+        let tokenId = await croPotionPurple.tokenOfOwnerByIndex(accountAddress, i)
+        purpleId.push( tokenId.toString() )
+      }
+      
+      let purpleSupply = await croPotionPurple.totalSupply()
+      purpleSupply = purpleSupply.toString()
+      let purpleGraveAllowance = await croSkullsGrave.allowance(accountAddress, croPotionPurple.address)
+      purpleGraveAllowance = purpleGraveAllowance.toString()
+      let purpleBlueApproval = await croPotionBlue.isApprovedForAll(accountAddress, croPotionPurple.address)
+      let purpleRedApproval = await croPotionRed.isApprovedForAll(accountAddress, croPotionPurple.address)
       dispatch( setPotions({
+          redId,
+          blueId,
           redCount,
-          blueCount
-        }) )
+          blueCount,
+          purpleSupply,
+          purpleCount,
+          purpleId,
+          purpleGraveAllowance,
+          purpleBlueApproval,
+          purpleRedApproval
+        })
+      )
+      console.log( store.getState().data)
       dispatch(getStakingData())
       let ownedTokensCount = await croSkullsContract.balanceOf(accountAddress)
       ownedTokensCount = ownedTokensCount.toString()

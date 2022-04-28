@@ -224,11 +224,14 @@
 
 .bank .stake-button {
   background-color: var(--green);
+  border-color: #2e7a49;
   margin-top: 10px;
 }
 
 .bank .claim-button {
   background-color: var(--yellow);
+  border-color: var(--orange);
+  color: #171717;
   margin-top: 10px;
 }
 

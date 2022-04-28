@@ -10,10 +10,10 @@ import { faDungeon, faRunning, faCoins, faSkullCrossbones, faSpinner, faRedoAlt 
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import IpfsHttpClient from "ipfs-http-client";
 import hexagon from './hexagon.svg';
-import inventoryIcon from './inventory.svg';
-import eggImage from './egg.png';
-import bluePotionImage from './bluePotionImage.png';
-import redPotionImage from './redPotionImage.png';
+import eggImage from '../images/egg.png';
+import bluePotionImage from '../images/bluePotionImage.png';
+import redPotionImage from '../images/redPotionImage.png';
+import purplePotionImage from "../images/purplePotionImage.png";
 import ReactQuill from "react-quill";
 import AdventureSound from "./skull-in-adventure.mp3";
 import "react-quill/dist/quill.snow.css";
@@ -259,7 +259,7 @@ const Tavern = () => {
 
   //quill description editor setting
 
-  let { storiesLoading, redCount, blueCount, croSkullsStaked, croSkulls, skullsStories, approval, advancedMetadata, loading, croSkullsContractOwner, petEggsMintedByUser, storyAllowance } = data;
+  let { storiesLoading, redCount, blueCount, croSkullsStaked, croSkulls, skullsStories, approval, advancedMetadata, loading, croSkullsContractOwner, petEggsBalance, storyAllowance, purpleCount } = data;
   let { accountAddress, contractDetected } = blockchain
   let { 
     tokenId,
@@ -274,8 +274,8 @@ const Tavern = () => {
   } = storyState
   return (
     <>
-      <div className="sk-flex sk-row">
-        <div className="sk-container wd-100">
+      <div className="sk-flex sk-row mh-100">
+        <div className="sk-container">
           <div className={`sk-box stories ${ viewStories ? 'show' : '' }`}>
             <span className="stories-heading">Recent Community Stories</span>
             <div className="sk-box-content sk-row of-y-over">
@@ -337,46 +337,7 @@ const Tavern = () => {
             }
             </div>
           </div>
-
-          <div className={`sk-box inventory ${ viewInventory ? 'show' : '' }`}>
-            <span className="stories-heading">Inventory</span>
-            <div className="sk-box-content sk-row of-y-over">
-              <div 
-                className="item-image-container"
-                style={{ width: `85px` }}
-              >
-                <div 
-                  style={{ backgroundImage: `url(${eggImage})` }}
-                  className={`item-image ${ ! petEggsMintedByUser ? 'disabled' : ''}`}
-                >
-                  <span className="item-count">{ petEggsMintedByUser }</span>
-                </div>
-              </div>
-              <div 
-                className="item-image-container"
-                style={{ width: `85px` }}
-              >
-                <div 
-                  style={{ backgroundImage: `url(${bluePotionImage})` }}
-                  className={`item-image ${ !blueCount ? 'disabled' : ''}`}
-                >
-                  <span className="item-count">{ `${blueCount}` }</span>
-                </div>
-              </div>
-              <div 
-                className="item-image-container"
-                style={{ width: `85px` }}
-              >
-                <div 
-                  style={{ backgroundImage: `url(${redPotionImage})` }}
-                  className={`item-image ${ !redCount ? 'disabled' : ''}`}
-                >
-                  <span className={"item-count"}>{ `${redCount}` }</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="sk-box">
+          <div className="sk-box skulls">
             <div className="tab-head">
               <ul className="sk-row view-list">
                 <li 
@@ -388,18 +349,6 @@ const Tavern = () => {
                   <FontAwesomeIcon 
                     className="btn-toggle-stories"
                     icon={faSkullCrossbones}
-                  />
-                </li>
-                <li
-                  className={`icon-menu inventory-menu ${ viewInventory ? `active` : ``}`}
-                  onClick={ () => {
-                    toggleInventory( ! viewInventory )
-                  }}
-                >
-                  <img 
-                    src={inventoryIcon}
-                    className="svg-icon btn-toggle-stories"
-                    alt="Inventory"
                   />
                 </li>
                 <li className={`skull-button view-button ${ viewState.currentView === 'tavern' ? 'active' : ''}`}
@@ -610,6 +559,57 @@ const Tavern = () => {
                       </span>
                     )
                   }
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className={`sk-box inventory`}>
+            <span className="stories-heading">
+              Inventory
+            </span>
+            <div className="sk-box-content sk-row of-y-over">
+              <div 
+                className="item-image-container"
+                style={{ width: `85px` }}
+              >
+                <div 
+                  style={{ backgroundImage: `url(${eggImage})` }}
+                  className={`item-image ${ ! petEggsBalance ? 'disabled' : ''}`}
+                >
+                  <span className="item-count">{ petEggsBalance }</span>
+                </div>
+              </div>
+              <div 
+                className="item-image-container"
+                style={{ width: `85px` }}
+              >
+                <div 
+                  style={{ backgroundImage: `url(${purplePotionImage})` }}
+                  className={`item-image ${ !purpleCount ? 'disabled' : ''}`}
+                >
+                  <span className="item-count">{ `${purpleCount}` }</span>
+                </div>
+              </div>
+              <div 
+                className="item-image-container"
+                style={{ width: `85px` }}
+              >
+                <div 
+                  style={{ backgroundImage: `url(${bluePotionImage})` }}
+                  className={`item-image ${ !blueCount ? 'disabled' : ''}`}
+                >
+                  <span className="item-count">{ `${blueCount}` }</span>
+                </div>
+              </div>
+              <div 
+                className="item-image-container"
+                style={{ width: `85px` }}
+              >
+                <div 
+                  style={{ backgroundImage: `url(${redPotionImage})` }}
+                  className={`item-image ${ !redCount ? 'disabled' : ''}`}
+                >
+                  <span className={"item-count"}>{ `${redCount}` }</span>
                 </div>
               </div>
             </div>

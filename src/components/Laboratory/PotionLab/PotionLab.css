@@ -1,257 +1,319 @@
-.laboratory-potion #container-desktop{
+.laboratory-potion #container-desktop {
     height: 80vh;
     overflow-y: hidden;
 }
-.laboratory-potion #container-desktop h1{
-color: white;
-text-align: center;
-margin-top: 5% !important;
-}
-.laboratory-potion .calderone-box{
+
+.laboratory-potion #container-desktop h1 {
+    color: white;
     text-align: center;
-    align-self: flex-end;
+}
+
+.laboratory-potion .calderone-box {
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+    text-align: center;
+    align-self: flex-start;
     position: relative;
 }
-
-.laboratory-potion .pot-box{
-    height: 50vh;
+.laboratory-potion .sk-container, .laboratory-potion .sk-container-wrapper {
+    height: 100%;
+}
+.laboratory-potion .pot-box {
     overflow-y: auto;
 }
-.laboratory-potion .pot-box img{
-width: 80%;
-border-radius: 15px;
-margin: auto;
+
+.potions-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    row-gap: 9px;
 }
 
-.laboratory-potion .create{
-    position: absolute;
-    top: 50%;
-    left: 40%;
+.laboratory-potion .potion-item {
+    position: relative;
+    max-width: 25%;
+    border-radius: 16px;
+    cursor: pointer;
 }
-.laboratory-potion #container-mobile{
+.laboratory-potion .potion-item img{
+    width: 100%;
+    border-radius: 12px;
+}
+
+.selected-red, .selected-blue {
+    border: 3px solid;
+}
+.selected-red {
+    border-color: var(--red);
+}
+.selected-blue {
+    border-color: var(--blue);
+}
+.laboratory-potion #container-mobile {
     display: none;
-    }
-    .laboratory-potion #modal-blue{
-        display: none;
-    }
-    .laboratory-potion #modal-red{
-        display: none;
-    }
-    .laboratory-potion #creation-modal{
-        display: none;
-    }
-    .laboratory-potion .modal-container{
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100vw;
-        min-height: 100vh;
-        max-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: flex-start;
-        flex-wrap: nowrap;
-        align-content: center;
-        z-index: 9999;
-        background: #000000f6 !important;
+}
 
+.laboratory-potion {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+.laboratory-potion .modal-container.show {
+    transform: translateX(0);
+    opacity: 1;
+    height: 80vh;
+}
+
+.laboratory-potion #creation-modal {
+    display: none;
+}
+
+.laboratory-potion .modal-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    min-height: 100vh;
+    max-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    align-content: center;
+    z-index: 9999;
+    background: #000000f6 !important;
+}
+
+.potions-list{
+    display: flex;
+    flex-direction: row;
+    column-gap: 9px;
+    align-items: flex-start;
+}
+.laboratory-potion .modal-custom {
+    background: #000000 !important;
+    height: 100%;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 12px;
+}
+
+.laboratory-potion .modal-content {
+    display: flex;
+    flex-direction: column;
+    row-gap: 12px;
+    flex-wrap: wrap;
+    background: #000000 !important;
+}
+
+.laboratory-potion .modal-content span {
+    float: right;
+}
+
+.laboratory-potion .modal-header-custom {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.laboratory-potion .modal-header-custom h1 {
+    text-align: center !important;
+}
+
+.laboratory-potion #creation-modal {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+
+.laboratory-potion .div-text {
+    width: 100vw;
+}
+
+.laboratory-potion #creation-text {
+    text-align: center;
+    font-size: 5em;
+}
+
+.laboratory-potion #modal-calderone {
+    width: 30%;
+    align-items: flex-end;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.laboratory-potion #modal-potion {
+    display: none;
+    width: auto;
+    height: 40vh;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.laboratory-potion #modal-potion img {
+    width: auto;
+    height: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@keyframes textBlue {
+    0% {
+        color: aliceblue;
+        opacity: 0;
     }
 
-    .laboratory-potion .modal-custom{
-        background: #00000065 !important;
+    20% {
+        opacity: 1;
     }
 
-    .laboratory-potion .modal-content{
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        background: #00000065 !important;
-    }
-    .laboratory-potion .modal-content span{
-        float: right;
-    }
-    .laboratory-potion .modal-header-custom{
-        margin: 5%;
-        text-align: center;
+    80% {
+        color: blue;
+        opacity: 1;
     }
 
-    .laboratory-potion .modal-header-custom h1{
-        text-align: center !important;
+    100% {
+
+        opacity: 0;
     }
-    .laboratory-potion .modal-content img{
-        width: 48%;
-        margin: 1%;
-    }
-    .laboratory-potion #creation-modal{
-        display: none;
-        justify-content: center;
-        align-items: center;
-        align-content: center;
+}
+
+@keyframes textRed {
+    0% {
+        color: aliceblue;
+        opacity: 0;
     }
 
-    .laboratory-potion .div-text{
-        width: 100vw;
-        min-height: 60vh;
-        max-height: 60vh;
+    20% {
+        opacity: 1;
     }
 
-    .laboratory-potion #creation-text{
-       padding-top: 30vh ;
-       text-align: center;
-       font-size: 5em;
+    80% {
+        color: red;
+        opacity: 1;
     }
 
-    .laboratory-potion #modal-calderone{
-        width: 30%;
-        height: 40vh;
-        align-items: flex-end;
-        margin-left: auto;
-        margin-right: auto;
+    100% {
+
+        opacity: 0;
     }
-    .laboratory-potion #modal-potion{
-        display: none;
-        width: auto;
-        height: 40vh;
-        margin-left: auto;
-        margin-right: auto;
-        text-align: center;
-    }
-    .laboratory-potion #modal-potion img{
-        width: auto;
-        height: 90%;
-        margin-left: auto;
-        margin-right: auto;
+}
+
+@keyframes textGreen {
+    0% {
+        color: aliceblue;
+        opacity: 0;
     }
 
-    @keyframes textBlue {
-        0% {
-            color: aliceblue;
-            opacity: 0;
-        }
-        20% {
-            opacity: 1;
-        }
-        80%{
-            color: blue;
-            opacity: 1;
-        }
-        100% {
-
-            opacity: 0;
-        }
+    20% {
+        opacity: 1;
     }
-    @keyframes textRed {
-        0% {
-            color: aliceblue;
-            opacity: 0;
-        }
-        20% {
-            opacity: 1;
-        }
-        80%{
-            color: red;
-            opacity: 1;
-        }
-        100% {
 
-            opacity: 0;
-        }
-    } 
-    @keyframes textGreen {
-        0% {
-            color: aliceblue;
-            opacity: 0;
-        }
-        20% {
-            opacity: 1;
-        }
-        80%{
-            color: green;
-            opacity: 1;
-        }
-        100% {
-
-            opacity: 0;
-        }
-    } 
-    @keyframes textPurple {
-        0% {
-            color: aliceblue;
-            opacity: 0;
-        }
-        20% {
-            opacity: 1;
-        }
-        80%{
-            color: purple;
-            opacity: 1;
-        }
-        100% {
-
-            opacity: 0;
-        }
+    80% {
+        color: green;
+        opacity: 1;
     }
-@media (min-width:320px) and (max-width:640px) { 
-    .laboratory-potion #container{
+
+    100% {
+
+        opacity: 0;
+    }
+}
+
+@keyframes textPurple {
+    0% {
+        color: aliceblue;
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    80% {
+        color: purple;
+        opacity: 1;
+    }
+
+    100% {
+
+        opacity: 0;
+    }
+}
+
+@media (min-width:320px) and (max-width:640px) {
+    .laboratory-potion #container {
         height: 80vh;
         overflow-y: auto;
     }
 
-    .laboratory-potion #calderone{
+    .laboratory-potion #calderone {
         align-items: center;
         align-self: center;
         align-content: center;
         text-align: center;
     }
 
-    .laboratory-potion #container-desktop{
-    visibility: hidden;
-    opacity: 0;
-    height: 0vh;
+    .laboratory-potion #container-desktop {
+        visibility: hidden;
+        opacity: 0;
+        height: 0vh;
     }
-    .laboratory-potion #container-mobile{
+
+    .laboratory-potion #container-mobile {
         height: 80vh;
         overflow-y: hidden;
         display: block;
-        }
-    .laboratory-potion .calderone-container{
+    }
+
+    .laboratory-potion .calderone-container {
         width: 100%;
         height: 100%;
     }
 
-    .laboratory-potion .button-container{
+    .laboratory-potion .button-container {
         width: 100%;
         flex-direction: column;
         display: flex;
     }
-    .laboratory-potion .button-container button{
+
+    .laboratory-potion .button-container button {
         margin-bottom: 5%;
     }
-    .laboratory-potion .create{
-        position: absolute;
-        top: 60%;
-        left: 39%;
-    }
-    .laboratory-potion #creation-text{
+    .laboratory-potion #creation-text {
         text-align: center;
         font-size: 3em;
-     }
-     .laboratory-potion #modal-calderone{
+    }
+
+    .laboratory-potion #modal-calderone {
         width: 100%;
         height: 40vh;
         align-items: flex-end;
         margin-left: auto;
         margin-right: auto;
     }
-    .laboratory-potion #modal-potion{
+
+    .laboratory-potion #modal-potion {
         display: none;
         width: 100%;
         height: 40vh;
         margin-left: auto;
         margin-right: auto;
     }
-    .laboratory-potion #modal-potion img{
+
+    .potion-item {
+        width: 100%;
+        max-width: 50% !important;
+    }
+
+    .laboratory-potion #modal-potion img {
         width: 100%;
     }
 }

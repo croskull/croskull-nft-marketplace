@@ -6,21 +6,18 @@ import { useDispatch } from "react-redux";
 import MetricContainer from "../MetricContainer/MetricContainer";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import Grave from "../Navbar/grave.png";
-import GraveBurn from "../Navbar/grave-burn.png";
-import Skull from "../Navbar/skull.png";
-import GraveMined from "../Navbar/grave-mined.png";
-import GraveAvailable from "../Navbar/grave-available.png";
-import SkullAdventure from '../Navbar/skull-adventure.png';
-import Soul from "../Navbar/soul.png";
+import Grave from "../images/grave.png";
+import GraveBurn from "../images/grave-burn.png";
+import GraveMined from "../images/grave-mined.png";
+import GraveAvailable from "../images/grave-available.png";
+import SkullAdventure from '../images/skull-adventure.png';
+import Soul from "../images/soul.png";
+import season1Banner from './season-1-banner.png';
 import { faDungeon, faFireAlt, faRunning } from '@fortawesome/free-solid-svg-icons';
 import './adventure.css';
-import season1Banner from './season-1-banner.png';
 
 
-const ipfsUri =  "https://croskull.mypinata.cloud/ipfs/QmZA9idEBomqsYBvA9ZH5JzuirmyQ414UBaqBGaEk2w69x/"
 const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/"
-const ipfsUri128 = "https://croskull.mypinata.cloud/ipfs/QmZn1HvYE1o1J8LhNpxFTj5k8LQb2bWT49YvbrhB3r19Xx/"
 
 const CroskullAdventure = () => {
   let { blockchain, data } = store.getState()
@@ -32,7 +29,6 @@ const CroskullAdventure = () => {
   const [detailsView, setDetailsView] = useState(false)
 
   let dispatch = useDispatch()
-  const ipfsUri =  ""  || "https://bafybeifax734esbihweq543p5jldhwj4djszkrevo6u7tig4xlorihx53m.ipfs.infura-ipfs.io/"
 
   useEffect(() => {
     if( blockchain.contractDetected )
@@ -44,7 +40,7 @@ const CroskullAdventure = () => {
     console.log(selectedSkulls )
     if ( selectedSkulls && selectedSkulls.includes(e)) {
       for( let i = 0; i < selectedSkulls.length; i++){
-        if (selectedSkulls[i] == e) {
+        if (selectedSkulls[i] === e) {
           selectedSkulls.splice(i, 1);
         }
       }
@@ -130,13 +126,11 @@ const CroskullAdventure = () => {
     approval, 
     blockTimestamp, 
     rewardPlusMalus, 
-    malusFee, 
     startStakeTimestamp, 
     rewards, 
     advancedMetadata, 
     croSkullsStaked, 
     croSkulls, 
-    cyclesLastWithdraw, 
     alreadyClaimed, 
     soulsGenerated,
     totalSkullsStaked,
@@ -148,12 +142,7 @@ const CroskullAdventure = () => {
 
   let totalSkulls = croSkullsStaked.length > 0 ? croSkullsStaked.length + croSkulls.length : 0
   let globalStartTimestamp = startStakeTimestamp;
-  console.log(startStakeTimestamp)
-  let finishStake = parseInt(globalStartTimestamp) + HUNDRED_DAYS_IN_SEC;
-  let diffStake = finishStake - blockTimestamp;
   let malusPercent = ( 800 - ( 25 * daysLastWithdraw ) ) / 10
-  let userStakeDate = formatDate( cyclesLastWithdraw * 10 )
-  let seasonRemainingDate = formatDate( diffStake )
   let seasonDurationDate = formatDate( blockTimestamp - globalStartTimestamp )
   let seasonProgress = parseInt( 100 / HUNDRED_DAYS_IN_SEC *  (blockTimestamp - globalStartTimestamp ) )
   burnedGraves = burnedGraves ?  burnedGraves : 0
@@ -205,7 +194,6 @@ const CroskullAdventure = () => {
                         />
                         <div className="floating-badges-container">
                           <span className="badge id">{cr}</span>
-                          <span className="badge rank">Rank {data ? data.rank : ''}</span>
                         </div>
                         <div className="bottom-actions">
                           <button 
@@ -237,6 +225,7 @@ const CroskullAdventure = () => {
             <img 
               src={season1Banner}  
               className="adventure-image"
+              alt="CroSkull Staking Season 1. Mine 3 Grave daily per each CroSkull you own!"
             />
             <div className="sk-box sk-flex sk-column h100">
               <div className="progress-info season-container">

@@ -9,7 +9,7 @@ import { sendNotification, fetchBalances } from "../../redux/data/dataActions";
 import IpfsHttpClient from "ipfs-http-client";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import Grave from "../Navbar/grave.png";
+import Grave from "../images/grave.png";
 import "react-quill/dist/quill.snow.css";
 import './Raffle.css';
 

@@ -59,7 +59,7 @@
     padding: 15px 25px;
 }
 .container-fluid.adventure{
-    background-image: url(bonefire.jpg);
+    background-image: url(bg-adventure.jpeg);
 }
 .adventure .details{
     overflow-y: overlay;

@@ -1,9 +1,8 @@
-.laboratory.container-fluid {
+.laboratory.container-fluid, .laboratory-potion{
     background-image: url(bg-lab.jpeg) !important;
     overflow-y: overlay;
 }
 
 .laboratory .sk-container{
-    min-height: 90%;
     justify-content: flex-start;
 }

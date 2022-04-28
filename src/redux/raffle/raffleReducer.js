@@ -25,6 +25,11 @@ const raffleReducer = (state = initialState, action) => {
                 allowance: payload.allowance,
                 isManager: payload.isManager
             };
+        case "UPDATE_STATE":
+            return {
+                ...state,
+                [payload.key]: payload.value
+            };
         default:
             return state;
     }

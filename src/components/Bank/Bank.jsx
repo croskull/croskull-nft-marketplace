@@ -3,18 +3,18 @@ import store from "../../redux/store";
 import { useDispatch } from "react-redux";
 import { playSound } from "../../redux/data/dataActions";
 import { ethers } from 'ethers';
-import Grave from "../Navbar/grave.png";
-import GraveCro from "./grve-cro-pair.png"
-import Rude from "./rude.png"
+import Rude from "../images/rude.png"
+import Hut from "./buildings/hut.png";
+import House from "./buildings/house.png"
+import Villa from "./buildings/villa.png"
+import FarmHouse from "./buildings/farmhouse.png"
+import Mansion from "./buildings/mansion.png"
+import Grave from "../images/grave.png";
+import GraveCro from "../images/grve-cro-pair.png"
+import Wishbone from "../images/wishbone.png"
 import CoinSound from "./collect-coin.mp3";
-import Wishbone from "../../images/wishbone.png"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleUp, faAngleDown, faQuestionCircle, faExternalLink} from '@fortawesome/free-solid-svg-icons';
-import Hut from "./hut.png";
-import House from "./house.png"
-import Villa from "./villa.png"
-import FarmHouse from "./farmhouse.png"
-import Mansion from "./mansion.png"
+import { faAngleUp, faAngleDown, faExternalLink} from '@fortawesome/free-solid-svg-icons';
 import MetricContainer from "../MetricContainer/MetricContainer";
 import { loadBankData, loadFarmData } from "../../redux/bank/bankActions";
 import { sendNotification, fetchBalances } from "../../redux/data/dataActions";
@@ -23,7 +23,7 @@ import './Bank.css';
 
 const mmfLink = "https://mm.finance/swap?outputCurrency=0x9885488cd6864df90eeba6c5d07b35f08ceb05e9"
 
-const Bank = ({ accountAddress }) => {
+const Bank = () => {
   const dispatch = useDispatch();
 
   const [detailsView, setDetailsView] = useState(false)
@@ -157,7 +157,6 @@ const Bank = ({ accountAddress }) => {
   ]
   
   const DAY_IN_SEC = 60 * 60 * 24 * 1000;
-  const HUNDRED_DAYS_IN_SEC = 100 * DAY_IN_SEC//100 * DAY_IN_SEC;
   function formatDate(data) {
     let timestamp = data*1000 - new Date( ).getTime()
     let tsHours = timestamp / 60 / 60 / 1000
@@ -603,7 +602,7 @@ const Bank = ({ accountAddress }) => {
                         value={ contract.usedWishbones }
                         vertical={true}
                         icon={Wishbone}
-                        tooltip="Your Grave Staked in this specific contract."
+                        tooltip="Wishbones used for this contract."
                       />
                       <button 
                         onClick={() => { claimRewards(contract.contractId) }}
@@ -751,7 +750,7 @@ const Bank = ({ accountAddress }) => {
                         lpPairAllowance > 0 ? (
                           <button 
                             className={'skull-button stake-button'} 
-                            disabled={ farmView.amountToStake <= formatEther(lpPairBalance, true) ? false : true}
+                            disabled={ farmView.amountToStake <= formatEther(lpPairBalance) ? false : true}
                             onClick={ () => stakeLiquidity() }
                           >
                             STAKE

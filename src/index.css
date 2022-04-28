@@ -11,23 +11,23 @@ body {
 
 body::-webkit-scrollbar-track, div::-webkit-scrollbar-track, ::-webkit-scrollbar-track
 {
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3) !important;
+	-webkit-box-shadow: inset 0 0 3px rgba(0,0,0,0.3) !important;
 	border-radius: 10px;
 	background-color: #16112D;
 }
 
 body::-webkit-scrollbar, div::-webkit-scrollbar, ::-webkit-scrollbar-track
 {
-	width: 6px !important;
+	width: 3px !important;
 	background-color: #16112D;
-    height: 6px;
+    height: 3px;
 }
 
 body::-webkit-scrollbar-thumb, div::-webkit-scrollbar-thumb, ::-webkit-scrollbar-track
 {
 	border-radius: 10px;
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3) !important;
-	background-color: #9e6eff;
+	-webkit-box-shadow: inset 0 0 3px rgba(0,0,0,.3) !important;
+	background-color: #bf9fff;
     z-index: 0;
 }
 .progress {

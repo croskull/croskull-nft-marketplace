@@ -14,9 +14,6 @@
   --green: #4bbf73;
   --button-gradient: linear-gradient(117deg, rgba(255,172,26,1) 0%, rgba(237,162,54,1) 100%);
 }
-body {
-  cursor: url(./images/skeleton-hand.cur) !important;
-}
 input {
   background-color: var(--violet);
   border-radius: 6px;
@@ -779,6 +776,17 @@ span.metric-usd-value {
     font-weight: 700;
 }
 
+/** 
+  HIDE SCORLLBAR
+*/
+.hide-scrollbar {
+  overflow-y: overlay;
+  -ms-overflow-style: none; 
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
 
 /** ANIMATIONS */
 

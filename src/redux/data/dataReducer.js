@@ -35,15 +35,24 @@ const initialState = {
     lastWithdrawTimestamp: 0,
     //pets
     petEggsLimit: 0,
-    petEggsMintedByUser: 0,
+    petEggsBalance: 0,
     petEggsSupply: 0,
     petEggsMaxSupply: 0,
     petEggsCost: 0,
     approvedEggs: false,
     //blue potion
     blueCount: 0,
+    blueId: [],
     //red potion
     redCount: 0,
+    redId: [],
+    //purple potion
+    purpleSupply: 0,
+    purpleCount: 0,
+    purpleId: [],
+    purpleGraveAllowance: 0,
+    purpleBlueApproval: false,
+    purpleRedApproval: false,
     //stories
     storyAllowance: false,
     skullsStories: [],
@@ -118,8 +127,8 @@ const dataReducer = (state = initialState, action) => {
             return {
                 ...state,
                 graveBalance: payload.graveBalance,
-                rudeBalance: payload.rudeBalance,
-                soulsBalance: payload.soulsBalance
+                soulsBalance: payload.soulsBalance,
+                petEggsBalance: payload.petEggsBalance
             }
         }
         case "FETCH_STAKING_SUCCESS":
@@ -182,8 +191,17 @@ const dataReducer = (state = initialState, action) => {
         case "SET_POTIONS":
             return {
                 ...state,
+                redId: payload.redId,
                 redCount: payload.redCount,
-                blueCount: payload.blueCount
+                blueId: payload.blueId,
+                blueCount: payload.blueCount,
+                purpleSupply: payload.purpleSupply,
+                purpleCount: payload.purpleCount,
+                purpleId: payload.purpleId,
+                purpleGraveAllowance: payload.purpleGraveAllowance,
+                purpleBlueApproval: payload.purpleBlueApproval,
+                purpleRedApproval: payload.purpleRedApproval,
+                
             }
         case "CLEAN_DATA":
             return {
@@ -212,10 +230,11 @@ const dataReducer = (state = initialState, action) => {
                 type: "info", // success, danger, info, warning
                 tx: "",
                 skullsStories: [],
+                rudeBalance: 0,
                 error: false,
                 errorMsg: "",
                 petEggsLimit: 0,
-                petEggsMintedByUser: 0,
+                petEggsBalance: 0,
                 petEggsSupply: 0,
                 petEggsMaxSupply: 0,
                 petEggsCost: 0,
@@ -227,6 +246,14 @@ const dataReducer = (state = initialState, action) => {
                 soulsBalance: 0,
                 redCount: 0,
                 blueCount: 0,
+                blueId: [],
+                redId: [],
+                purpleSupply: 0,
+                purpleCount: 0,
+                purpleId: [],
+                purpleGraveAllowance: 0,
+                purpleBlueApproval: false,
+                purpleRedApproval: false,
                 storyAllowance: false,
                 daysLastWithdraw: 0,
                 graveTotalSupply: 0
@@ -235,7 +262,6 @@ const dataReducer = (state = initialState, action) => {
             return {
                 ...state,
                 petEggsLimit: payload.petEggsLimit,
-                petEggsMintedByUser: payload.petEggsMintedByUser,
                 petEggsSupply: payload.petEggsSupply,
                 petEggsMaxSupply: payload.petEggsMaxSupply, 
                 petEggsCost: payload.petEggsCost,

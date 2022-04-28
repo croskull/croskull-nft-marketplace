@@ -11,7 +11,7 @@ const MAX_APPROVE = "11579208923731619542357098500868790785326998466564056403945
 const Merchant = () => {
     const dispatch = useDispatch();
     let { blockchain, data } = store.getState();
-    let { petEggsSupply, petEggsMaxSupply, petEggsLimit, petEggsMintedByUser, petEggsCost, graveBalance, approvedEggs } = data
+    let { petEggsSupply, petEggsMaxSupply, petEggsLimit, petEggsBalance, petEggsCost, graveBalance, approvedEggs } = data
     let { croSkullsGrave, croSkullsPetEggs, accountAddress, formatEther } = blockchain
 
 
@@ -61,7 +61,7 @@ const Merchant = () => {
         })
     }
     
-    let canMint = petEggsMintedByUser < petEggsLimit
+    let canMint = petEggsBalance < petEggsLimit
     let hasBalance = parseInt(petEggsCost) <= parseInt(graveBalance)
     let currentDate = parseInt(new Date() / 1000)
     let endDate = 1654903359;
@@ -86,7 +86,7 @@ const Merchant = () => {
                             <span>Cost: { formatEther(petEggsCost) } <b>GRAVE</b></span>
                             <span>Limit: Max 2 Eggs per Address</span>
                             <span>Max Supply: {petEggsMaxSupply} EGGS</span>
-                            <span>{ `Your Limit: ${petEggsMintedByUser}/${petEggsLimit}` }</span>
+                            <span>{ `Your Limit: ${petEggsBalance}/${petEggsLimit}` }</span>
                         </div>
                         {
                             ! approvedEggs ? 
@@ -128,7 +128,7 @@ const Merchant = () => {
                 </div>
                 <div className="sk-container">
                     <img 
-                        src={ petEggsMintedByUser ? MerchantAvatar : MerchantEmpty }
+                        src={ petEggsBalance ? MerchantAvatar : MerchantEmpty }
                         className={ `${approvedEggs ? `merchant-egg` : `merchant-egg trip`}` }
                         alt="Pet's Egg"
                     />
