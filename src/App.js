@@ -17,7 +17,6 @@ import ClickSound from "./sounds/click-sound.mp3"
 import PotionLab from "./components/Laboratory/PotionLab/PotionLab";
 import "./App.css";
 
-let provider;
 class App extends Component {
   constructor(props) {
     super(props);
@@ -31,14 +30,6 @@ class App extends Component {
       clickSound.currentTime = 0
       clickSound.play()
     })
-  }
-
-  setProvider = (_provider = false) => {
-    if (_provider) {
-      provider = _provider;
-    } else if (!provider) {
-      provider = window.ethereum
-    }
   }
 
   subscribe = () => {
@@ -124,13 +115,13 @@ class App extends Component {
                           render={() => (
                             <Laboratory />
                           )}
-                        />
+                        />*/}
                         <Route
                           path="/laboratory-potion"
                           render={() => (
                             <PotionLab />
                           )}
-                          />*/}
+                          />
                       </Switch>
                     </CSSTransition>
                   </TransitionGroup>

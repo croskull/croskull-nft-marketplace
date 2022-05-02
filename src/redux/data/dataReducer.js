@@ -127,6 +127,7 @@ const dataReducer = (state = initialState, action) => {
             return {
                 ...state,
                 graveBalance: payload.graveBalance,
+                rudeBalance: payload.rudeBalance,
                 soulsBalance: payload.soulsBalance,
                 petEggsBalance: payload.petEggsBalance
             }

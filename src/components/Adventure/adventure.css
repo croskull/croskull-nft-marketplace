@@ -21,6 +21,11 @@
 .first.show{
     border-top-left-radius: 0px;
 }
+.switcher-head{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
 .switcher-button {
     padding: 3px 18px;
     border: none;
@@ -163,11 +168,15 @@
     display: none;
 }
 
-.switcher-wrapper{
+.adventure .switcher-wrapper{
+    display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: space-around;
-    align-items: center;
+    align-items: stretch;
+}
+.adventure .details-box{
+    height: fit-content;
 }
 .adventure .view-button{
     color: #fff;

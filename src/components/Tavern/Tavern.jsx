@@ -16,6 +16,7 @@ import redPotionImage from '../images/redPotionImage.png';
 import purplePotionImage from "../images/purplePotionImage.png";
 import ReactQuill from "react-quill";
 import AdventureSound from "./skull-in-adventure.mp3";
+import Draggable from "react-draggable"
 import "react-quill/dist/quill.snow.css";
 import './tavern.css';
 
@@ -563,57 +564,57 @@ const Tavern = () => {
               </div>
             </div>
           </div>
-          <div className={`sk-box inventory`}>
-            <span className="stories-heading">
-              Inventory
-            </span>
-            <div className="sk-box-content sk-row of-y-over">
-              <div 
-                className="item-image-container"
-                style={{ width: `85px` }}
-              >
+            <div className={`sk-box inventory`} draggable="true">
+              <span className="stories-heading">
+                Inventory
+              </span>
+              <div className="sk-box-content sk-row of-y-over">
                 <div 
-                  style={{ backgroundImage: `url(${eggImage})` }}
-                  className={`item-image ${ ! petEggsBalance ? 'disabled' : ''}`}
+                  className="item-image-container"
+                  style={{ width: `85px` }}
                 >
-                  <span className="item-count">{ petEggsBalance }</span>
+                  <div 
+                    style={{ backgroundImage: `url(${eggImage})` }}
+                    className={`item-image ${ ! petEggsBalance ? 'disabled' : ''}`}
+                  >
+                    <span className="item-count">{ petEggsBalance }</span>
+                  </div>
                 </div>
-              </div>
-              <div 
-                className="item-image-container"
-                style={{ width: `85px` }}
-              >
                 <div 
-                  style={{ backgroundImage: `url(${purplePotionImage})` }}
-                  className={`item-image ${ !purpleCount ? 'disabled' : ''}`}
+                  className="item-image-container"
+                  style={{ width: `85px` }}
                 >
-                  <span className="item-count">{ `${purpleCount}` }</span>
+                  <div 
+                    style={{ backgroundImage: `url(${purplePotionImage})` }}
+                    className={`item-image ${ !purpleCount ? 'disabled' : ''}`}
+                  >
+                    <span className="item-count">{ `${purpleCount}` }</span>
+                  </div>
                 </div>
-              </div>
-              <div 
-                className="item-image-container"
-                style={{ width: `85px` }}
-              >
                 <div 
-                  style={{ backgroundImage: `url(${bluePotionImage})` }}
-                  className={`item-image ${ !blueCount ? 'disabled' : ''}`}
+                  className="item-image-container"
+                  style={{ width: `85px` }}
                 >
-                  <span className="item-count">{ `${blueCount}` }</span>
+                  <div 
+                    style={{ backgroundImage: `url(${bluePotionImage})` }}
+                    className={`item-image ${ !blueCount ? 'disabled' : ''}`}
+                  >
+                    <span className="item-count">{ `${blueCount}` }</span>
+                  </div>
                 </div>
-              </div>
-              <div 
-                className="item-image-container"
-                style={{ width: `85px` }}
-              >
                 <div 
-                  style={{ backgroundImage: `url(${redPotionImage})` }}
-                  className={`item-image ${ !redCount ? 'disabled' : ''}`}
+                  className="item-image-container"
+                  style={{ width: `85px` }}
                 >
-                  <span className={"item-count"}>{ `${redCount}` }</span>
+                  <div 
+                    style={{ backgroundImage: `url(${redPotionImage})` }}
+                    className={`item-image ${ !redCount ? 'disabled' : ''}`}
+                  >
+                    <span className={"item-count"}>{ `${redCount}` }</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
         </div>
       </div>
       { display ? (

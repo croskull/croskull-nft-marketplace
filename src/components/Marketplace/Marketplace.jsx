@@ -26,6 +26,7 @@ const Marketplace = () => {
     let [modalData, setModalData] = useState()
     const [hasData, toggleData] = useState(false)
     let [sort, setSort] = useState(0);
+    /*
     let [filter, setFilter] = useState([
         { name: 'Background', value: [] },
         { name: 'Skull', value: [] },
@@ -34,7 +35,16 @@ const Marketplace = () => {
         { name: 'Eyes', value: [] },
         { name: 'Hat', value: [] },
         { name: 'Trait', value: [] }
-    ]);
+    ]);*/
+    let [filter, setFilter] = useState({
+        'Background': [],
+        'Skull': [],
+        'Body': [],
+        'Nose': [],
+        'Eyes': [],
+        'Hat': [],
+        'Trait': []
+    })
     let [angleIconFilter, setAngleIconFilter] = useState([]);
     let [skullModal, setSkullModal] = useState(true);
     let {
@@ -152,78 +162,25 @@ const Marketplace = () => {
         dispatch(loadEbisusSkullsNew(sort));
     }
 
-    function addFilter(name, value) {
-        switch (name) {
-            case 'Background':
-                if (!filter[0].value.includes(value))
-                    filter[0].value.push(value);
-                else {
-                    const index = filter[0].value.indexOf(value);
-                    filter[0].value.splice(index, 1);
-                }
-                break;
-            case 'Skull':
-                if (!filter[1].value.includes(value))
-                    filter[1].value.push(value);
-                else {
-                    const index = filter[1].value.indexOf(value);
-                    filter[1].value.splice(index, 1);
-                }
-                break;
-            case 'Body':
-                if (!filter[2].value.includes(value))
-                    filter[2].value.push(value);
-                else {
-                    const index = filter[2].value.indexOf(value);
-                    filter[2].value.splice(index, 1);
-                }
-                break;
-            case 'Nose':
-                if (!filter[3].value.includes(value))
-                    filter[3].value.push(value);
-                else {
-                    const index = filter[3].value.indexOf(value);
-                    filter[3].value.splice(index, 1);
-                }
-                break;
-            case 'Eyes':
-                if (!filter[4].value.includes(value))
-                    filter[4].value.push(value);
-                else {
-                    const index = filter[4].value.indexOf(value);
-                    filter[4].value.splice(index, 1);
-                }
-                break;
-            case 'Hat':
-                if (!filter[5].value.includes(value))
-                    filter[5].value.push(value);
-                else {
-                    const index = filter[5].value.indexOf(value);
-                    filter[5].value.splice(index, 1);
-                }
-            case 'Trait':
-                if (!filter[6].value.includes(value))
-                    filter[6].value.push(value);
-                else {
-                    const index = filter[6].value.indexOf(value);
-                    filter[6].value.splice(index, 1);
-                }
-                break;
-            default:
-                break;
+    function addFilter(trait, value) {
+        if (!filter[trait].includes(value))
+            filter[trait].push(value);
+        else {
+            const index = filter[trait].indexOf(value);
+            filter[trait].splice(index, 1);
         }
         loadSkullFilter();
     }
 
     function checkFilter(cr) {
         let flag = true;
-        filter.map(f => {
-            if (f.value.length > 0 && flag) {
-                if(f.name == 'Trait')
-            {
-               
-                if(f.value.includes(5))
-                {   console.log(5)
+        Object.entries(filter).map( (trait) => {
+            let name = trait[0]
+            trait = trait[1]
+            if (trait.length > 0 && flag) {
+                if( name == 'Trait') {
+                if(trait.includes(5)) {   
+                    console.log(5)
                     cr.nft.attributes.map(at => {
                         if (at.trait_type == 'Hat' && flag) {
                             if (at.value.includes('none'))
@@ -234,7 +191,7 @@ const Marketplace = () => {
                         }
                     })
                 }
-                if(f.value.includes(6))
+                if(trait.includes(6))
                 {
                     console.log(6)
                     cr.nft.attributes.map(at => {
@@ -249,8 +206,8 @@ const Marketplace = () => {
                 } 
             }else{
                 cr.nft.attributes.map(at => {
-                    if (at.trait_type == f.name && flag) {
-                        if (f.value.includes(at.value))
+                    if (at.trait_type == name && flag) {
+                        if (trait.includes(at.value))
                             flag = true
                         else {
                             flag = false;
@@ -285,8 +242,8 @@ const Marketplace = () => {
     function clear() {
         sort=0;
         setSort(0);
-        filter.map((f)=>{
-            f.value =[];
+        Object.entries(filter).map((trait)=>{
+            trait[1] = [];
         })
         let select = document.getElementById('sortBy').options;
         select[0].selected = true; //seleziono la prima scelta
@@ -513,7 +470,7 @@ const Marketplace = () => {
                                         />
                                     }
                                     {
-                                        skullList.length ?
+                                        skullList && skullList.length ?
                                             (skullList).map((cr, index) => {
                                                 if (checkFilter(cr))
                                                     return (

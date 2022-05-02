@@ -13,6 +13,7 @@ import GraveAvailable from "../images/grave-available.png";
 import SkullAdventure from '../images/skull-adventure.png';
 import Soul from "../images/soul.png";
 import season1Banner from './season-1-banner.png';
+import { loadDexData } from "../../redux/dexscreener/dexscreenerActions";
 import { faDungeon, faFireAlt, faRunning } from '@fortawesome/free-solid-svg-icons';
 import './adventure.css';
 
@@ -20,20 +21,21 @@ import './adventure.css';
 const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/"
 
 const CroskullAdventure = () => {
-  let { blockchain, data } = store.getState()
+  let { blockchain, data, dexscreener } = store.getState()
 
   const [viewState, setViewState] = useState( {
     selectedSkulls: []
   })
 
   const [detailsView, setDetailsView] = useState(false)
+  const [priceUsd, setPriceUsd] = useState(false)
 
   let dispatch = useDispatch()
 
   useEffect(() => {
-    if( blockchain.contractDetected )
-      return //dispatch(getSkullsData())
-  }, [blockchain.contractDetected])
+    if( ! dexscreener.graveInUsd )
+      dispatch(loadDexData())
+  }, [blockchain.croSkullsStaking])
   
   const selectSkull = e => { //handle stake selects
     let {selectedSkulls} = viewState;
@@ -140,6 +142,10 @@ const CroskullAdventure = () => {
     burnedGraves
   } = data
 
+  let {
+    graveInUsd
+  } = dexscreener
+
   let totalSkulls = croSkullsStaked.length > 0 ? croSkullsStaked.length + croSkulls.length : 0
   let globalStartTimestamp = startStakeTimestamp;
   let malusPercent = ( 800 - ( 25 * daysLastWithdraw ) ) / 10
@@ -227,7 +233,7 @@ const CroskullAdventure = () => {
               className="adventure-image"
               alt="CroSkull Staking Season 1. Mine 3 Grave daily per each CroSkull you own!"
             />
-            <div className="sk-box sk-flex sk-column h100">
+            <div className="details-box sk-box sk-flex sk-column">
               <div className="progress-info season-container">
                 <FontAwesomeIcon 
                   icon={faDungeon} 
@@ -276,7 +282,8 @@ const CroskullAdventure = () => {
                 </div>
               </div>
               <div class="switcher-container">
-                <div className=" switcher-wrapper">
+                <div className="switcher-head">
+                  <div className=" switcher-wrapper">
                     <button
                       className={`switcher-button view-button ${ detailsView ? '' : 'active'}`}
                       onClick={
@@ -286,13 +293,35 @@ const CroskullAdventure = () => {
                       Your Stats
                     </button>
                     <button
-                      className={`switcher-button view-button ${ ! detailsView ? '' : 'active'}`}
+                      className={`switcher-button view-button ${ detailsView ? 'active' : ''}`}
                       onClick={
                         () => setDetailsView(true)
                       }
                     >
                       Global Stats
                     </button>
+                  </div>
+                  <div className="switcher-wrapper">
+                    <button
+                      className={`switcher-button view-button ${ ! priceUsd ? 'active' : ''}`}
+                      onClick={
+                        () => setPriceUsd(false)
+                      }
+                    >
+                      <img 
+                        className="skull-icon"
+                        src={Grave} 
+                      />
+                    </button>
+                    <button
+                      className={`switcher-button view-button ${ priceUsd ? 'active' : ''}`}
+                      onClick={
+                        () => setPriceUsd(true)
+                      }
+                    >
+                      USD
+                    </button>
+                  </div>
                 </div>
                 <div className={`sk-box-content sk-column first ${ ! detailsView ? 'show' : 'hide'}`}>
                   <MetricContainer 
@@ -303,27 +332,27 @@ const CroskullAdventure = () => {
                   />
                   <MetricContainer 
                     label="Mined Grave"
-                    value={formatEther(rewards)}
+                    value={ priceUsd ? `$${(formatEther(rewards) * graveInUsd).toFixed(2)}` : formatEther(rewards)}
                     icon={Grave}
                     tooltip="Amount of Grave you've generated since the start. This is used as main metric to calculate the actual rewards minus actual Malus Fee."
                   />
                   <MetricContainer 
                     label="Current Malus"
                     addClass="negative"
-                    value={malusPercent > 0 ? malusAmount : 0 }
+                    value={ priceUsd ? `$${(malusAmount * graveInUsd).toFixed(2)}` : malusAmount}
                     icon={GraveBurn}
                     tooltip="Amount of Grave you'll burn based on Mined Grave and current Malus Burn Fee."
                   />
                   <MetricContainer 
                     label="Available to Withdraw"
                     addClass="positive"
-                    value={malusPercent > 0 ? formatEther(rewardPlusMalus) : formatEther(rewards)}
+                    value={ priceUsd ? `$${(formatEther(rewardPlusMalus) * graveInUsd).toFixed(2)}` : formatEther(rewardPlusMalus)}
                     icon={GraveAvailable}
                     tooltip="Amount of Grave you'll recieve based on Mined Grave and current Malus Burn Fee."
                   />
                   <MetricContainer 
                     label="Claimed Grave"
-                    value={formatEther(alreadyClaimed)}
+                    value={ priceUsd ? `$${(formatEther(alreadyClaimed) * graveInUsd).toFixed(2)}` : formatEther(alreadyClaimed)}
                     icon={Grave}
                     tooltip="Amount of Grave you've already harvested from the Adventure."
                   />
@@ -343,13 +372,14 @@ const CroskullAdventure = () => {
                   />
                   <MetricContainer 
                     label="Mined Grave"
-                    value={formatEther(totalWithdrawedGraves)}
+                    value={ priceUsd ? `$${(formatEther(totalWithdrawedGraves) * graveInUsd).toFixed(2)}` : formatEther(totalWithdrawedGraves)}
                     icon={GraveMined}
                     tooltip="Total amount of all the Grave withdrawed since the start. Don't reflect total generated rewards, but just withdrawed."
                   />
                   <MetricContainer 
                     label="Burned Grave"
                     value={`${formatEther(burnedGraves) } (${burnedPercent}%)`}
+                    value={ `${priceUsd ? `$${(formatEther(burnedGraves) * graveInUsd).toFixed(2)}` : formatEther(burnedGraves)} (${burnedPercent}%)`}
                     icon={GraveBurn}
                     tooltip="Total Burned Grave amount base on the total supply, not only Adventure burn. ( total percent of burn )."
                   />

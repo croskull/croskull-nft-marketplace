@@ -52,7 +52,7 @@ const Navbar = () => {
 
   const web3ModalConnection = () => {
     web3Modal.on("connect", async (_provider) => {
-      const provider = new ethers.providers.Web3Provider(_provider);
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
       dispatch(connect( provider ))
     })
   }
@@ -129,8 +129,9 @@ const Navbar = () => {
           >
             More
           </button>
-          <div className={`flex-v season`}>
-              <span>Season</span>
+          <div className={`sk-box flex-v season`}>
+            <h3>Adventure</h3>
+            <div className="sk-box-content flex-v">
               <span>
                 <img 
                   className="skull-icon"
@@ -162,9 +163,10 @@ const Navbar = () => {
                   className="skull-icon"
                   src={GraveBurn}
                 />
-                { `${ malusAmount } -(${malusPercent}%)` }
+                { `${ malusAmount } (-${ malusPercent }%)` }
                 <span className="sk-tooltip">Burned Grave</span>
               </span>
+            </div>
           </div>
         </div>
       </div>
@@ -218,13 +220,11 @@ const Navbar = () => {
               Raffle
             </Link>
           </li>
-          {
-          /*<li className="nav-item merchant-menu">
+          <li className="nav-item merchant-menu">
             <Link to="/laboratory-potion" className="nav-link">
               Laboratory
             </Link>
-          </li>*/
-          }
+          </li>
         </ul>
         <div
           className="social-list"

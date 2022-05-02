@@ -285,7 +285,8 @@ export const getStakingData =  () => {
       croSkullsStaking, 
       contractDetected, 
       croSkullsPetEggs, 
-      croSkullsGrave, 
+      croSkullsGrave,
+      croSkullsContract,
       croSkullsSouls,
       accountAddress,
       ethProvider
@@ -296,7 +297,7 @@ export const getStakingData =  () => {
     let started = await croSkullsStaking.started()
     if( started ){
       
-      let isApproved = await croSkullsStaking.approvalStatus()
+      let isApproved = await croSkullsContract.isApprovedForAll( accountAddress, croSkullsStaking.address )
       let petEggsLimit = await croSkullsPetEggs.eggsPerAddress()
       let petEggsBalance = await croSkullsPetEggs.minterList( accountAddress )
       let petEggsMaxSupply = await croSkullsPetEggs.eggsLimit()
@@ -362,6 +363,7 @@ export const getStakingData =  () => {
         graveTotalSupply = graveTotalSupply.toString()
         
         dispatch(fetchStakingSuccess({
+          approval: isApproved,
           malusFee,
           rewardPlusMalus,
           rewards,
@@ -404,7 +406,6 @@ export const getSkullsData = () => {
       } = store.getState().blockchain
       if( ! croSkullsContract )
         return
-      dispatch(refreshSkullsStories())
       let redCount = await croPotionRed.balanceOf(accountAddress)
       let blueCount = await croPotionBlue.balanceOf(accountAddress)
       let purpleCount = await croPotionPurple.balanceOf(accountAddress)
@@ -414,19 +415,26 @@ export const getSkullsData = () => {
       purpleCount = purpleCount.toString()
 
       let redId = [];
-      for( let i = 0; i < redCount; i++) {
-        let tokenId = await croPotionRed.tokenOfOwnerByIndex(accountAddress, i)
-        redId.push( tokenId.toString() )
-      }
       let blueId = [];
-      for( let i = 0; i < redCount; i++) {
-        let tokenId = await croPotionBlue.tokenOfOwnerByIndex(accountAddress, i)
-        blueId.push( tokenId.toString() )
-      }
       let purpleId = [];
-      for( let i = 0; i < purpleCount; i++) {
-        let tokenId = await croPotionPurple.tokenOfOwnerByIndex(accountAddress, i)
-        purpleId.push( tokenId.toString() )
+      try{
+        if( redCount )
+          for( let i = 0; i < redCount; i++) {
+            let tokenId = await croPotionRed.tokenOfOwnerByIndex(accountAddress, i)
+            redId.push( tokenId.toString() )
+          }
+        if( blueCount )
+          for( let i = 0; i < redCount; i++) {
+            let tokenId = await croPotionBlue.tokenOfOwnerByIndex(accountAddress, i)
+            blueId.push( tokenId.toString() )
+          }
+        if( purpleCount )
+          for( let i = 0; i < purpleCount; i++) {
+            let tokenId = await croPotionPurple.tokenOfOwnerByIndex(accountAddress, i)
+            purpleId.push( tokenId.toString() )
+          }
+      } catch (e) {
+        console.log(e)
       }
       
       let purpleSupply = await croPotionPurple.totalSupply()

@@ -90,6 +90,9 @@ padding: 3%  !important;
 .skull-details span{
     font-weight: 500;
 }
+.collection-details{
+    height: fit-content;
+}
 
 /*FILTER CONTAINER*/
 .marketplace .filter-container{

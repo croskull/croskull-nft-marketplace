@@ -10,6 +10,14 @@ const MetricContainer = ({
     vertical = false,
     usdValue,
 }) => {
+
+    const UsdValue = ({value}) => {
+        return (
+            <span className="metric-usd-value">
+                        ${parseFloat(value).toFixed(2)}
+            </span>
+        )
+    }
     return (
         <div className={`metric-container ${vertical ? 'vertical' : ''}`}>
             <span>
@@ -20,7 +28,7 @@ const MetricContainer = ({
                             <FontAwesomeIcon 
                                 icon={faQuestionCircle} 
                                 className="tooltip-icon"
-                            /> 
+                            />
                             <span className="sk-tooltip">
                                 {tooltip}
                             </span>
@@ -43,10 +51,10 @@ const MetricContainer = ({
                     ) : ('')
                 }
             </span>
-            { usdValue ? (
-                <span className="metric-usd-value">
-                    ${parseFloat(usdValue).toFixed(2)}
-                </span>
+            { vertical && usdValue ? (
+                <UsdValue
+                    value={usdValue}
+                />
              ) : ('')
             }
         </div>
