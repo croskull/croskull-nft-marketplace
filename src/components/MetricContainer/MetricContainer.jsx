@@ -9,6 +9,7 @@ const MetricContainer = ({
     addClass,
     vertical = false,
     usdValue,
+    id,
 }) => {
 
     const UsdValue = ({value}) => {
@@ -19,7 +20,7 @@ const MetricContainer = ({
         )
     }
     return (
-        <div className={`metric-container ${vertical ? 'vertical' : ''}`}>
+        <div className={`metric-container ${vertical ? 'vertical' : ''}`} id={id ? id : ''} >
             <span>
                 {label}
                 {

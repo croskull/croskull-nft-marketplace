@@ -1,0 +1,145 @@
+.evo-card{
+  margin: auto;
+  width: 50%;
+  font-weight: bold;
+}
+.evo-card .card-img{
+  position: relative;
+}
+.evo-card img{
+  width: 100%;
+  border-radius: 12px;
+}
+.evo-card #skull-icon{
+  width: 10%;
+  border-radius: 0px;
+}
+.evo-card #rank{
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  z-index: 2;
+  color: black;
+}
+.evo-card #id{
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 2;
+  color: black;
+  background-color: aliceblue;
+  border-radius: 5px;
+  padding: 2px;
+}
+.evo-card #lvl{
+  display: flex;
+  color: black;
+  background-color: aliceblue;
+  height: 3vh;
+  width: 3vh;
+  font-size: 2em;
+  transform: translatey(-2vh);
+  border: 2px solid black;
+  border-radius: 50%;
+  margin: auto;
+  align-items: center;
+  justify-content: center;
+  padding-left: 2px;
+}
+.evo-card #malus{
+  position: absolute;
+  bottom: 15%;
+  left: 5px;
+  color: black;
+  background-color: rgba(240, 248, 255, 0.267);
+  width: auto;
+  padding: 1px;
+  border-radius: 2px;
+}
+.evo-card .evocard-stat{
+  margin-top: -10%;
+
+}
+.evocard-row{
+  display: flex;
+  flex-direction: row;
+}
+.evo-card .wd-48{
+  min-width: 48%;
+}
+.evo-card .wd-48 span{
+  float: right;
+}
+.evo-card #power{
+  margin-right: 2%;
+  color: orange;
+}
+.evo-card #stamina{
+  margin-left: 2%;
+  color: rgb(54, 206, 54);
+}
+.evo-card .evo-stat{
+  padding: 2%;
+  margin: 2%;
+}
+.evo-stat #str{
+  color: red;
+}
+.evo-stat #dex{
+  color: rgb(0, 255, 234);
+}
+.evo-stat #const{
+  color: rgb(0, 163, 41);
+}
+.evo-stat #int{
+  color: rgb(127, 80, 255);
+}
+.evo-stat #wisd{
+  color: rgb(161, 0, 161);
+}
+.evo-stat #char{
+  
+  color: rgb(255, 196, 0);
+}
+.evo-card .wd-80{
+  min-width: 80%;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.evo-card .wd-20{
+  min-width: 20%;
+}
+.evo-card .progress-bar, .progress{
+  border-radius: 2px !important;
+}
+
+ .white{
+  background-color: rgba(240, 248, 255, 0.432) !important;
+}
+ .green{
+  background-color: rgba(52, 182, 0, 0.432) !important;
+}
+ .purple{
+  background-color: rgba(108, 0, 250, 0.432) !important;
+}
+
+@media (min-width:320px) and (max-width:640px) {
+  .evo-card{
+    margin: auto;
+    width: 100%;
+  }
+  .evo-card #lvl{
+    height: 5vh;
+    width: 5vh;
+    font-size: 2em;
+    transform: translatey(-3.5vh);
+
+  }
+  .evo-card .sk-row{
+    flex-direction: row;
+  }
+  .evo-card .skull-icon{
+    width: auto;
+  }
+
+}

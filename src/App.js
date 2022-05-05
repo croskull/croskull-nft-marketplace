@@ -16,6 +16,7 @@ import Laboratory from "./components/Laboratory/Laboratory";
 import ClickSound from "./sounds/click-sound.mp3"
 import PotionLab from "./components/Laboratory/PotionLab/PotionLab";
 import "./App.css";
+import MintEvo from "./components/MintEvo/MintEvo";
 
 class App extends Component {
   constructor(props) {
@@ -120,6 +121,12 @@ class App extends Component {
                           path="/laboratory-potion"
                           render={() => (
                             <PotionLab />
+                          )}
+                          />
+                           <Route
+                          path="/mint-evo"
+                          render={() => (
+                            <MintEvo />
                           )}
                           />
                       </Switch>
