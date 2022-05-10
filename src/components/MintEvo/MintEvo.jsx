@@ -15,7 +15,7 @@ const MintEvo = () => {
     let { blockchain, data } = store.getState();
     let [potionC, setPotionC] = useState(null);
     let [skullC, setSkullC] = useState(null);
-    let [skull, setSkull] = useState(skull1);
+    let [skull, setSkull] = useState(skull2);
     function showSKull (){
       let s =  document.getElementById("skull-choice");
 
@@ -83,11 +83,20 @@ const MintEvo = () => {
                 default:
                     break;
             }
-          }, 5000);
+          }, 5000000);
       },[])
     return (
         <>
 
+                <div className="sk-box sk-row">
+                    <marquee behavior="scroll" direction="left">{testo.map(t =>{
+                        return(
+                            <>
+                            {t} &emsp;&emsp;&emsp;
+                            </>
+                        )
+                    })}</marquee>
+                </div>
                 <div className="sk-flex sk-row">
                     <div className="sk-box wd-50">
                             <EvoCard skull={skull}/>
@@ -141,7 +150,6 @@ const MintEvo = () => {
                         </div>
                     </div>
                 </div>
-
         </>
     )
 };
@@ -205,3 +213,5 @@ const skull3 ={
     nextLvl : '2500',
     malus : ['hungry','freeze']
 }
+
+const testo =['testo1','testo2','testo3','testo4','testo5','testo6','testo7','testo8'];

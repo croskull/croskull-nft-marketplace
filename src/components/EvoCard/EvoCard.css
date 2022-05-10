@@ -1,7 +1,44 @@
+:root{
+  --shine-degree: 120deg;
+  --shine-color: rgba(255, 255, 255, 0.2);
+  --shine-effect: linear-gradient(
+    var(--shine-degree),
+    transparent,
+    var(--shine-color),
+    transparent
+  );
+}
 .evo-card{
   margin: auto;
-  width: 50%;
+  width: 100%;
   font-weight: bold;
+  background-image: linear-gradient(
+    to right,
+    #462523 0,
+           #cb9b51 22%, 
+    #f6e27a 45%,
+    #f6f2c0 50%,
+    #f6e27a 55%,
+    #cb9b51 78%,
+    #462523 100%
+    );
+    background-image: linear-gradient(160deg, #a54e07, #b47e11, #fef1a2, #bc881b, #a54e07);
+  padding: 18px;
+  border-radius: 12px;
+
+}
+/*
+.evo-card:hover::after{
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 10%;
+  height: 100%;
+  background: var(--shine-effect);
+  display: none;
+}*/
+.evo-card:hover{
+  filter: brightness(1.5);
 }
 .evo-card .card-img{
   position: relative;
@@ -58,7 +95,7 @@
 }
 .evo-card .evocard-stat{
   margin-top: -10%;
-
+  text-shadow: -1px 0 #000000, 0 1px #000000, 1px 0 #000000, 0 -1px #000000; 
 }
 .evocard-row{
   display: flex;
@@ -81,6 +118,7 @@
 .evo-card .evo-stat{
   padding: 2%;
   margin: 2%;
+  position: relative;
 }
 .evo-stat #str{
   color: red;
@@ -101,6 +139,15 @@
   
   color: rgb(255, 196, 0);
 }
+.evo-stat #logo{
+  border: 0;
+  position: absolute;
+  width: 50%;
+  align-self: center;
+  left: 25%;
+  top: 5%;
+  opacity: 0.2;
+}
 .evo-card .wd-80{
   min-width: 80%;
   margin-top: auto;
@@ -117,14 +164,58 @@
   background-color: rgba(240, 248, 255, 0.432) !important;
 }
  .green{
-  background-color: rgba(52, 182, 0, 0.432) !important;
+  background-color: #1B977E !important;
+
 }
  .purple{
   background-color: rgba(108, 0, 250, 0.432) !important;
 }
+/*flip*/
+.card-container {
+  position: relative;
+  perspective: 1000px;
+  width: 100%;
+  margin: auto;
+}
+.card2 {
+  transform-style: preserve-3d;
+  transition: all 1s ease-in-out;
+  position: relative;
+}
+.card2:hover {
+  transform: rotateY(180deg);
+}
+.card2 .side {
+  -webkit-perspective: 0;
+  -webkit-backface-visibility: hidden;
+
+  visibility:visible;
+  backface-visibility: hidden;
+}
+.card2 #back {
+  color: #0087cc;
+  line-height: 150px;
+  text-align: center;
+  transform: rotateY(180deg);
+  position: absolute;
+  top: 0;
+  width: 150px;
+}
+.card2 #back .evo-card{
+  width: 100%;
+  height: 100%;
+  
+}
+.card2 #back .evo-card div{
+  width: 100%;
+  height: 100%;
+  background-image: url('./Rank/greenBg.png');
+  background-size: cover;
+  border-radius: 12px;
+}
 
 @media (min-width:320px) and (max-width:640px) {
-  .evo-card{
+  .card-container{
     margin: auto;
     width: 100%;
   }
@@ -140,6 +231,9 @@
   }
   .evo-card .skull-icon{
     width: auto;
+  }
+  .card2 #back {
+    left: 0;
   }
 
 }
