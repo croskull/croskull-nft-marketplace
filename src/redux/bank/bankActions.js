@@ -40,7 +40,6 @@ export const loadFarmData = () =>{
         datas.forEach( async (data, i) => {
             let value = await croSkullsFarm[data]()
             value = await value.toString()
-            console.log( value )
             finalData = {
                 ...finalData,
                 [data]: value
@@ -116,6 +115,7 @@ export const loadBankData = () => {
         let userActiveContracts = await croSkullsBank.getActiveContracts()
         let userFinalContracts = []
         userActiveContracts.map( async contractId => {
+            if( contractId.toString() == 0 ) return
             let contractRewards = await croSkullsBank.currentRewards(contractId)
             let contractHash = ethers.utils.solidityKeccak256([ "address", "uint" ], [ accountAddress, contractId ])
             let contractDetails = await croSkullsBank.userContracts(contractHash)

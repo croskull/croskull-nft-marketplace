@@ -22,7 +22,7 @@ const Home = () => {
     let dispatch = useDispatch()
     const [detailsView, setDetailsView] = useState('skulls')
     let { blockchain, marketplace, data } = store.getState()
-    let { accountAddress } = blockchain
+    let { accountAddress, cnsDomain } = blockchain
 
     useEffect( () => {
         if( marketplace.redSolds ) return 
@@ -60,7 +60,7 @@ const Home = () => {
                             accountAddress ? (
                                 <>
                                     <div className="welcome sk-column sk-box-content">
-                                        <span className="welcome-message">Hi <b>Skuller</b>,</span>
+                                        <span className="welcome-message">Hi <b>{cnsDomain ? cnsDomain : `Skuller`}</b>,</span>
                                         <span className="welcome-address">{accountAddress}</span>
                                     </div>
                                 </>

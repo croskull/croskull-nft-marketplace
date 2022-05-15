@@ -5,6 +5,7 @@ const initialState = {
     provider: false,
     ethProvider: false,
     accountAddress: "",
+    cnsDomain: "",
     accountBalance: "",
     managerAddress: null,
     croSkullsContract: false,
@@ -36,12 +37,13 @@ const blockchainReducer = (state = initialState, action) => {
                 ...initialState,
                 loading: true,
             };
-            case "CONNECTION_SUCCESS":
+        case "CONNECTION_SUCCESS":
             return {
                 ...state,
                 loading: false,
                 contractDetected: true,
                 accountAddress: payload.accountAddress,
+                cnsDomain: payload.cnsDomain,
                 accountBalance: payload.accountBalance,
                 ethProvider: payload.ethProvider,
                 croSkullsContract: payload.croSkullsContract,
@@ -81,6 +83,7 @@ const blockchainReducer = (state = initialState, action) => {
                 provider: false,
                 ethProvider: false,
                 accountAddress: "",
+                cnsDomain: "",
                 accountBalance: "",
                 managerAddress: null,
                 croSkullsContract: false,

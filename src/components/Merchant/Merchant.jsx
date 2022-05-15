@@ -11,7 +11,7 @@ const MAX_APPROVE = "11579208923731619542357098500868790785326998466564056403945
 const Merchant = () => {
     const dispatch = useDispatch();
     let { blockchain, data } = store.getState();
-    let { petEggsSupply, petEggsMaxSupply, petEggsLimit, petEggsBalance, petEggsCost, graveBalance, approvedEggs } = data
+    let { petEggsMinted, petEggsSupply, petEggsMaxSupply, petEggsLimit, petEggsBalance, petEggsCost, graveBalance, approvedEggs } = data
     let { croSkullsGrave, croSkullsPetEggs, accountAddress, formatEther } = blockchain
 
 
@@ -86,7 +86,7 @@ const Merchant = () => {
                             <span>Cost: { formatEther(petEggsCost) } <b>GRAVE</b></span>
                             <span>Limit: Max 2 Eggs per Address</span>
                             <span>Max Supply: {petEggsMaxSupply} EGGS</span>
-                            <span>{ `Your Limit: ${petEggsBalance}/${petEggsLimit}` }</span>
+                            <span>{ `Your Limit: ${petEggsMinted}/${petEggsLimit}` }</span>
                         </div>
                         {
                             ! approvedEggs ? 

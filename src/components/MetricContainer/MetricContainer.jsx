@@ -8,8 +8,7 @@ const MetricContainer = ({
     tooltip,
     addClass,
     vertical = false,
-    usdValue,
-    id,
+    usdValue
 }) => {
 
     const UsdValue = ({value}) => {
@@ -20,7 +19,7 @@ const MetricContainer = ({
         )
     }
     return (
-        <div className={`metric-container ${vertical ? 'vertical' : ''}`} id={id ? id : ''} >
+        <div className={`metric-container ${vertical ? 'vertical' : ''}`}>
             <span>
                 {label}
                 {

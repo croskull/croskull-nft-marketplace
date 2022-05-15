@@ -29,7 +29,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   let { blockchain, data } = store.getState();
   let { rewardPlusMalus, soulsBalance, graveBalance, rudeBalance, croSkulls, rewards, croSkullsStaked, daysLastWithdraw } = data
-  let { accountAddress, formatEther, contractDetected, loading } = blockchain
+  let { accountAddress, formatEther, contractDetected, loading, cnsDomain } = blockchain
   const [isHovered, setIsHovered] = useState(false)
   const [menuState, setMenuState] = useState(false)
   let malusPercent = ( 800 - ( 25 * daysLastWithdraw ) ) / 10
@@ -257,7 +257,12 @@ const Navbar = () => {
         >
           { ! contractDetected ?
             `Connect` :
-            isHovered ? `Disconnect` : `${accountAddress.substr(0, 5)}...${accountAddress.substr(39, 41)}` }
+              isHovered ? 
+                `Disconnect` :
+                  cnsDomain ? 
+                    `${cnsDomain}` : 
+                      `${accountAddress.substr(0, 5)}...${accountAddress.substr(39, 41)}` 
+          }
         </button>
       </div>
     </nav>

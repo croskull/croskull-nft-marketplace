@@ -1,66 +1,109 @@
-
-.mint-evo .sk-row{
+.mint-evo .sk-row {
   margin: auto;
 }
 
-.mint-evo .sk-row .sk-box{
+.mint-evo .sk-row .sk-box {
   margin: auto;
 }
-.mint-evo .sk-box-content{
+
+.mint-evo .sk-box-content {
   display: block;
 }
-.mint-evo .sk-box-content .sk-row *{
+
+.mint-evo .sk-box-content .sk-row * {
   margin: auto;
 }
+
 .mint-evo .sk-box-content .sk-row {
   padding-left: 10%;
   padding-right: 10%;
 }
-.mint-evo .sk-box-content .sk-row img{
-  height: 10vh; width: 10vh; border-radius:50%
+
+.mint-evo .sk-box-content .sk-row img {
+  height: 10vh;
+  width: 10vh;
+  border-radius: 50%
 }
 
-.mint-evo .sk-box-content .sk-box-content{
+.mint-evo .card-container {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+
+.mint-evo .sk-box-content .sk-box-content {
   display: flex;
   padding: 0;
   padding: 2%;
   margin-bottom: 1%;
 }
-.mint-evo .sk-box-content .sk-box-content .circular-image{
+
+.mint-evo .sk-box-content .sk-box-content .circular-image {
   height: 100%;
   width: auto;
   text-align: center;
 }
-.mint-evo .sk-box-content .sk-box-content .circular-image img{  height: 4vw; width: 4vw; border-radius:50%   }
+
+.mint-evo .sk-box-content .sk-box-content .circular-image img {
+  height: 4vw;
+  width: 4vw;
+  border-radius: 50%
+}
+
 #skull-choice {
   visibility: hidden;
-
+  width: 100%;
+  overflow-x: hidden;
+}
+#skull-choice .sk-box-content, #potion-choice .sk-box-content {
+  width: 100%;
+  overflow-x: overlay;
 }
 
 #potion-choice {
   display: none;
+  width: 100%;
+  overflow-x: hidden;
 }
-.mint-evo .skull-button {
-  margin-top: 10%;
-  margin-left: 10%;
-  margin-right: 10%;
-  width: 80%;
+
+.inventory-list {
+  position: absolute;
+  z-index: 999;
+  top: 20%;
+  width: 100%;
+  opacity: 0;
+  left: 0;
+  transform: scale(0);
+  transform-origin: top;
+  transition: transform 0.4s ease, opacity 0.4s ease;
 }
+.inventory-list.show{
+  opacity: 1;
+  transform: scale(1);
+}
+.inventory-list .sk-box-content {
+  width: 100%;
+  overflow-x: overlay;
+}
+
 @media (min-width:320px) and (max-width:640px) {
-  .mint-evo .wd-50{
+  .mint-evo .wd-50 {
     max-width: 100%;
   }
-  .mint-evo .sk-row{
+
+  .mint-evo .sk-row {
     flex-direction: column-reverse;
   }
+
   .mint-evo .sk-box-content .sk-row {
     padding: 0;
     flex-direction: row;
   }
-  .mint-evo .sk-box-content .sk-box-content .circular-image img{  
-    height: 10vh; 
-    width: 10vh; 
-    border-radius:50%   
+
+  .mint-evo .sk-box-content .sk-box-content .circular-image img {
+    height: 10vh;
+    width: 10vh;
+    border-radius: 50%
   }
 
 }

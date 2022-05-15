@@ -1,174 +1,266 @@
-:root{
-  --shine-degree: 120deg;
-  --shine-color: rgba(255, 255, 255, 0.2);
-  --shine-effect: linear-gradient(
-    var(--shine-degree),
-    transparent,
-    var(--shine-color),
-    transparent
-  );
-}
-.evo-card{
-  margin: auto;
-  width: 100%;
-  font-weight: bold;
-  background-image: linear-gradient(
-    to right,
-    #462523 0,
-           #cb9b51 22%, 
-    #f6e27a 45%,
-    #f6f2c0 50%,
-    #f6e27a 55%,
-    #cb9b51 78%,
-    #462523 100%
-    );
-    background-image: linear-gradient(160deg, #a54e07, #b47e11, #fef1a2, #bc881b, #a54e07);
-  padding: 18px;
-  border-radius: 12px;
 
+.evo-container {
+  cursor: pointer;
+  -webkit-box-shadow: 0px 5px 20px -3px rgba(140, 36, 255, 0.25);
+  box-shadow: 0px 5px 20px -3px rgba(140, 36, 255, 0.25);
+  position: relative;
+  max-width: 280px;
+  background: var(--purple-bg);
+  border-radius: var(--radius);
+  color: #fff;
+  border: 1px solid #ffffff30;
 }
-/*
-.evo-card:hover::after{
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 10%;
-  height: 100%;
-  background: var(--shine-effect);
-  display: none;
-}*/
-.evo-card:hover{
-  filter: brightness(1.5);
-}
-.evo-card .card-img{
+.card-image-container {
   position: relative;
 }
-.evo-card img{
+.card-image-container:before {
+  content: "";
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+  position: absolute;
   width: 100%;
-  border-radius: 12px;
+  height: 33%;
+  bottom: 0;
+  left: 0;
 }
-.evo-card #skull-icon{
-  width: 10%;
-  border-radius: 0px;
+.card-image-container:hover:before {
+  content: "";
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(40, 40, 40, 0.5) 100%
+  );
 }
-.evo-card #rank{
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  z-index: 2;
-  color: black;
+.evo-image {
+  width: 100%;
+  border-top-left-radius: var(--radius);
+  border-top-right-radius: var(--radius);
+  overflow: clip;
 }
-.evo-card #id{
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  z-index: 2;
-  color: black;
-  background-color: aliceblue;
-  border-radius: 5px;
-  padding: 2px;
+
+.card-details {
+  position: relative;
 }
-.evo-card #lvl{
+.card-info {
+  position: relative;
   display: flex;
-  color: black;
-  background-color: aliceblue;
-  height: 3vh;
-  width: 3vh;
-  font-size: 2em;
-  transform: translatey(-2vh);
-  border: 2px solid black;
-  border-radius: 50%;
-  margin: auto;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 9px;
+  z-index: 999;
+  width: 100%;
+  top: 0;
+  left: 0;
+  margin-top: -20px;
+  height: 35px;
+}
+.card-info:before {
+  content: "";
+  position: absolute;
+  display: flex;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url(https://analytics.croskull.com/brush-2.svg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position-x: -20px;
+  filter: grayscale(0.9);
+}
+.card-exp-after {
+  content: "";
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 9px;
+  z-index: 9999;
+  width: 90%;
+  top: 0;
+  left: 0;
+  height: 35px;
+  background: url(https://analytics.croskull.com/brush-2.svg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position-x: -20px;
+  z-index: 0;
+}
+.card-level {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  margin-left: 20px;
+  display: flex;
+  font-size: 26px;
+  font-weight: 700;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-left: 2px;
+  line-height: 1em;
+  z-index: 1;
 }
-.evo-card #malus{
+.card-level:after {
+  content: "";
   position: absolute;
-  bottom: 15%;
-  left: 5px;
-  color: black;
-  background-color: rgba(240, 248, 255, 0.267);
-  width: auto;
-  padding: 1px;
-  border-radius: 2px;
+  transform: rotate(128deg);
+  height: 44px;
+  width: 44px;
+  background: url(https://analytics.croskull.com/level-brush.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: brightness(0%) saturate(100%) invert(43%) sepia(67%) saturate(876%)
+    hue-rotate(222deg) brightness(102%) contrast(104%);
 }
-.evo-card .evocard-stat{
-  margin-top: -10%;
-  text-shadow: -1px 0 #000000, 0 1px #000000, 1px 0 #000000, 0 -1px #000000; 
+.card-level:before {
+  content: "";
+  position: absolute;
+  background: var(--purple-bg);
+  width: 40px;
+  height: 40px;
+  z-index: -1;
+  border-radius: 100%;
 }
-.evocard-row{
+.card-exp {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  column-gap: 6px;
+  right: 0;
+  z-index: 1;
+  padding-right: 7px;
+  font-size: 12px;
+}
+
+.card-rank {
+  position: absolute;
+  top: 6;
+  right: 0;
+  color: #fff;
+  margin: 6px;
+  border-radius: 15px;
+}
+
+.card-rank img {
+  width: 28px;
+}
+.card-stats-container {
+  padding: 9px;
+  padding-top: 15px;
+}
+.card-stats {
   display: flex;
   flex-direction: row;
 }
-.evo-card .wd-48{
-  min-width: 48%;
-}
-.evo-card .wd-48 span{
-  float: right;
-}
-.evo-card #power{
-  margin-right: 2%;
-  color: orange;
-}
-.evo-card #stamina{
-  margin-left: 2%;
-  color: rgb(54, 206, 54);
-}
-.evo-card .evo-stat{
-  padding: 2%;
-  margin: 2%;
+.card-stats .vertical {
   position: relative;
+  flex-direction: column;
+  align-items: center;
 }
-.evo-stat #str{
-  color: red;
+.card-stats .vertical .stat {
+  width: 100%;
+  display: flex;
+  row-gap: 6px;
+  flex-direction: column;
+  background: none !important;
 }
-.evo-stat #dex{
-  color: rgb(0, 255, 234);
+.card-stats .vertical .stat-icon {
+  width: 28px;
 }
-.evo-stat #const{
-  color: rgb(0, 163, 41);
+.card-stats .vertical .stat-value {
+  font-size: 22px;
 }
-.evo-stat #int{
-  color: rgb(127, 80, 255);
+.stat-list {
+  border-radius: 6px;
+  padding: 0px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 6px;
+  column-gap: 6px;
 }
-.evo-stat #wisd{
-  color: rgb(161, 0, 161);
+.stat {
+  position: relative;
+  max-width: 33%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 6px;
+  background: var(--purple-bg-light);
 }
-.evo-stat #char{
-  
-  color: rgb(255, 196, 0);
+.stat-icon {
+  width: 22px;
 }
-.evo-stat #logo{
-  border: 0;
+.stat-tooltip,
+.stamina-tooltip {
+  transform: scale(0);
+  font-size: 12px;
   position: absolute;
-  width: 50%;
-  align-self: center;
-  left: 25%;
-  top: 5%;
-  opacity: 0.2;
+  top: -12px;
+  padding: 3px 9px;
+  background: #111;
+  border-radius: 6px;
+  transition: transform 0.2s ease;
 }
-.evo-card .wd-80{
-  min-width: 80%;
-  margin-top: auto;
-  margin-bottom: auto;
+.stat:hover .stat-tooltip,
+.card-level:hover + .stat-tooltip,
+.stamina-bar:hover .stamina-tooltip {
+  transform: scale(1);
+  z-index: 999;
 }
-.evo-card .wd-20{
-  min-width: 20%;
+.stamina-bar {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  column-gap: 9px;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  margin-top: 6px;
 }
-.evo-card .progress-bar, .progress{
-  border-radius: 2px !important;
+.stamina-bar span {
+  font-size: 12px;
+}
+.stamina-bar-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  column-gap: 3px;
+}
+.stamina-bar-container span {
+  width: 100%;
+  height: 4px;
+  box-shadow: inset 0px 0px 10px 1px rgb(184 117 255 / 40%),
+    0px 0px 20px rgb(179 117 255 / 10%);
+}
+.stamina-bar-container span.active {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0px 0px 10px 2px rgb(160 117 255 / 50%),
+    0px 0px 20px rgb(157 117 214 / 50%);
 }
 
- .white{
-  background-color: rgba(240, 248, 255, 0.432) !important;
+.levelup-icon, .upgrade-icon {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 16px;
+  height: 16px;
 }
- .green{
-  background-color: #1B977E !important;
-
+.levelup-icon {
+  background: url(https://analytics.croskull.com/levelup.svg);
 }
- .purple{
-  background-color: rgba(108, 0, 250, 0.432) !important;
+.upgrade-icon {
+  background: url(https://analytics.croskull.com/add-exp.svg);
 }
 /*flip*/
 .card-container {
@@ -214,26 +306,72 @@
   border-radius: 12px;
 }
 
-@media (min-width:320px) and (max-width:640px) {
-  .card-container{
-    margin: auto;
-    width: 100%;
-  }
-  .evo-card #lvl{
-    height: 5vh;
-    width: 5vh;
-    font-size: 2em;
-    transform: translatey(-3.5vh);
+.footer {
+  display: flex;
+  flex-direction: row;
+  column-gap: 6px;
+  justify-content: space-between;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #ffffff50;
+  font-size: 10px;
+  opacity: 0.7;
+  text-align: center;
+}
+.stamina-bar-wrapper{
+  position: relative;
+}
+.evo-claim-button {
+  width: 18px;
+}
 
-  }
-  .evo-card .sk-row{
-    flex-direction: row;
-  }
-  .evo-card .skull-icon{
-    width: auto;
-  }
-  .card2 #back {
-    left: 0;
-  }
+/** PETS */
 
+.evo-container.pet {
+  background: var(--red-bg);
+}
+.evo-container.pet .stat {
+  background: var(--red-bg-light);
+}
+.evo-container.pet .stamina-bar-container span.active {
+  box-shadow: inset 0px 0px 10px 2px rgb(255 117 117 / 50%),
+    0px 0px 20px rgb(214 117 117 / 50%);
+}
+.evo-container.pet .stamina-bar-container span {
+  box-shadow: inset 0px 0px 10px 2px rgb(255 117 117 / 40%),
+    0px 0px 20px rgb(214 117 117 / 10%);
+}
+.pet .card-exp-after {
+  filter: brightness(0%) saturate(100%) invert(77%) sepia(75%) saturate(5917%)
+    hue-rotate(325deg) brightness(98%) contrast(121%);
+}
+.pet .card-level:after {
+  filter: brightness(0%) saturate(100%) invert(77%) sepia(75%) saturate(5917%)
+    hue-rotate(325deg) brightness(98%) contrast(121%);
+}
+.upgrade-icon .tooltip {
+  position: absolute;
+  transform: scale(0);
+  top: -20px;
+  right: 20px;
+  background: #111;
+  padding: 3px 9px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: 3px;
+}
+.upgrade-icon:hover .tooltip {
+  transform: scale(1);
+}
+.pet .card-level:before {
+  background: var(--red-bg);
+}
+:root {
+  --radius: 10px;
+  --purple-bg: #150c1f;
+  --purple-bg-light: hsl(267deg 100% 79% / 10%);
+  --red-bg: #220c0c;
+  --red-bg-light: hsl(267deg 100% 79% / 10%);
+  --purple: #9e6cff;
 }

@@ -88,7 +88,6 @@ const Marketplace = () => {
                 break;
             }
         }
-        console.log(id, type, items[id])
         if (items && items[id]) {
             let { price, nftId, listingId } = items[id]
             let formattedPrice = ethers.utils.parseUnits(price, 18)
@@ -100,7 +99,6 @@ const Marketplace = () => {
                     _skullId: nftId
                 }))
             } else {
-                console.log(false)
                 dispatch(sendNotification({
                     title: `Insufficient balance`,
                     type: "info",
@@ -158,7 +156,6 @@ const Marketplace = () => {
 
     function loadSkullFilter() {
         dispatch(loadEbisusSkullsNew());
-        console.log(sort);
         dispatch(loadEbisusSkullsNew(sort));
     }
 
@@ -180,7 +177,6 @@ const Marketplace = () => {
             if (trait.length > 0 && flag) {
                 if( name == 'Trait') {
                 if(trait.includes(5)) {   
-                    console.log(5)
                     cr.nft.attributes.map(at => {
                         if (at.trait_type == 'Hat' && flag) {
                             if (at.value.includes('none'))
@@ -193,7 +189,6 @@ const Marketplace = () => {
                 }
                 if(trait.includes(6))
                 {
-                    console.log(6)
                     cr.nft.attributes.map(at => {
                         if (at.trait_type == 'Hat' && flag) {
                             if (at.value.includes('none'))
@@ -218,7 +213,6 @@ const Marketplace = () => {
 
             }
         })
-        console.log(flag);
         return flag;
     }
 
@@ -250,7 +244,6 @@ const Marketplace = () => {
         attributesList.map((attribute,i) =>{
             attribute.value.map(value =>{
                 let s = document.getElementById(attribute.name + '-' + value);
-                console.log(s);
                 s.checked = false;
             })
         

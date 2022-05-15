@@ -1,147 +1,172 @@
-import { faBold, faBolt, faBrain, faCheese, faFistRaised, faFrown, faHandFist, faHandRock, faPlus, faPrayingHands, faRunning, faSadCry, faScroll, faSnowflake, fasword } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import MetricContainer from "../MetricContainer/MetricContainer";
+import EvoStat from "./EvoStat/EvoStat";
 import './EvoCard.css';
-import Soul from "../images/soul.png";
-import rankD from './Rank/rankD.png';
-import rankC from './Rank/rankC.png';
-import rankB from './Rank/rankB.png';
-import rankA from './Rank/rankA.png';
-import rankS from './Rank/rankS.png';
-import logo from './Rank/logo.png';
-import greenBG from './Rank/greenBg.png';
+import Power from "../images/power.svg"
+import STR from "../images/str.svg";
+import DEX from "../images/dex.svg";
+import INT from "../images/int.svg";
+import WISD from "../images/wisd.svg";
+import CONST from "../images/const.svg";
+import CHAR from "../images/char.svg";
+import store from "../../redux/store";
+import SRank from "../images/s-plus-rank.png";
+import GraveIcon from "../images/grave.png"
 
-
-
-const EvoCard = ({ skull }) => {
+const EvoCard = ({ type = 'evoskull'}) => {
     const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/";
-
-    function getRank(r) {
-        switch (r) {
-            case 'd':
-                return rankD;
-            case 'c':
-                return rankC;
-            case 'b':
-                return rankB;
-            case 'a':
-                return rankA;
-            case 's':
-                return rankS;
-            default:
-                return null;
+    let { accountAddress } = store.getState().blockchain
+    const evo = {
+            id: 4,
+            type: type,
+            image: type == 'evoskull' ? "https://analytics.croskull.com/skull.webp" : "https://analytics.croskull.com/evopet.jpeg",
+            maxStamina: 15,
+            stamina: 9,
+            owner: '0x8479f2Ac6a9d94708FE5831CF6B7678aD0fdEfd0'.toLowerCase(),
+            cnsDomain: `hiutaky.cro`,
+            level: 6,
+            experience: 434,
+            nextLvlExp: 1024,
+            isLevelable: false,
+            isClaimable: true,
+            str: 12,
+            dex: 12,
+            int: 12,
+            wisd: 12,
+            const: 12,
+            char: 10,
+            power: 70,
         }
+    console.log( evo.owner == accountAddress, evo.owner, accountAddress)
+
+    const RenderStaminaBar = () => {
+        let staminaBar = [];
+        const staminaSpan = (active) => {  
+            return (
+                <span class={ active ? `active` : ``}></span>
+            )
+        }
+
+        for( let i = 0; i < evo.maxStamina; i++){
+                staminaBar[i] = staminaSpan( i < evo.stamina ? true : false)
+        }
+        return (
+            <div class="stamina-bar">
+                {
+                    evo.isClaimable && evo.type == 'evoskull' ? (
+                        <span >
+                            <img 
+                                className="evo-claim-button"
+                                src={GraveIcon} 
+                            />
+                        </span>
+                    ) : ('')
+                }
+                <div class="stamina-bar-container">
+                    { staminaBar }
+                </div>
+                <span>
+                    { 
+                        evo.stamina ? 
+                            `${evo.stamina}/${evo.maxStamina}` : 
+                            accountAddress == evo.owner ?
+                                `Restore` :
+                                    `No stamina` 
+                    }
+                </span>
+                <span class="stamina-tooltip">Stamina</span>
+            </div>
+        )
     }
-useEffect(() => {
-    setInterval(function(){
-        console.log('qua');
-    let b = document.getElementById('back');
-    let f = document.getElementById('front');
-    b.style.width = f.offsetWidth +'px';
-    b.style.height = f.offsetHeight +'px';
-}, 1000);
-  },[])
+
+    let evoExpProgress = parseInt( 100 / evo.nextLvlExp * evo.experience )
 
     return (
-        <>
-            <div className="card-container">
-            <div class="card2">
-            <div className={'evo-card side'} id='front'>
-                <div className={"sk-box "+ skull.bg} >
-                    <div className="card-img" >
-                        <img src={ipfsUri480 + skull.id + '.webp'} />
-                        <p id="rank"><img src={getRank(skull.rank)} id='skull-icon' /></p>
-                        <p id="id">#{skull.id}</p>
-                        <div id="lvl">{skull.lvl}</div>
-                        <div className="sk-row sk-flex" id='malus'>
-                            {skull.malus.includes('sad') ? <FontAwesomeIcon icon={faFrown} size='2x' /> : ''}
-                            {skull.malus.includes('freeze') ? <FontAwesomeIcon icon={faSnowflake} size='2x' /> : ''}
-                            {skull.malus.includes('hungry') ? <FontAwesomeIcon icon={faCheese} size='2x' /> : ''}
-                        </div>
+        <div class={`evo-container ${ evo.type }`}>
+            <div class="evo-image-container">
+                <img class="evo-image" src={evo.image} draggable="false" />
+                <span class="card-rank">
+                    <img src={SRank} draggable="false" />
+                </span>
+            </div>
+            <div class="card-details">
+                <span class="card-info">
+                    <span 
+                        class="card-exp-after" 
+                        style={ {width: `${evoExpProgress}%`} }
+                    >
+                    </span>
+                    <span class="card-level">
+                        {evo.level}
+                        {   
+                            accountAddress == evo.owner ?
+                                evo.isLevelable ? 
+                                    <span class="levelup-icon"></span> : 
+                                    <span class="upgrade-icon"></span> :
+                                ``
+                        }
+                    </span>
+                    <span class="stat-tooltip">Level</span>
+                    <span class="card-exp">
+                        {
+                            evo.experience < evo.nextLvlExp ? 
+                                `${evo.experience}/${evo.nextLvlExp}` : 
+                                accountAddress == evo.owner ? 
+                                    `Levelable` :
+                                    ``
+                        }
+                    </span>
+                </span>
+            </div>
+            <div class="card-stats-container">
+                <div class="card-stats">
+                    <div class="stat-list vertical">
+                        <EvoStat 
+                            icon={Power}
+                            value={evo.power}
+                            tooltip={`Power`}
+                        />
                     </div>
-                    <div className="evocard-stat">
-                        <div className="evocard-row">
-                            <div className="wd-48" id='power'>
-                                Power
-                                <span>{skull.power} <FontAwesomeIcon icon={faHandRock} />
-                                </span>
-                            </div>
-                            <div className="wd-48" id='stamina'>
-                                Stamina
-                                <span>{skull.stamina} <FontAwesomeIcon icon={faPlus} />
-                                </span>
-                            </div>
-                        </div>
-                        <div className="sk-column sk-flex evo-stat sk-box-content">
-                            <MetricContainer
-                                label="STR"
-                                value={<span>{skull.str} <FontAwesomeIcon icon={faFistRaised} /></span>}
-                                id='str'
-                            />
-
-                            <MetricContainer
-                                label="DEX"
-                                value={<span>{skull.dex} <FontAwesomeIcon icon={faBolt} /></span>}
-                                id='dex'
-                            />
-                            <MetricContainer
-                                label="CONST"
-                                value={<span>{skull.const} <FontAwesomeIcon icon={faRunning} /></span>}
-                                id='const'
-                            />
-                            <MetricContainer
-                                label="INT"
-                                value={<span>{skull.int} <FontAwesomeIcon icon={faBrain} /></span>}
-                                id='int'
-                            />
-                            <MetricContainer
-                                label="WISD"
-                                value={<span>{skull.wisd} <FontAwesomeIcon icon={faScroll} /></span>}
-                                id='wisd'
-                            />
-                            <MetricContainer
-                                label="CHAR"
-                                value={<span>{skull.char} <FontAwesomeIcon icon={faPrayingHands} /></span>}
-                                id='char'
-                            />
-                            <img src={logo} id='logo' />
-                        </div>
-                        <div className="evocard-row">
-                            <div className="wd-80">
-                                <div className="progress">
-                                    <div
-                                        className="progress-bar bg-success"
-                                        role="progressbar"
-                                        style={{ width: (skull.exp / skull.nextLvl * 100) + '%' } /*sostituire con timeElapsed in % */}
-                                        aria-valuenow="10"
-                                        aria-valuemin="0"
-                                        aria-valuemax="80"
-                                    >
-                                        Exp {skull.exp}/{skull.nextLvl}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="wd-20 ">
-                                <MetricContainer
-                                    value={<FontAwesomeIcon icon={faPlus} />}
-                                    icon={Soul}
-                                />
-                            </div>
-                        </div>
+                    <div class="stat-list">
+                        <EvoStat 
+                            icon={STR}
+                            value={evo.str}
+                            tooltip={`Strength`}
+                        />
+                        <EvoStat 
+                            icon={DEX}
+                            value={evo.dex}
+                            tooltip={`Dexterity`}
+                        />
+                        <EvoStat 
+                            icon={INT}
+                            value={evo.int}
+                            tooltip={`Intelligence`}
+                        />
+                        <EvoStat 
+                            icon={CONST}
+                            value={evo.const}
+                            tooltip={`Constitution`}
+                        />
+                        <EvoStat 
+                            icon={WISD}
+                            value={evo.wisd}
+                            tooltip={`Wisdom`}
+                        />
+                        <EvoStat 
+                            icon={CHAR}
+                            value={evo.char}
+                            tooltip={`Charisma`}
+                        />
                     </div>
                 </div>
-                </div>
-                <div className="side" id='back'>
-                    <div className={'evo-card'}>
-                        <div />
-                    </div>
-
+                <RenderStaminaBar />
+                <div class="footer">
+                    <span>EvoSkull #<b>{evo.id}</b>/333</span>
+                    <span>Owner: <b>{evo.cnsDomain || evo.owner }</b></span>
                 </div>
             </div>
-            </div>
-
-        </>
+        </div>
     )
 };
 

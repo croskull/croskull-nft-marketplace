@@ -46,7 +46,7 @@ class App extends Component {
   render() {
     return (
       <div className="main">
-        <Notifier data={store.getState().data} />
+        <Notifier />
         {(
           <>
             <HashRouter
@@ -67,7 +67,7 @@ class App extends Component {
                           path="/"
                           exact
                           render={() => (
-                            <Home></Home>
+                            <Home/>
                           )}
                         />
                         <Route
@@ -79,7 +79,7 @@ class App extends Component {
                         <Route
                           path="/adventure"
                           render={() => (
-                            <CroskullAdventure></CroskullAdventure>
+                            <CroskullAdventure />
                           )}
                         />
                         <Route
@@ -123,19 +123,19 @@ class App extends Component {
                           render={() => (
                             <PotionLab />
                           )}
-                          />
-                           <Route
+                        />
+                        <Route
                           path="/mint-evo"
                           render={() => (
                             <MintEvo />
                           )}
-                          />
-                                                     <Route
+                        />
+                        <Route
                           path="/evo-tavern"
                           render={() => (
                             <EvoTavern/>
                           )}
-                          />
+                        />
                       </Switch>
                     </CSSTransition>
                   </TransitionGroup>

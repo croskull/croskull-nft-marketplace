@@ -81,7 +81,6 @@ export const loadEbisusSkulls = () => {
         }else{
             let rawSkullData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F&state=0&page=1&pageSize=20`)).json();
             saleSkulls = rawSkullData.listings
-            console.log(rawSkullData)
         }
         dispatch(updateState({
             key: "saleSkulls",
@@ -94,7 +93,6 @@ export const loadEbisusSkullsNew = (i) => {
     return async (dispatch) => {
         let { marketplace } = store.getState()
         let skullList;
-        console.log('skullist:'+skullList)
         let rawSkullData;
         switch (i){
             case 0:
@@ -148,7 +146,6 @@ export const getAttribute = () =>{
         {name:'Hat',value:[]},
         {name:'Trait',value:[5,6]}
         ];
-        console.log(skullsList);
     skullsList.map(skull =>{
         (skull.attributes).map( at =>{
             switch (at.trait_type) {

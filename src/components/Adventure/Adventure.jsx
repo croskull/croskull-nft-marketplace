@@ -360,7 +360,7 @@ const CroskullAdventure = () => {
                     label="Mined Souls"
                     value={soulsGenerated}
                     icon={Soul}
-                    tooltip="Total amount of Souls mined since the adventure start. It actually reflect the amount of Souls you'll recieve once claim done."
+                    tooltip="Total amount of Souls mined since your last claim. This will be the amount of Souls you'll receive when you claim again."
                   />
                 </div>
                 <div className={`sk-box-content sk-column ${ detailsView ? 'show' : 'hide'}`}>

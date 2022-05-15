@@ -122,9 +122,6 @@ export const refreshSkullsStories = () => {
     }))
     let storiesFilter = croSkullsDescription.filters.DescriptionUpdate()
 
-    croSkullsDescription.on('DescriptionUpdate', (content) => {
-      console.log( content )
-    })
     let currentBlock = await ethProvider.getBlockNumber()
     if( storyLastBlock )
       currentBlock = storyLastBlock;
@@ -298,12 +295,14 @@ export const getStakingData =  () => {
     if( started ){
       
       let isApproved = await croSkullsContract.isApprovedForAll( accountAddress, croSkullsStaking.address )
+      let petEggsMinted = await croSkullsPetEggs.minterList( accountAddress )
       let petEggsLimit = await croSkullsPetEggs.eggsPerAddress()
       let petEggsBalance = await croSkullsPetEggs.minterList( accountAddress )
       let petEggsMaxSupply = await croSkullsPetEggs.eggsLimit()
       let petEggsSupply = await croSkullsPetEggs.eggsCounter()
       let petEggsCost = await croSkullsPetEggs.eggCost()
       let approvedEggs = await croSkullsGrave.allowance( accountAddress, croSkullsPetEggs.address )
+      petEggsMinted = petEggsMinted.toString()
       petEggsLimit = petEggsLimit.toString()
       petEggsBalance = petEggsBalance.toString()
       petEggsMaxSupply = petEggsMaxSupply.toString()
@@ -312,6 +311,7 @@ export const getStakingData =  () => {
       approvedEggs = approvedEggs.toString() >= parseInt(petEggsCost)
 
       dispatch(updateMerchant({
+        petEggsMinted,
         petEggsLimit,
         petEggsBalance,
         petEggsSupply,
@@ -392,7 +392,6 @@ export const getStakingData =  () => {
 
 export const getSkullsData = () => {
   return async (dispatch) => {
-      console.log('getSkullsData')
       dispatch(fetchDataRequest());
       dispatch(fetchBalances())
       let {
@@ -456,7 +455,6 @@ export const getSkullsData = () => {
           purpleRedApproval
         })
       )
-      console.log( store.getState().data)
       dispatch(getStakingData())
       let ownedTokensCount = await croSkullsContract.balanceOf(accountAddress)
       ownedTokensCount = ownedTokensCount.toString()

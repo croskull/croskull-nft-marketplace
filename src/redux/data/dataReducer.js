@@ -34,6 +34,7 @@ const initialState = {
     totalWithdrawedSouls: 0,
     lastWithdrawTimestamp: 0,
     //pets
+    petEggsMinted: 0,
     petEggsLimit: 0,
     petEggsBalance: 0,
     petEggsSupply: 0,
@@ -234,6 +235,7 @@ const dataReducer = (state = initialState, action) => {
                 rudeBalance: 0,
                 error: false,
                 errorMsg: "",
+                petEggsMinted: 0,
                 petEggsLimit: 0,
                 petEggsBalance: 0,
                 petEggsSupply: 0,
@@ -262,6 +264,7 @@ const dataReducer = (state = initialState, action) => {
         case "UPDATE_MERCHANT":
             return {
                 ...state,
+                petEggsMinted: payload.petEggsMinted,
                 petEggsLimit: payload.petEggsLimit,
                 petEggsSupply: payload.petEggsSupply,
                 petEggsMaxSupply: payload.petEggsMaxSupply, 

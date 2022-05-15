@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
-import  ReactNotification, {store} from 'react-notifications-component';
+import store from "../../redux/store";
 import 'react-notifications-component/dist/theme.css'
-const Notifier = ({ data }) => {
+const Notifier = () => {
+
+    let { data } = store.getState()
 
     const [ state, setNotifier ] = useState({
+        title: "",
         message: "",
-        tx: "",
-        error: false,
+        type: "",
+        duration: 6000,
     });
 
 
@@ -15,16 +18,12 @@ const Notifier = ({ data }) => {
         let type = data.type
         if( message ) {
             console.log( message )
-            store.addNotification(
+            setNotifier(
                 {
                     title: `${data.title}!`,
                     message: `${message}...`,
                     type: type || "success",
-                    insert: "top",
-                    container: "bottom-left",
-                    dismiss: {
-                        duration: 6000
-                    }
+                    duration: 6000
                 }
             )
         }
@@ -33,7 +32,7 @@ const Notifier = ({ data }) => {
 
     return (
         <div>
-            <ReactNotification />
+            adkadkadksdka
         </div>
     )
 }

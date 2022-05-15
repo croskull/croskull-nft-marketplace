@@ -20,6 +20,7 @@ import Rude from "../../abis/Rude.json";
 import {
   sendNotification, getSkullsData, cleanData
 } from "../data/dataActions";
+import { CNS } from '@cnsdomains/core'
 const chainId =  "0x19" || "0x152"; //testnet - 3
 const networkId =  25; //25 || 5777; //25 production, 338 testnet3, 5777 ganache local env
 
@@ -170,6 +171,8 @@ export const connect = ( ethProvider = false) => {
                 dispatch(noAccount())
             } else {
                 let accountAddress = accounts[0]
+                const cns = new CNS(chainId, signer)
+                let cnsDomain = await cns.getName(accountAddress)
                 dispatch(sendNotification({
                     title: `Welcome Back`,
                     message: `${accountAddress}`,
@@ -180,6 +183,7 @@ export const connect = ( ethProvider = false) => {
                 payload = {
                     ...payload,
                     accountAddress,
+                    cnsDomain,
                     accountBalance,
                     ethProvider
                 }

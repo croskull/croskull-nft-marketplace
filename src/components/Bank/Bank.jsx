@@ -48,7 +48,6 @@ const Bank = () => {
     duration: 0
   })
 
-
   useEffect(() => {
     dispatch(loadBankData())
     dispatch(loadFarmData())

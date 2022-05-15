@@ -6,150 +6,142 @@ import store from "../../redux/store";
 import './MintEvo.css';
 import egg from "./egg.png";
 import purplePotionImage from "../images/purplePotionImage.png";
+import Skull from "../images/skull.png";
+import EvoSkull from "../images/evoskull-icon.png";
+import Grave from "../images/grave.png";
 import EvoCard from "../EvoCard/EvoCard";
-
-
+import MetricContainer from "../MetricContainer/MetricContainer";
 
 const MintEvo = () => {
     const dispatch = useDispatch();
     let { blockchain, data } = store.getState();
-    let [potionC, setPotionC] = useState(null);
-    let [skullC, setSkullC] = useState(null);
-    let [skull, setSkull] = useState(skull2);
-    function showSKull (){
-      let s =  document.getElementById("skull-choice");
+    const [ evolver, setEvolver ] = useState({
+        skull: 0,
+        potion: 0
+    })
 
-      let p =  document.getElementById("potion-choice");
-      if(s.style.visibility == 'visible')
-      {
-        s.style.visibility = "hidden";
-      }else{
-        s.style.display = 'flex'
-        s.style.visibility = "visible";
-        p.style.display = 'none'
-      }
+    const [ view, setView ] = useState(false) // false or 0 hide, 1 for Skull and 2 for Potion
 
+    function chooseSkull(skull) {
+        setEvolver({
+            ...evolver,
+            skull
+        })
+        setView(0)
     }
-    function showPotion (){
-        
-        let s =  document.getElementById("skull-choice");
 
-        let p =  document.getElementById("potion-choice");
-        if(p.style.display == 'flex')
-        {
-            p.style.display ='none'
-            s.style.display = 'flex'
-            s.style.visibility = 'hidden'
-        }else{
-            s.style.display = 'none'
-            s.style.visibility = 'hidden'
-            p.style.display = 'flex'
-        }
-
-      }
-
-      function chooseSkull(skull) {
-        let s =document.getElementById("skull-img");
-        s.src = ipfsUri480+skull+".webp";
-        let s2 =document.getElementById("skull-id");
-        s2.innerHTML = '#'+skull;
-        setSkullC(skull);
-        console.log(skullC);
-      }
-      function choosePotion(potion) {
-        let p =document.getElementById("potion-img");
-        p.src = purplePotionImage;
-        let p2 =document.getElementById("potion-id");
-        p2.innerHTML = '#'+potion;
-        setPotionC(potion);
-        console.log(potionC);
-      }
+    function choosePotion(potion) {
+        setEvolver({
+            ...evolver,
+            potion
+        })
+        setView(0)
+    }
     const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/"
     
-
-      useEffect(() => {
-        setInterval(function(){
-            let m = Math.floor(Math.random() * 3);
-            switch(m){
-                case 0:
-                    setSkull(skull1 );
-                    break;
-                case 1:
-                    setSkull(skull2 );
-                    break;
-                case 2:
-                    setSkull(skull3 );
-                    break;
-                default:
-                    break;
-            }
-          }, 5000000);
-      },[])
     return (
         <>
-
-                <div className="sk-box sk-row">
-                    <marquee behavior="scroll" direction="left">{testo.map(t =>{
-                        return(
-                            <>
-                            {t} &emsp;&emsp;&emsp;
-                            </>
-                        )
-                    })}</marquee>
+            <div className="sk-flex sk-row">
+                <div className="card-container wd-50">
+                        <EvoCard />
                 </div>
-                <div className="sk-flex sk-row">
-                    <div className="sk-box wd-50">
-                            <EvoCard skull={skull}/>
-                    </div>
-                    <div className="sk-box wd-50">
-                        <h1>Mint EvoSkull</h1>
-                        <div className="sk-box-content">
-                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-</p>
-                            <div className="sk-box-content sk-row of-y-over" id="skull-choice">
+                <div className="sk-box wd-50">
+                    <h1>Mint EvoSkull</h1>
+                        <p>EvoSkulls is a collection of Unique, Animated, 1/1 NFTs with on-chain Stats powered on the Cronos blockchain. The collection consists of 333 Super-rare Skulls, all 1/1.</p>
+                        <p>By owning an Evo, you can generate 9 $GRVE daily. Evo also have different on-chain stats, this means that these data can be leveraged to powers amazing PVP Battling and Mission systems.</p>
+                    <div className="sk-box-content">
+                        <div className={`inventory-list sk-box ${ view == 1 ? 'show' : ''}`}>
+                            <div className="sk-box-content sk-row">
+                            {
+                                walletSkull.map( s =>{
+                                    return(
+                                        <div className="circular-image">
+                                            <img src={ipfsUri480+s+".webp"}  onClick={() => chooseSkull(s)}/>
+                                            <p>#{s}</p>
+                                        </div>
+                                    )
+
+                                })
+                            }
+                            </div>
+                        </div>
+                        <div className={`inventory-list sk-box ${ view == 2 ? 'show' : ''}`}>
+                            <div className="sk-box-content sk-row">
                                 {
                                     walletSkull.map( s =>{
                                         return(
                                             <div className="circular-image">
-                                                <img src={ipfsUri480+s+".webp"}  onClick={() =>chooseSkull(s)}/>
+                                                <img src={purplePotionImage}  onClick={() => choosePotion(s)}/>
                                                 <p>#{s}</p>
-                                                </div>
+                                            </div>
                                         )
-
-                                    })
-                                }
-
-                            </div>
-                            <div className="sk-box-content sk-row of-y-over" id="potion-choice">
-                            {
-                                    walletSkull.map( s =>{
-                                        return(
-                                            <div className="circular-image">
-                                                <img src={purplePotionImage}  onClick={() =>choosePotion(s)}/>
-                                                <p>#{s}</p>
-                                                </div>
-                                        )
-
                                     })
                                 }
                             </div>
-                            <div className="sk-row sk-flex">
-                                <div style={{textAlign: 'center'}}>
-                                    <img src={egg}  onClick={() => showSKull()} id='skull-img'/>
-                                    <p id='skull-id'>SKull</p>
-                                </div>
-
-                                <FontAwesomeIcon icon={faPlus} size="2x"/>
-                                <div style={{textAlign: 'center'}}>
-                                    <img src={egg} onClick={() => showPotion()} label='' id='potion-img'/>
-                                    <p id='potion-id'>Potion</p>
-                                </div>
-
-                            </div>
-                                <button className="skull-button" disabled={skullC == null || potionC == null}>MINT</button>
                         </div>
+                        <div className="sk-row sk-flex">
+                            <div 
+                                className="sk-flex sk-column"
+                            >
+                                <img 
+                                    src={evolver.skull ? ipfsUri480+evolver.skull+".webp" : egg}  
+                                    onClick={ () => 
+                                        view != 1 ? setView(1) : setView(0) 
+                                    } 
+                                />
+                                <span id='skull-id'>
+                                    {evolver.skull ? `Skull: #${evolver.skull}` : `Select Skull`}
+                                </span>
+                            </div>
+                            <FontAwesomeIcon icon={faPlus} size="2x"/>
+                            <div 
+                                className="sk-flex sk-column"
+                            >
+                                <img 
+                                    src={evolver.potion ? `${purplePotionImage}` : egg} 
+                                    onClick={ () =>  
+                                        view != 2 ? setView(2) : setView(0)
+                                    }
+                                />
+                                <span id='potion-id'>
+                                    {evolver.potion ? `Potion: #${evolver.potion}` : `Select Potion`}
+                                </span>
+                            </div>
+                        </div>
+
                     </div>
+                        <MetricContainer
+                            label="CroSkull"
+                            value={ evolver.skull ? `OK #${evolver.skull}` : `Select` }
+                            icon={Skull}
+                            tooltip="Select a CroSkull to proced. Skull is returned after the mint."
+                        />
+                        <MetricContainer
+                            label="Purple Potion"
+                            value={ evolver.potion ? `OK #${evolver.potion}` : `Select` }
+                            icon={purplePotionImage}
+                            tooltip="You need both CroSkull and Purple Potion. Potion is burned during the mint."
+                        />
+                        <MetricContainer
+                            label="Total Minted"
+                            value={ `5/333` }
+                            icon={EvoSkull}
+                            tooltip="Total Evo Circulating Supply / Max Supply."
+                        />
+                        <MetricContainer
+                            label="Mint Cost"
+                            value={ `200` }
+                            icon={Grave}
+                            tooltip="Transaction cost in Grave."
+                        />
+                        <button 
+                            className="skull-button" 
+                            disabled={ ! evolver.skull || ! evolver.potion ? true : false}
+                        >
+                            MINT
+                        </button>
                 </div>
+            </div>
         </>
     )
 };
