@@ -46,7 +46,7 @@ const Marketplace = () => {
         'Trait': []
     })
     let [angleIconFilter, setAngleIconFilter] = useState([]);
-    let [skullModal, setSkullModal] = useState(true);
+    let [skullModal, setSkullModal] = useState(false);
     let {
         saleSkulls,
         saleBlue,
@@ -64,10 +64,9 @@ const Marketplace = () => {
 
     useEffect(() => {
         if (hasData) return
-        dispatch(loadEbisusData(sort))
-        dispatch(getAttribute())
-        toggleData(true)
-        setSkullModal(false)
+            dispatch(loadEbisusData(sort))
+            dispatch(getAttribute())
+            toggleData(true)
     }, [])
 
     const handlePurchase = async (id, type) => {
@@ -88,24 +87,28 @@ const Marketplace = () => {
                 break;
             }
         }
-        if (items && items[id]) {
-            let { price, nftId, listingId } = items[id]
-            let formattedPrice = ethers.utils.parseUnits(price, 18)
-            let formattedBalance = accountBalance ? ethers.utils.parseUnits(accountBalance, 0) : false;
-            if (formattedBalance && formattedBalance.gte(formattedPrice)) {
-                dispatch(purchaseItem({
-                    _listingId: listingId,
-                    _cost: formattedPrice,
-                    _skullId: nftId
-                }))
-            } else {
-                dispatch(sendNotification({
-                    title: `Insufficient balance`,
-                    type: "info",
-                    tx: '',
-                    message: `You need ${price} CRO`
-                }))
-            }
+        console.log( id, items )
+        if (items) {
+            items.map( (item) => {
+                if( item.listingId != id ) return 
+                let { price, nftId, listingId } = item
+                let formattedPrice = ethers.utils.parseUnits(price, 18)
+                let formattedBalance = accountBalance ? ethers.utils.parseUnits(accountBalance, 0) : false;
+                if (formattedBalance && formattedBalance.gte(formattedPrice)) {
+                    dispatch(purchaseItem({
+                        _listingId: listingId,
+                        _cost: formattedPrice,
+                        _skullId: nftId
+                    }))
+                } else {
+                    dispatch(sendNotification({
+                        title: `Insufficient balance`,
+                        type: "info",
+                        tx: '',
+                        message: `You need ${price} CRO`
+                    }))
+                }
+            })
         }
     }
 
@@ -155,7 +158,7 @@ const Marketplace = () => {
 
 
     function loadSkullFilter() {
-        dispatch(loadEbisusSkullsNew());
+        //dispatch(loadEbisusSkullsNew());
         dispatch(loadEbisusSkullsNew(sort));
     }
 
@@ -166,6 +169,7 @@ const Marketplace = () => {
             const index = filter[trait].indexOf(value);
             filter[trait].splice(index, 1);
         }
+        
         loadSkullFilter();
     }
 
@@ -321,7 +325,7 @@ const Marketplace = () => {
                                         <button
                                             className="skull-button mission-button"
                                             onClick={() => {
-                                                handlePurchase(modalData.index, 'skull')
+                                                handlePurchase(modalData.listingId, 'skull')
                                             }}
                                         >
                                             Buy
@@ -330,9 +334,9 @@ const Marketplace = () => {
                                     <img src={ipfsUri480 + modalData.nft.edition + '.webp'} className='img-modal'></img>
                                 </div>
                                 <div className='attribute-container sk-flex sk-column'>
-                                    {modalData.nft.attributes.map(at => {
+                                    {modalData.nft.attributes.map((at,i) => {
                                         return (
-                                            <div className='sk-box-content sk-row'>
+                                            <div className='sk-box-content sk-row' key={i}>
                                                 <p>{at.trait_type}</p>
                                                 <p>{ at.value ? <AttributeMap value={at.value} /> : ''}</p>
                                                 <p>{(at.occurrence * 100).toFixed(0) + '%'}</p>
@@ -412,10 +416,9 @@ const Marketplace = () => {
                                 <div className='sk-column filter-container' id='filter-container'>
                                     <div className='sort-container'>
                                     <div className='select-div'>
-                                        <select name="sortBy" id="sortBy" onChange={selectSort} >
-                                            
+                                        <select name="sortBy" id="sortBy" onChange={selectSort} defaultValue="0" >
                                             <optgroup label="Sort By">
-                                                <option value='0' selected>None</option>
+                                                <option value='0'>None</option>
                                                 <option value="1" onClick={selectSort}>Latest Listing</option>
                                                 <option value="2" onClick={selectSort}>Price (Lowest)</option>
                                                 <option value="3" onClick={selectSort}>Price (Highest)</option>
@@ -439,14 +442,20 @@ const Marketplace = () => {
                                                             </div>
                                                             <div className='filter-checkbox' id={'filter-checkbox-' + i} hidden={!angleIconFilter[i]}>
                                                                 {
-                                                                    
-                                                                        attribute.value.map((value, i) => {
-                                                                                return (
-                                                                                    <div className='checkbox'>
-                                                                                        <input type="checkbox" id={attribute.name + '-' + value} name={attribute.name + '-' + value} onChange={() => addFilter(attribute.name, value)} />
-                                                                                        <label for={attribute.name + '-' + value}> { value ? <AttributeMap value={value} /> : ''} </label>
-                                                                                    </div>
-                                                                                )
+                                                                    attribute.value.map((value, i) => {
+                                                                        return (
+                                                                            <div className='checkbox' key={i}>
+                                                                                <input 
+                                                                                    type="checkbox" 
+                                                                                    id={attribute.name + '-' + value} 
+                                                                                    name={attribute.name + '-' + value} 
+                                                                                    onChange={() => addFilter(attribute.name, value)} 
+                                                                                />
+                                                                                <label htmlFor={attribute.name + '-' + value}>
+                                                                                    { value ? <AttributeMap value={value} /> : ''}
+                                                                                </label>
+                                                                            </div>
+                                                                        )
                                                                     })
                                                                 }
                                                             </div>
@@ -465,7 +474,6 @@ const Marketplace = () => {
                                     {
                                         skullList && skullList.length ?
                                             (skullList).map((cr, index) => {
-                                                if (checkFilter(cr))
                                                     return (
                                                         <div key={index} className="skull-item" onClick={() => openSkullModal(cr, index)}>
                                                             <div
@@ -482,7 +490,7 @@ const Marketplace = () => {
                                                                     <button
                                                                         className="skull-button mission-button"
                                                                         onClick={() => {
-                                                                            handlePurchase(index, 'skull')
+                                                                            handlePurchase(cr.listingId, 'skull')
                                                                         }}
                                                                     >
                                                                         Buy
@@ -527,7 +535,7 @@ const Marketplace = () => {
                                                                 <button
                                                                     className="skull-button mission-button"
                                                                     onClick={() => {
-                                                                        handlePurchase(index, 'blue')
+                                                                        handlePurchase(cr.listingId, 'blue')
                                                                     }}
                                                                 >
                                                                     Buy

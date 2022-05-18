@@ -114,11 +114,16 @@ export const loadBankData = () => {
         userContractsCount = await userContractsCount.toString()
         let userActiveContracts = await croSkullsBank.getActiveContracts()
         let userFinalContracts = []
+        let isZero = false;
         userActiveContracts.map( async contractId => {
-            if( contractId.toString() == 0 ) return
-            let contractRewards = await croSkullsBank.currentRewards(contractId)
+            if( isZero && ! contractId ){
+                return
+            }
+            isZero = true
             let contractHash = ethers.utils.solidityKeccak256([ "address", "uint" ], [ accountAddress, contractId ])
             let contractDetails = await croSkullsBank.userContracts(contractHash)
+            if( contractDetails.amount.toString() == 0 ) return
+            let contractRewards = await croSkullsBank.currentRewards(contractId)
             let contractData = {
                 contractId: contractId.toString(),
                 amount: contractDetails.amount.toString(),
@@ -132,6 +137,7 @@ export const loadBankData = () => {
             }
             userFinalContracts.push(contractData)
         })
+        console.log( userFinalContracts )
         let allowance = await croSkullsGrave.allowance(accountAddress, croSkullsBank.address)
         allowance = await allowance.toString()
         finalData = {

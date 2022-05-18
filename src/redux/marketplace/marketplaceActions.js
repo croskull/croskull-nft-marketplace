@@ -60,7 +60,6 @@ export const loadEbisusData = (sort) => {
                 redTotalVolume: r.totalVolume,
             }))
         }
-        dispatch(loadEbisusSkulls())
         dispatch(loadEbisusSkullsNew(sort))
         dispatch(loadEbisusBlue())
         dispatch(loadEbisusRed())
@@ -94,38 +93,42 @@ export const loadEbisusSkullsNew = (i) => {
         let { marketplace } = store.getState()
         let skullList;
         let rawSkullData;
+        const skullCollection = `https://api.ebisusbay.com/listings?collection=0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F&state=0&page=1&pageSize=6666`
         switch (i){
             case 0:
-            rawSkullData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F&state=0&page=1&pageSize=6666`)).json();
+            rawSkullData = await (await fetch(skullCollection)).json();
             skullList = rawSkullData.listings;
             break;
             case 1:
-            rawSkullData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F&state=0&page=1&pageSize=6666`)).json();
+            rawSkullData = await (await fetch(skullCollection)).json();
             skullList = rawSkullData.listings;
             break;
             case 2:
-                rawSkullData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F&state=0&sortBy=price&page=1&pageSize=6666`)).json();
-            skullList = rawSkullData.listings;
+                rawSkullData = await (await fetch(`${skullCollection}&sortBy=price`)).json();
+            skullList = rawSkullData.listings.reverse();
             break;
             case 3:
-                rawSkullData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F&state=0&sortBy=price&page=1&pageSize=6666`)).json();
+                rawSkullData = await (await fetch(`${skullCollection}&sortBy=price`)).json();
             skullList = rawSkullData.listings;
-            skullList = skullList.reverse();
+            skullList = skullList;
             break;
             case 4:
-                rawSkullData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F&state=0&sortBy=rank&page=1&pageSize=6666`)).json();
+                rawSkullData = await (await fetch(`${skullCollection}&sortBy=rank`)).json();
             skullList = rawSkullData.listings;
             break;
             case 5:
-                rawSkullData = await (await fetch(`https://api.ebisusbay.com/listings?collection=0xF87A517A5CaecaA03d7cCa770789BdB61e09e05F&state=0&sortBy=rank&page=1&pageSize=6666`)).json();
-            skullList = rawSkullData.listings;
-            skullList = skullList.reverse();
+                rawSkullData = await (await fetch(`${skullCollection}&sortBy=rank`)).json();
+            skullList = rawSkullData.listings.reverse();
             break;
             default:
                 skullList=null;
             break;
         }
 
+        dispatch(updateState({
+            key: "saleSkulls",
+            value: skullList
+        }))
         dispatch(updateState({
             key: "skullList",
             value: skullList

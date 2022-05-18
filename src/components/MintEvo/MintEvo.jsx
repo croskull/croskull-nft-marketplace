@@ -12,6 +12,7 @@ import Grave from "../images/grave.png";
 import EvoCard from "../EvoCard/EvoCard";
 import MetricContainer from "../MetricContainer/MetricContainer";
 
+
 const MintEvo = () => {
     const dispatch = useDispatch();
     let { blockchain, data } = store.getState();

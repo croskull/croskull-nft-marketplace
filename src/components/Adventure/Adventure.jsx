@@ -69,7 +69,7 @@ const CroskullAdventure = () => {
           tx,
           type: "info"
         }))
-        await tx.wait(2)
+        await tx.wait(1)
         dispatch(sendNotification({
           title: `Success!`,
           message: `Withdraw succesful`,
@@ -95,7 +95,7 @@ const CroskullAdventure = () => {
           tx,
           type: "default"
         }))
-        await tx.wait(2)
+        await tx.wait(1)
         dispatch(sendNotification({
           title: `Approved!`,
           message: `Approved Succesful`,

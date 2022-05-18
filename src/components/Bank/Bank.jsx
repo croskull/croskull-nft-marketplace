@@ -83,7 +83,6 @@ const Bank = () => {
   }
 
   const getMax = () => {
-    console.log( lpPairBalance )
     setfarmView({
       ...farmView,
       amountToStake: formatEther(lpPairBalance)
@@ -415,7 +414,7 @@ const Bank = () => {
               <span className="details-title">Total Value Locked</span>
             </div>
             <div className="sk-box">
-              <span className="sk-box-content details-value">{ totalGraveVolume ? formatEther(totalGraveVolume) : 0 }</span>
+              <span className="sk-box-content details-value">{ totalGraveVolume ? parseFloat(formatEther(totalGraveVolume)).toFixed(2) : 0 }</span>
               <span className="details-title">Total Grave Volume</span>
             </div>
             <div className="sk-box">
@@ -424,7 +423,7 @@ const Bank = () => {
             </div>
             <div className="sk-box">
               <span className="sk-box-content details-value">{ activeContracts ? activeContracts : 0 }</span>
-              <span className="details-title">Total Contracts Active</span>
+              <span className="details-title">Total Active Contracts</span>
             </div>
         </div>
         <div className="sk-row switcher-container">
@@ -592,7 +591,7 @@ const Bank = () => {
                       />
                       <MetricContainer 
                         label="End"
-                        value={ `${ ! contract.isClaimable ? timeConverter(contract.unlockTimestamp) : 0 }` }
+                        value={ `${ ! contract.isClaimable ? timeConverter(contract.unlockTimestamp) : `Claimable` }` }
                         vertical={true}
                         tooltip={`Created: ${timeConverter(contract.startTimestamp)}`}
                       />

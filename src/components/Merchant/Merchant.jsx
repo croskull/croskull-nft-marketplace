@@ -26,7 +26,7 @@ const Merchant = () => {
                 tx,
                 type: "default"
             }))
-            await tx.wait(2)
+            await tx.wait(1)
             dispatch(sendNotification({
                 title: `Egg Purchased!`,
                 message: `Successful purchased 1 pet's egg.`,
@@ -50,7 +50,7 @@ const Merchant = () => {
                 tx,
                 type: "default"
             }))
-            await tx.wait(2)
+            await tx.wait(1)
             dispatch(sendNotification({
                 title: `Approved Successful!`,
                 message: `Now you can purchase your pet's egg.`,
@@ -61,7 +61,7 @@ const Merchant = () => {
         })
     }
     
-    let canMint = petEggsBalance < petEggsLimit
+    let canMint = petEggsMinted < petEggsLimit
     let hasBalance = parseInt(petEggsCost) <= parseInt(graveBalance)
     let currentDate = parseInt(new Date() / 1000)
     let endDate = 1654903359;
@@ -84,7 +84,7 @@ const Merchant = () => {
                         <span>Burn your <b>GRAVE</b> to receive a limited and super-rare NFT Seasonal Pet Eggs Generation 1.</span>
                         <div className="sk-box-content sk-column">
                             <span>Cost: { formatEther(petEggsCost) } <b>GRAVE</b></span>
-                            <span>Limit: Max 2 Eggs per Address</span>
+                            <span>Limit: Max <b>{petEggsLimit}</b> Eggs per Address</span>
                             <span>Max Supply: {petEggsMaxSupply} EGGS</span>
                             <span>{ `Your Limit: ${petEggsMinted}/${petEggsLimit}` }</span>
                         </div>

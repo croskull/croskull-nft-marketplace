@@ -174,9 +174,9 @@ export const refreshSkullsStories = () => {
   }
 }
 
-export const sendNotification = ({ title, message, tx, type}) => {
+export const sendNotification = ({ title, message, tx, type, icon = false}) => {
     return async (dispatch) => {
-      dispatch(notificationRequest({title, message, tx, type}))
+      dispatch(notificationRequest({title, message, tx, type, icon}))
     }
 }
 

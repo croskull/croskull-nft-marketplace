@@ -56,9 +56,10 @@ class App extends Component {
                 render={({ location }) => (
                   <TransitionGroup className={`container-fluid ${location.pathname.replace('/', '')}`}>
                     <CSSTransition
-                      key={location.pathname}
                       classNames="fade"
-                      timeout={500}
+                      key={location.pathname.split("/")[1] || "/"}
+                      timeout={{ enter: 600, exit: 600 }}
+                      appear
                     >
                       <Switch
                         location={location}

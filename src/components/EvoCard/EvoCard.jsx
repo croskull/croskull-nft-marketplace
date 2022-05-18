@@ -12,6 +12,9 @@ import CHAR from "../images/char.svg";
 import store from "../../redux/store";
 import SRank from "../images/s-plus-rank.png";
 import GraveIcon from "../images/grave.png"
+import EvoVideo from "../images/evo-video.mp4";
+import ReactPlayer from 'react-player'
+
 
 const EvoCard = ({ type = 'evoskull'}) => {
     const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/";
@@ -51,7 +54,7 @@ const EvoCard = ({ type = 'evoskull'}) => {
                 staminaBar[i] = staminaSpan( i < evo.stamina ? true : false)
         }
         return (
-            <div class="stamina-bar">
+            <div className="stamina-bar">
                 {
                     evo.isClaimable && evo.type == 'evoskull' ? (
                         <span >
@@ -62,7 +65,7 @@ const EvoCard = ({ type = 'evoskull'}) => {
                         </span>
                     ) : ('')
                 }
-                <div class="stamina-bar-container">
+                <div className="stamina-bar-container">
                     { staminaBar }
                 </div>
                 <span>
@@ -74,7 +77,7 @@ const EvoCard = ({ type = 'evoskull'}) => {
                                     `No stamina` 
                     }
                 </span>
-                <span class="stamina-tooltip">Stamina</span>
+                <span className="stamina-tooltip">Stamina</span>
             </div>
         )
     }
@@ -83,31 +86,40 @@ const EvoCard = ({ type = 'evoskull'}) => {
 
     return (
         <div class={`evo-container ${ evo.type }`}>
-            <div class="evo-image-container">
-                <img class="evo-image" src={evo.image} draggable="false" />
-                <span class="card-rank">
+            <div className="evo-image-container">
+                <ReactPlayer 
+                    className="evo-image"
+                    url={EvoVideo}
+                    playing={true}
+                    muted={true}
+                    controls={false}
+                    loop={true}
+                    width={`100%`}
+                    height={`100%`}
+                />
+                <span className="card-rank">
                     <img src={SRank} draggable="false" />
                 </span>
             </div>
-            <div class="card-details">
-                <span class="card-info">
+            <div className="card-details">
+                <span className="card-info">
                     <span 
-                        class="card-exp-after" 
+                        className="card-exp-after" 
                         style={ {width: `${evoExpProgress}%`} }
                     >
                     </span>
-                    <span class="card-level">
+                    <span className="card-level">
                         {evo.level}
                         {   
                             accountAddress == evo.owner ?
                                 evo.isLevelable ? 
-                                    <span class="levelup-icon"></span> : 
-                                    <span class="upgrade-icon"></span> :
+                                    <span className="levelup-icon"></span> : 
+                                    <span className="upgrade-icon"></span> :
                                 ``
                         }
                     </span>
-                    <span class="stat-tooltip">Level</span>
-                    <span class="card-exp">
+                    <span className="stat-tooltip">Level</span>
+                    <span className="card-exp">
                         {
                             evo.experience < evo.nextLvlExp ? 
                                 `${evo.experience}/${evo.nextLvlExp}` : 
@@ -118,16 +130,16 @@ const EvoCard = ({ type = 'evoskull'}) => {
                     </span>
                 </span>
             </div>
-            <div class="card-stats-container">
-                <div class="card-stats">
-                    <div class="stat-list vertical">
+            <div className="card-stats-container">
+                <div className="card-stats">
+                    <div className="stat-list vertical">
                         <EvoStat 
                             icon={Power}
                             value={evo.power}
                             tooltip={`Power`}
                         />
                     </div>
-                    <div class="stat-list">
+                    <div className="stat-list">
                         <EvoStat 
                             icon={STR}
                             value={evo.str}
@@ -161,7 +173,7 @@ const EvoCard = ({ type = 'evoskull'}) => {
                     </div>
                 </div>
                 <RenderStaminaBar />
-                <div class="footer">
+                <div className="footer">
                     <span>EvoSkull #<b>{evo.id}</b>/333</span>
                     <span>Owner: <b>{evo.cnsDomain || evo.owner }</b></span>
                 </div>

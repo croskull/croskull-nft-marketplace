@@ -52,7 +52,7 @@ const Navbar = () => {
 
   const web3ModalConnection = () => {
     web3Modal.on("connect", async (_provider) => {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new ethers.providers.Web3Provider(_provider || window.ethereum);
       dispatch(connect( provider ))
     })
   }

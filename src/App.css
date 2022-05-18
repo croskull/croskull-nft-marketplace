@@ -53,6 +53,8 @@ b, strong {
   max-height: 90vh;
   height: 90vh;
   overflow-x: clip;
+  position: relative;
+  transition: background 0.5s linear;
 }
 .footer{
   grid-area: footer;
@@ -364,6 +366,7 @@ a:hover {
 button[disabled], .disabled{
   filter: grayscale(1);
   background-color: #ddd;
+  color: #555;
 }
 .retire-button{
   background: var(--red);
@@ -788,6 +791,30 @@ span.metric-usd-value {
   display: none;
 }
 
+.fade-appear,
+.fade-enter {
+  transition: 0.3s ease-in;
+  opacity: 0;
+  transform: translateY(10px);
+}
+.fade-appear-active,
+.fade-enter-active {
+  transition: 0.3s ease-in;
+  transform: translateY(0px);
+  opacity: 1;
+}
+
+.fade-exit {
+  transition: 0.3s ease-out;
+  transform: translateY(0px);
+  opacity: 1;
+}
+
+.fade-exit-active {
+  transition: 0.3s ease-in;
+  opacity: 0;
+  transform: translateY(10px);
+}
 /** ANIMATIONS */
 
 @keyframes gradient {

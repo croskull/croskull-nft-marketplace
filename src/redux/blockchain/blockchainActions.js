@@ -175,7 +175,7 @@ export const connect = ( ethProvider = false) => {
                 let cnsDomain = await cns.getName(accountAddress)
                 dispatch(sendNotification({
                     title: `Welcome Back`,
-                    message: `${accountAddress}`,
+                    message: `${cnsDomain || accountAddress}`,
                     type: "default"
                 }))
                 let accountBalance = await ( await ethProvider.getBalance(accountAddress)).toString();

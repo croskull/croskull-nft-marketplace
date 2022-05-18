@@ -117,14 +117,14 @@ const Raffle = () => {
           title: `Transaction Sent`,
           message: 'Waiting for confirmation...',
           tx,
-          type: "info"
+          type: "sending",
         }))
         await tx.wait(1)
         dispatch(sendNotification({
           title: `Success!`,
-          message: `You are now participating`,
+          message: `You are now participating.`,
           tx,
-          type: "success"
+          type: "success",
         }))
         dispatch(fetchBalances())
         dispatch(loadRaffleData())
@@ -192,7 +192,7 @@ const Raffle = () => {
                   tx,
                   type: "info"
                 }))
-                await tx.wait(2)
+                await tx.wait(1)
                 dispatch(sendNotification({
                   title: `Raffle Created!`,
                   message: `Raffle Created Succesful`,
