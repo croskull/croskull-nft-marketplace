@@ -43,7 +43,7 @@ const MintEvo = () => {
         <>
             <div className="sk-flex sk-row">
                 <div className="card-container wd-50">
-                        <EvoCard />
+                        <EvoCard type='evopet'/>
                 </div>
                 <div className="sk-box wd-50">
                     <h1>Mint EvoSkull</h1>

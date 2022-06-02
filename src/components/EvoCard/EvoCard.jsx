@@ -13,7 +13,7 @@ import store from "../../redux/store";
 import SRank from "../images/s-plus-rank.png";
 import GraveIcon from "../images/grave.png"
 
-const EvoCard = ({ type = 'evoskull'}) => {
+const EvoCard = (type) => {
     const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/";
     let { accountAddress } = store.getState().blockchain
     const evo = {

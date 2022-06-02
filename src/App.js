@@ -18,6 +18,7 @@ import PotionLab from "./components/Laboratory/PotionLab/PotionLab";
 import "./App.css";
 import MintEvo from "./components/MintEvo/MintEvo";
 import EvoTavern from "./components/EvoTavern/EvoTavern";
+import MintEgg from "./components/MintEgg/MintEgg";
 
 class App extends Component {
   constructor(props) {
@@ -128,6 +129,12 @@ class App extends Component {
                           path="/mint-evo"
                           render={() => (
                             <MintEvo />
+                          )}
+                        />
+                        <Route
+                          path="/mint-egg"
+                          render={() => (
+                            <MintEgg />
                           )}
                         />
                         <Route
