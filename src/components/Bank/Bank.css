@@ -94,6 +94,12 @@
   display: flex;
   flex-direction: column;
 }
+
+.bank .unstake-button {
+  background: var(--red);
+  color: #fff;
+  border-color: #a93e3a;
+}
 .bank .data-row {
   display: flex;
   flex-direction: row;
@@ -363,6 +369,17 @@
 /*FARM CSS*/
 .lp-head-details{
   justify-content: space-between;
+}
+.lp-head-details a {
+  padding: 3px 12px;
+  border-radius: 15px;
+  font-weight: 700;
+  background: var(--purple);
+  transition: background .4s ease;
+}
+.lp-head-details a:hover {
+  background: #fff;
+  color: var(--purple) !important;
 }
 .bank .farm-content {
   padding: 12px;

@@ -17,9 +17,15 @@ import Raffle from "../../abis/SkullsRaffle.json";
 import Bank from "../../abis/SkullsBank.json";
 import Farm from "../../abis/SkullsFarm.json"
 import Rude from "../../abis/Rude.json";
+import ERC721evo from "../../abis/ERC721evo.json"
+import PetSeasonOne from "../../abis/PetSeasonOne.json"
 import {
   sendNotification, getSkullsData, cleanData
 } from "../data/dataActions";
+import {
+    loadEvoSkulls
+} from "../evo/evoActions";
+import { loadPets } from "../pet/petActions";
 import { CNS } from '@cnsdomains/core'
 const chainId =  "0x19" || "0x152"; //testnet - 3
 const networkId =  25; //25 || 5777; //25 production, 338 testnet3, 5777 ganache local env
@@ -45,6 +51,8 @@ const Core_Contracts = {
     croPotionRed: RedPotion,
     croPotionPurple: PurplePotion,
     croSkullsPetEggs: PetEggs,
+    evoSkullsContract: ERC721evo,
+    petSeasonOne: PetSeasonOne,
     //ERC20
     croSkullsGrave: Grave,
     croSkullsSouls: Souls,
@@ -117,16 +125,6 @@ const requestDisconnect = () => {
     }
 }
 
-export const wishboneError = () => {
-   
-    return async (dispatch) => {
-         dispatch(sendNotification({
-        title: `Wishbones Error`,
-        message: `wishbones must be a multiple of 10`,
-        type: "danger"
-    }))}
-}
-
 export const disconnect = () => {
     return async (dispatch) => {
         dispatch(requestDisconnect())
@@ -185,10 +183,13 @@ export const connect = ( ethProvider = false) => {
                     accountAddress,
                     cnsDomain,
                     accountBalance,
-                    ethProvider
+                    ethProvider,
+                    cns
                 }
                 dispatch(connectSuccess(payload))
                 dispatch(getSkullsData())
+                dispatch(loadEvoSkulls())
+                dispatch(loadPets())
             }
             //await this.loadBlockchainData()
         } else {

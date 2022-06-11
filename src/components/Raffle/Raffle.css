@@ -64,8 +64,8 @@
 
 .participate-button {
   width: 80%;
-  background-color: #B20000 !important;
   color: white !important;
+  background-color: #B20000 !important;
   border-bottom: 2px solid var(--red-border) !important;
 }
 
@@ -116,12 +116,15 @@
   height: 100%;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   flex-wrap: nowrap;
   align-content: center;
   z-index: 9999;
   background: #00000065 !important;
   overflow-y: hidden;
+}
+.raffle .modal.active {
+  display: flex;
 }
 .raffle-head {
   justify-content: space-between;
@@ -136,9 +139,7 @@
 .raffle .modal-w-content {
   position: relative;
   max-height: 90vh;
-  padding: 20px;
-  margin: auto;
-  width: 40%;
+  width: auto;
   -webkit-animation-name: animatetop;
   -webkit-animation-duration: 0.4s;
   animation-name: animatetop;

@@ -142,6 +142,7 @@ const CroskullAdventure = () => {
     burnedGraves
   } = data
 
+
   let {
     graveInUsd
   } = dexscreener
@@ -172,7 +173,7 @@ const CroskullAdventure = () => {
                       <button className="skull-button retire-button" 
                         onClick={() => dispatch(toTavern( croSkullsStaked ))}
                       >
-                        Retire All ({ croSkullsStaked.length })
+                        Retire All ({ croSkullsStaked.length > 50 ? `49` : croSkullsStaked.length })
                       </button> 
                       ) : ('')
                     }

@@ -5,6 +5,8 @@
     background-size: cover;
     width: 100%;
     justify-content: center;
+    flex-direction: row;
+    align-items: flex-start;
 }
 /** TABS */
 .in-tavern, .in-adventure {
@@ -109,10 +111,10 @@
     display: flex;
     flex-direction: row;
     width: 100%;
+    justify-content: flex-start;
 }
 .skull-item{
     position: relative;
-    max-width: 25%;
     padding: 6px;
 }
 .skull-image{
@@ -141,10 +143,13 @@
     padding: 3px 6px !important;
 }
 .skull-grid{
-    column-gap: 0px !important;
-    flex-wrap: wrap;
+    column-gap: 6px !important;
+    row-gap: 6px;
     display: flex;
-    max-height: 70vh;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    max-height: 80vh;
     overflow-y: overlay;
     overflow-x: hidden;
 }
@@ -185,14 +190,9 @@
     border-image-slice: 3;
 }
 .stories{
-    max-width: 100%;
-    position: absolute;
-    left: -12px;
-    top: 80px;
+    width: 100%;
     z-index: 1;
     border: 2px solid var(--white);
-    transform: scale(0);
-    opacity: 0;
     transition: opacity .54s cubic-bezier(0,.52,.47,.98) 0s, transform 0s 0.54s;
 }
 .stories.show, .inventory.show{
@@ -217,15 +217,15 @@
     column-gap: 12px;
 }
 .inventory {
-    max-width: 33%;
     width: 100%;
     z-index: 1;
     height: fit-content;
-    border: 2px solid var(--white);
     transition: opacity .54s cubic-bezier(0,.52,.47,.98) 0s, transform 0s 0.54s;
 }
+.inventory img {
+    filter: invert(1) brightness(100%);
+}
 .tavern .skulls {
-    max-width: 66%;
     width: 100%;
 }
 .inventory-menu > img{
@@ -251,21 +251,82 @@
     margin: 12px 0px;
 }
 
+/** NEW TAVERN */
+.sidebar-list {
+    padding: 6px !important;
+    height: fit-content;
+}
 
-@media (min-width:320px) and (max-width:640px) {
+.divider {
+    height: 3px;
+    width: 100%;
+    background: #fff;
+    opacity: 0.5;
+    border-radius: 10px;
+}
+.sk-box.hide {
+    display: none;
+}
+.sk-box.active {
+    padding: 6px !important;
+}
+.sk-box.active > .sk-box-content {
+    padding: 6px !important;
+}
+.skull-grid .evo-container, .skull-grid .skull-item {
+    max-width: 280px;
+}
+
+.pet-rewards .metric-container {
+    width: auto;
+}
+
+/** Phone */
+
+@media (min-width:240px) and (max-width:640px) {
+
+    .pet-rewards .metric-container {
+        width: 100%;
+    }
+    .tavern .pet-rewards {
+        flex-direction: row !important;
+    }
     .tavern .sk-container{
-        flex-direction: column-reverse;
         row-gap: 12px;
         padding: 12px;
+        flex-direction: column;
     }
     .tavern .skulls, .tavern .inventory{
-        max-width: 100%;
-        width: 100%;
         margin: 0px;
         z-index: 0;
-        max-height: 70%;
     }
     .tavern .mh-100 {
         max-height: 100%;
+    }
+    .tavern .sidebar-list {
+        flex-direction: row;
+        column-gap: 6px;
+        justify-content: space-between;
+    }
+    .inventory {
+        width: auto;
+    }
+    .divider {
+        width: 3px;
+        border-radius: 6px;
+        height: auto;
+    }
+}
+
+/** Tablet & small screen */
+@media (min-width: 641px) and (max-width: 840) {
+}
+@media (min-width: 641px) and (max-width: 1240px) {
+    .tavern .sk-container{
+        row-gap: 12px;
+        padding: 12px;
+    }
+    .container-fluid.tavern {
+        padding: 0px;
     }
 }

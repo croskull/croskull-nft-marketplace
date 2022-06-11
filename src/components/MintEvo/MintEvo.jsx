@@ -8,18 +8,23 @@ import egg from "./egg.png";
 import purplePotionImage from "../images/purplePotionImage.png";
 import Skull from "../images/skull.png";
 import EvoSkull from "../images/evoskull-icon.png";
-import Grave from "../images/grave.png";
 import EvoCard from "../EvoCard/EvoCard";
 import MetricContainer from "../MetricContainer/MetricContainer";
-
+import { loadEvoSkulls, updateState } from "../../redux/evo/evoActions"
+import { sendNotification } from "../../redux/data/dataActions"
+import { BigNumber, ethers } from "ethers";
 
 const MintEvo = () => {
     const dispatch = useDispatch();
-    let { blockchain, data } = store.getState();
+    let { blockchain, data, evo } = store.getState();
+    let { accountAddress, croPotionPurple, evoSkullsContract, croSkullsContract } = blockchain
+    let { croSkulls, purpleId } = data
+    let { totalSupply, isPurpleApproved, isSkullApproved } = evo
     const [ evolver, setEvolver ] = useState({
         skull: 0,
         potion: 0
     })
+    const [evoView, setEvoView] = useState(false)
 
     const [ view, setView ] = useState(false) // false or 0 hide, 1 for Skull and 2 for Potion
 
@@ -38,13 +43,161 @@ const MintEvo = () => {
         })
         setView(0)
     }
+
     const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/"
-    
+    const evoIpfsBase = "https://croskull.mypinata.cloud/ipfs/QmTmqi1k5KWv988iidG4wyu1WBuQBiqYUARB2xsRU2Q4pT/"
+    const approvePurple = async () => {
+        let approveTx = croPotionPurple.setApprovalForAll(
+            evoSkullsContract.address,
+            true
+        )
+        await approveTx.then(
+            async (tx) => {
+              console.log( tx )
+              dispatch(sendNotification({
+                title: `Transaction Sent`,
+                message: 'Waiting for confirmation...',
+                tx,
+                type: "info"
+              }))
+              await tx.wait(1)
+              dispatch(sendNotification({
+                title: `Potion Approved!`,
+                message: `Potion can now be used.`,
+                tx,
+                type: "success"
+              }))
+
+              dispatch( updateState({
+                  "key": "isPurpleApproved",
+                  "value": true
+              } ))
+            }
+        )
+    }
+
+    const approveSkull = async () => {
+        let approveTx = croSkullsContract.setApprovalForAll(
+            evoSkullsContract.address,
+            true
+        )
+        await approveTx.then(
+            async (tx) => {
+              console.log( tx )
+              dispatch(sendNotification({
+                title: `Transaction Sent`,
+                message: 'Waiting for confirmation...',
+                tx,
+                type: "info"
+              }))
+              await tx.wait(1)
+              dispatch(sendNotification({
+                title: `Skull Approved!`,
+                message: `Skull can now be used.`,
+                tx,
+                type: "success"
+              }))
+
+              dispatch( updateState({
+                  "key": "isSkullApproved",
+                  "value": true
+              } ))
+            }
+        )
+    }
+
+    const mintEvo = async () => {
+        let currentSupply = (await evoSkullsContract.totalSupply()).toString()
+        currentSupply = parseInt(currentSupply)
+        if( currentSupply < 333 ) {
+            let currentToken = currentSupply+1
+            let ipfsMetadata = ethers.utils.keccak256(
+                ethers.utils.toUtf8Bytes( `${currentToken}`  )
+            ).replace('0x','')
+            let mintEvo = evoSkullsContract.evocation(
+                evolver.skull,
+                evolver.potion,
+                `${evoIpfsBase}${ipfsMetadata}.json`
+            )
+            await mintEvo.then(
+                async (tx) => {
+                    console.log( tx )
+                    dispatch(sendNotification({
+                        title: `Transaction Sent`,
+                        message: 'Waiting for confirmation...',
+                        tx,
+                        type: "info"
+                    }))
+                    await tx.wait(1)
+                    dispatch(sendNotification({
+                        title: `EvoSkull ${currentToken} Summoned`,
+                        message: `EvoSkull can now be used.`,
+                        tx,
+                        type: "success"
+                    }))
+                    dispatch(
+                        loadEvoSkulls()
+                    )
+                    await loadEvoToken(currentToken)
+                }
+            )
+        }
+    }
+
+    const checkSkulls = async () => {
+        let correct = 0
+        let wrong = 0
+        for(let i = 80; i < totalSupply; i++ ){
+            let uri = await evoSkullsContract.tokenURI(i)
+            let hash = ethers.utils.keccak256(
+                ethers.utils.toUtf8Bytes( `${i}`  )
+                ).replace('0x','')
+            let correctEvoIPFS = `${evoIpfsBase}${hash}.json`
+            if( uri == correctEvoIPFS ){
+                correct++
+                console.log('Giusto - ', i, correctEvoIPFS)
+            }else{
+                wrong++
+                console.log('Updating > - ', i, correctEvoIPFS)
+                await evoSkullsContract.setTokenURI(i, correctEvoIPFS)
+            }
+        }
+        console.log(correct, wrong)
+    }
+
+    const loadEvoToken = async (tokenId) => {
+        let tempToken = await evoSkullsContract.getToken(tokenId)
+        let tempCurToken = tempToken.currentToken
+        let keys = []
+        Object.keys(tempCurToken).forEach((e, key) => {
+            if( parseInt(e) <= 17 ) return
+            keys.push(e)
+        })
+        let cleanEvo = []
+        for(let i = 0; i < keys.length; i++){
+            let k = keys[i]
+            cleanEvo[k] =  tempCurToken[k] instanceof BigNumber ? tempCurToken[k].toString() : tempCurToken[k]
+        }
+        let cleanToken = {
+            owner: accountAddress,
+            id: tokenId.toString(),
+            currentToken: cleanEvo,
+            isClaimable: tempToken.isClaimable,
+            isUsable: tempToken.isUsable,
+            nextLvlExp: tempToken.nextLvlExp.toString(),
+            isLevelable: tempToken.isLevelable
+        }
+        setEvoView( cleanToken )
+    }
+
+
     return (
         <>
             <div className="sk-flex sk-row">
                 <div className="card-container wd-50">
-                        <EvoCard />
+                        <EvoCard 
+                            evo={evoView ? evoView : false}
+                        />
                 </div>
                 <div className="sk-box wd-50">
                     <h1>Mint EvoSkull</h1>
@@ -54,38 +207,45 @@ const MintEvo = () => {
                         <div className={`inventory-list sk-box ${ view == 1 ? 'show' : ''}`}>
                             <div className="sk-box-content sk-row">
                             {
-                                walletSkull.map( s =>{
-                                    return(
-                                        <div className="circular-image">
-                                            <img src={ipfsUri480+s+".webp"}  onClick={() => chooseSkull(s)}/>
-                                            <p>#{s}</p>
-                                        </div>
-                                    )
+                                croSkulls.length ?
+                                    croSkulls.map( (s, i) =>{
+                                        return(
+                                            <div className="circular-image center" key={i}>
+                                                <img src={ipfsUri480+s+".webp"}  onClick={() => chooseSkull(s)}/>
+                                                <span>#{s}</span>
+                                            </div>
+                                        )
 
-                                })
+                                    }) : (
+                                        <span>You don't have any skull... </span>
+                                    )
                             }
                             </div>
                         </div>
                         <div className={`inventory-list sk-box ${ view == 2 ? 'show' : ''}`}>
                             <div className="sk-box-content sk-row">
                                 {
-                                    walletSkull.map( s =>{
-                                        return(
-                                            <div className="circular-image">
-                                                <img src={purplePotionImage}  onClick={() => choosePotion(s)}/>
-                                                <p>#{s}</p>
-                                            </div>
+                                    purpleId.length ?
+                                        purpleId.map( s =>{
+                                            return(
+                                                <div className="circular-image center">
+                                                    <img src={purplePotionImage}  onClick={() => choosePotion(s)}/>
+                                                    <span>#{s}</span>
+                                                </div>
+                                            )
+                                        }) : (
+                                            <span>You don't have any purple potion... </span>
                                         )
-                                    })
                                 }
                             </div>
                         </div>
-                        <div className="sk-row sk-flex">
+                        <div className="sk-row sk-flex evo-selector">
                             <div 
-                                className="sk-flex sk-column"
+                                className="sk-flex sk-column center"
                             >
                                 <img 
-                                    src={evolver.skull ? ipfsUri480+evolver.skull+".webp" : egg}  
+                                    className={`${evolver.skull ? '' : 'disabled'}`}
+                                    src={evolver.skull ? ipfsUri480+evolver.skull+".webp" : `${ipfsUri480}1.webp`}  
                                     onClick={ () => 
                                         view != 1 ? setView(1) : setView(0) 
                                     } 
@@ -96,10 +256,11 @@ const MintEvo = () => {
                             </div>
                             <FontAwesomeIcon icon={faPlus} size="2x"/>
                             <div 
-                                className="sk-flex sk-column"
+                                className="sk-flex sk-column center"
                             >
                                 <img 
-                                    src={evolver.potion ? `${purplePotionImage}` : egg} 
+                                    className={`${evolver.potion ? '' : 'disabled'}`}
+                                    src={`${purplePotionImage}`} 
                                     onClick={ () =>  
                                         view != 2 ? setView(2) : setView(0)
                                     }
@@ -125,86 +286,40 @@ const MintEvo = () => {
                         />
                         <MetricContainer
                             label="Total Minted"
-                            value={ `5/333` }
+                            value={ `${totalSupply}/333` }
                             icon={EvoSkull}
                             tooltip="Total Evo Circulating Supply / Max Supply."
                         />
-                        <MetricContainer
-                            label="Mint Cost"
-                            value={ `200` }
-                            icon={Grave}
-                            tooltip="Transaction cost in Grave."
-                        />
-                        <button 
-                            className="skull-button" 
-                            disabled={ ! evolver.skull || ! evolver.potion ? true : false}
-                        >
-                            MINT
-                        </button>
+                        {
+                            ! isSkullApproved ? (
+                                <button 
+                                    className="skull-button" 
+                                    onClick={ () => approveSkull() }
+                                >
+                                    Approve Skull
+                                </button>
+                            ) : ! isPurpleApproved ? (
+                                <button 
+                                    className="skull-button" 
+                                    onClick={ () => approvePurple() }
+                                >
+                                    Approve Purple
+                                </button>
+                            ) : (
+                                <button 
+                                    className="skull-button" 
+                                    onClick={ () => mintEvo() }
+                                    disabled={ ! evolver.skull || ! evolver.potion ? true : false}
+                                >
+                                    { ! evolver.skull ? `Select Skull` : ! evolver.potion ? `Select Potion` : `Mint EvoSkull`}
+                                </button>
+                            )
+                        }
+                        
                 </div>
             </div>
         </>
     )
 };
 
-
-
 export default MintEvo;
-
-const walletSkull =[1,2,3,4,5,6,7,8,9];
-
-const skull1 ={
-    id: 123,
-    rank:'d',
-    lvl : 0,
-    bg: 'white',
-    str : '5',
-    dex : '5',
-    const : '5',
-    int : '5',
-    wisd : '5',
-    char: '5',
-    stamina: '10',
-    power: '30',
-    exp : '15',
-    nextLvl : '25',
-    malus : ['freeze']
-}
-
-const skull2 ={
-    id: 1234,
-    rank:'b',
-    lvl : 7,
-    bg: 'green',
-    str : '12',
-    dex : '12',
-    const : '12',
-    int : '12',
-    wisd : '12',
-    char: '12',
-    stamina: '10',
-    power: '72',
-    exp : '100',
-    nextLvl : '250',
-    malus : ['freeze','sad']
-}
-
-const skull3 ={
-    id: 345,
-    rank:'s',
-    lvl : 10,
-    bg: 'purple',
-    str : '15',
-    dex : '15',
-    const : '15',
-    int : '15',
-    wisd : '15',
-    char: '15',
-    stamina: '10',
-    power: '90',
-    exp : '1777',
-    nextLvl : '2500',
-    malus : ['hungry','freeze']
-}
-
-const testo =['testo1','testo2','testo3','testo4','testo5','testo6','testo7','testo8'];

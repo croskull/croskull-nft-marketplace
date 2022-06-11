@@ -1,4 +1,3 @@
-
 .evo-container {
   cursor: pointer;
   -webkit-box-shadow: 0px 5px 20px -3px rgba(140, 36, 255, 0.25);
@@ -10,30 +9,30 @@
   color: #fff;
   border: 1px solid #ffffff30;
 }
+
 .card-image-container {
   position: relative;
 }
+
 .card-image-container:before {
   content: "";
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.5) 100%
-  );
+  background: linear-gradient(180deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.5) 100%);
   position: absolute;
   width: 100%;
   height: 33%;
   bottom: 0;
   left: 0;
 }
+
 .card-image-container:hover:before {
   content: "";
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(40, 40, 40, 0.5) 100%
-  );
+  background: linear-gradient(180deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(40, 40, 40, 0.5) 100%);
 }
+
 .evo-image {
   width: 100%;
   border-top-left-radius: var(--radius);
@@ -44,6 +43,7 @@
 .card-details {
   position: relative;
 }
+
 .card-info {
   position: relative;
   display: flex;
@@ -57,6 +57,7 @@
   margin-top: -20px;
   height: 35px;
 }
+
 .card-info:before {
   content: "";
   position: absolute;
@@ -65,12 +66,23 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: url(https://analytics.croskull.com/brush-2.svg);
+  background: var(--purple);
+  background: url(../images/brush-2.svg);
   background-size: cover;
   background-repeat: no-repeat;
   background-position-x: -20px;
   filter: grayscale(0.9);
 }
+
+.evo-claim-button[disabled] {
+  filter: grayscale(1);
+}
+
+.skull-button.danger {
+  background-color: #B20000 !important;
+  border-bottom: 2px solid var(--red-border) !important;
+}
+
 .card-exp-after {
   content: "";
   position: absolute;
@@ -83,12 +95,14 @@
   top: 0;
   left: 0;
   height: 35px;
-  background: url(https://analytics.croskull.com/brush-2.svg);
+  background: var(--purple);
+  background: url(../images/brush-2.svg);
   background-size: cover;
   background-repeat: no-repeat;
   background-position-x: -20px;
   z-index: 0;
 }
+
 .card-level {
   position: relative;
   width: 44px;
@@ -103,18 +117,19 @@
   line-height: 1em;
   z-index: 1;
 }
+
 .card-level:after {
   content: "";
   position: absolute;
   transform: rotate(128deg);
   height: 44px;
   width: 44px;
-  background: url(https://analytics.croskull.com/level-brush.svg);
+  background: url(../images/level-brush.svg);
   background-size: contain;
   background-repeat: no-repeat;
-  filter: brightness(0%) saturate(100%) invert(43%) sepia(67%) saturate(876%)
-    hue-rotate(222deg) brightness(102%) contrast(104%);
+  filter: brightness(0%) saturate(100%) invert(43%) sepia(67%) saturate(876%) hue-rotate(222deg) brightness(102%) contrast(104%);
 }
+
 .card-level:before {
   content: "";
   position: absolute;
@@ -124,6 +139,7 @@
   z-index: -1;
   border-radius: 100%;
 }
+
 .card-exp {
   position: absolute;
   display: flex;
@@ -134,34 +150,37 @@
   right: 0;
   z-index: 1;
   padding-right: 7px;
-  font-size: 12px;
+  font-size: 0.8em;
 }
 
 .card-rank {
-  position: absolute;
-  top: 6;
-  right: 0;
   color: #fff;
   margin: 6px;
   border-radius: 15px;
 }
 
 .card-rank img {
-  width: 28px;
+  width: 1.8em;
 }
+
 .card-stats-container {
   padding: 9px;
   padding-top: 15px;
 }
+
 .card-stats {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
+
 .card-stats .vertical {
   position: relative;
   flex-direction: column;
   align-items: center;
 }
+
 .card-stats .vertical .stat {
   width: 100%;
   display: flex;
@@ -169,25 +188,26 @@
   flex-direction: column;
   background: none !important;
 }
+
 .card-stats .vertical .stat-icon {
-  width: 28px;
+  width: 1.8em;
 }
+
 .card-stats .vertical .stat-value {
-  font-size: 22px;
+  font-size: 1.8em;
 }
+
 .stat-list {
   border-radius: 6px;
   padding: 0px;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: auto auto auto;
   row-gap: 6px;
   column-gap: 6px;
 }
+
 .stat {
   position: relative;
-  max-width: 33%;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -198,13 +218,15 @@
   border-radius: 6px;
   background: var(--purple-bg-light);
 }
+
 .stat-icon {
-  width: 22px;
+  width: 1.3em;
 }
+
 .stat-tooltip,
 .stamina-tooltip {
   transform: scale(0);
-  font-size: 12px;
+  font-size: 0.8em;
   position: absolute;
   top: -12px;
   padding: 3px 9px;
@@ -212,56 +234,157 @@
   border-radius: 6px;
   transition: transform 0.2s ease;
 }
+
 .stat:hover .stat-tooltip,
-.card-level:hover + .stat-tooltip,
+.card-level:hover+.stat-tooltip,
 .stamina-bar:hover .stamina-tooltip {
   transform: scale(1);
   z-index: 999;
 }
-.stamina-bar {
+
+.stamina-bar, .evo-mid-bar {
   position: relative;
   display: flex;
   flex-direction: row;
   column-gap: 9px;
   align-items: center;
-  justify-content: center;
-  padding: 6px;
+}
+.evo-mid-bar {
+  justify-content: space-between;
   margin-top: 6px;
 }
-.stamina-bar span {
-  font-size: 12px;
+.stamina-bar {
+  padding: 6px;
+  justify-content: center;
+  width: 100%;
 }
+.evo-claim .stat-tooltip {
+  white-space:nowrap;
+  top: -30px;
+  left: 0;
+}
+.stamina-bar span {
+  font-size: 0.8em;
+}
+
 .stamina-bar-container {
   width: 100%;
   display: flex;
   flex-direction: row;
   column-gap: 3px;
 }
+
 .stamina-bar-container span {
   width: 100%;
   height: 4px;
   box-shadow: inset 0px 0px 10px 1px rgb(184 117 255 / 40%),
     0px 0px 20px rgb(179 117 255 / 10%);
 }
+
 .stamina-bar-container span.active {
   background: rgba(255, 255, 255, 0.9);
   box-shadow: inset 0px 0px 10px 2px rgb(160 117 255 / 50%),
     0px 0px 20px rgb(157 117 214 / 50%);
 }
 
-.levelup-icon, .upgrade-icon {
+.sk-box.experience-dialog {
+  position: absolute;
+  padding: 6px;
+  display: flex;
+  z-index: 999;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  width: 80%;
+  row-gap: 6px !important;
+}
+
+.exp-heading {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  column-gap: 6px;
+}
+.exp-title, .exp-slider-wrapper {
+  font-size: 0.8em;
+  font-weight: 700;
+}
+.souls-icon {
+  height: 18px;
+}
+
+.dialog-action.skull-button {
+  font-size: 0.8em;
+}
+.skull-button.success{
+  background-color: var(--green);
+  border-color: #2e7a49;
+}
+
+.experience-dialog .sk-box-content {
+  width: 100%;
+  flex-direction: column;
+  padding: 6px;
+  row-gap: 6px;
+}
+.evo-container .close-icon {
+  font-size: 1.8em;
+  line-height: 1;
+}
+
+.exp-slider-wrapper {
+  display: flex;
+  flex-direction: row;
+  column-gap: 6px;
+  align-content: center;
+  align-items: center;
+}
+
+.dialog-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.exp-slider {
+  width: 100%;
+  height: 4px;
+  background: #ffffff57;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  column-gap: 6px;
+  align-items: center;
+}
+
+.exp-slider-inner {
+  width: 33%;
+  height: 100%;
+  background: #fff;
+  border-radius: 6px;
+}
+
+.levelup-icon,
+.upgrade-icon {
+  z-index: 99999;
   position: absolute;
   left: 0;
   bottom: 0;
   width: 16px;
   height: 16px;
 }
+
 .levelup-icon {
-  background: url(https://analytics.croskull.com/levelup.svg);
+  background: url(../images/levelup.svg);
 }
+
 .upgrade-icon {
-  background: url(https://analytics.croskull.com/add-exp.svg);
+  background: url(../images/add-exp.svg);
 }
+
 /*flip*/
 .card-container {
   position: relative;
@@ -269,21 +392,25 @@
   width: 100%;
   margin: auto;
 }
+
 .card2 {
   transform-style: preserve-3d;
   transition: all 1s ease-in-out;
   position: relative;
 }
+
 .card2:hover {
   transform: rotateY(180deg);
 }
+
 .card2 .side {
   -webkit-perspective: 0;
   -webkit-backface-visibility: hidden;
 
-  visibility:visible;
+  visibility: visible;
   backface-visibility: hidden;
 }
+
 .card2 #back {
   color: #0087cc;
   line-height: 150px;
@@ -293,12 +420,14 @@
   top: 0;
   width: 150px;
 }
-.card2 #back .evo-card{
+
+.card2 #back .evo-card {
   width: 100%;
   height: 100%;
-  
+
 }
-.card2 #back .evo-card div{
+
+.card2 #back .evo-card div {
   width: 100%;
   height: 100%;
   background-image: url('./Rank/greenBg.png');
@@ -318,9 +447,11 @@
   opacity: 0.7;
   text-align: center;
 }
-.stamina-bar-wrapper{
+
+.stamina-bar-wrapper {
   position: relative;
 }
+
 .evo-claim-button {
   width: 18px;
 }
@@ -330,25 +461,29 @@
 .evo-container.pet {
   background: var(--red-bg);
 }
+
 .evo-container.pet .stat {
   background: var(--red-bg-light);
 }
+
 .evo-container.pet .stamina-bar-container span.active {
   box-shadow: inset 0px 0px 10px 2px rgb(255 117 117 / 50%),
     0px 0px 20px rgb(214 117 117 / 50%);
 }
+
 .evo-container.pet .stamina-bar-container span {
   box-shadow: inset 0px 0px 10px 2px rgb(255 117 117 / 40%),
     0px 0px 20px rgb(214 117 117 / 10%);
 }
+
 .pet .card-exp-after {
-  filter: brightness(0%) saturate(100%) invert(77%) sepia(75%) saturate(5917%)
-    hue-rotate(325deg) brightness(98%) contrast(121%);
+  filter: brightness(0%) saturate(100%) invert(77%) sepia(75%) saturate(5917%) hue-rotate(325deg) brightness(98%) contrast(121%);
 }
+
 .pet .card-level:after {
-  filter: brightness(0%) saturate(100%) invert(77%) sepia(75%) saturate(5917%)
-    hue-rotate(325deg) brightness(98%) contrast(121%);
+  filter: brightness(0%) saturate(100%) invert(77%) sepia(75%) saturate(5917%) hue-rotate(325deg) brightness(98%) contrast(121%);
 }
+
 .upgrade-icon .tooltip {
   position: absolute;
   transform: scale(0);
@@ -361,12 +496,15 @@
   width: 100%;
   border-radius: 3px;
 }
+
 .upgrade-icon:hover .tooltip {
   transform: scale(1);
 }
+
 .pet .card-level:before {
   background: var(--red-bg);
 }
+
 :root {
   --radius: 10px;
   --purple-bg: #150c1f;

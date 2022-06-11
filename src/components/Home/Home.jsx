@@ -21,9 +21,8 @@ const ipfsUriFull = "https://croskull.mypinata.cloud/ipfs/"
 const Home = () => {
     let dispatch = useDispatch()
     const [detailsView, setDetailsView] = useState('skulls')
-    let { blockchain, marketplace, data } = store.getState()
+    let { blockchain, marketplace, data, farm } = store.getState()
     let { accountAddress, cnsDomain } = blockchain
-
     useEffect( () => {
         if( marketplace.redSolds ) return 
         dispatch(loadEbisusData())

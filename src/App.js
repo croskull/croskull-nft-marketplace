@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { HashRouter, Route, Switch } from "react-router-dom";
 import Marketplace from "./components/Marketplace/Marketplace";
 import CroskullAdventure from "./components/Adventure/Adventure";
 import Merchant from "./components/Merchant/Merchant";
@@ -7,7 +6,6 @@ import Analytics from "./components/Analytics/Analytics";
 import Navbar from "./components/Navbar/Navbar";
 import Notifier from "./components/Notifier/Notifier";
 import Tavern from "./components/Tavern/Tavern";
-import { TransitionGroup, CSSTransition } from "react-transition-group";
 import store from "./redux/store";
 import Raffle from "./components/Raffle/Raffle";
 import Home from "./components/Home/Home";
@@ -15,10 +13,13 @@ import Bank from "./components/Bank/Bank";
 import Laboratory from "./components/Laboratory/Laboratory";
 import ClickSound from "./sounds/click-sound.mp3"
 import PotionLab from "./components/Laboratory/PotionLab/PotionLab";
-import "./App.css";
+import HallOfFame from "./components/HallOfFame/HallOfFame"
 import MintEvo from "./components/MintEvo/MintEvo";
-import EvoTavern from "./components/EvoTavern/EvoTavern";
+import MintEgg from "./components/MintEgg/MintEgg";
+import "./App.css";
 
+import { HashRouter, Route, Switch } from "react-router-dom";
+import { TransitionGroup, CSSTransition } from "react-transition-group";
 class App extends Component {
   constructor(props) {
     super(props);
@@ -41,7 +42,6 @@ class App extends Component {
       });
     });
   }
-
 
   render() {
     return (
@@ -113,12 +113,18 @@ class App extends Component {
                             <Bank />
                           )}
                         />
-                        {/**<Route
+                        <Route
                           path="/laboratory"
                           render={() => (
                             <Laboratory />
                           )}
-                        />*/}
+                        />
+                        <Route
+                          path="/mint-egg"
+                          render={() => (
+                            <MintEgg />
+                          )}
+                        />
                         <Route
                           path="/laboratory-potion"
                           render={() => (
@@ -131,10 +137,10 @@ class App extends Component {
                             <MintEvo />
                           )}
                         />
-                        <Route
-                          path="/evo-tavern"
+                        <Route 
+                          path="/hall-of-fame"
                           render={() => (
-                            <EvoTavern/>
+                            <HallOfFame />
                           )}
                         />
                       </Switch>

@@ -16,11 +16,12 @@ import './Raffle.css';
 const Raffle = () => {
   let dispatch = useDispatch()
   let { blockchain, raffle, data } = store.getState()
-  let { formatEther, accountAddress, croRaffle, croSkullsGrave } = blockchain
+  let { formatEther, accountAddress, croRaffle, croSkullsGrave, cns } = blockchain
   let { userGraveBalance } = data
   let { isManager, raffles, allowance } = raffle
-  const [hasData, toggleData] = useState(false)
+  const [modalView, setModalView] = useState(false)
   const [onlyActive, toggleActive] = useState(false)
+
 
   useEffect( () => {
     if(blockchain.croRaffle )
@@ -30,8 +31,10 @@ const Raffle = () => {
   const [modalState, setModalState] = useState({
     title: '',
     winners: [],
+    cns: [],
     prize: 1,
-    coin: ''
+    coin: '',
+    loading: false
   });
 
   const [raffleCreator, setRaffleCreator] = useState( {
@@ -63,17 +66,21 @@ const Raffle = () => {
   }
 
 
-  const openModal = (raf) => {
+  const openModal = async (raf) => {
+    setModalState({
+      ...modalState,
+      loading: true
+    })
     setModalState({
       title: raf.title,
-      winners: raf.winners
+      winners: raf.winners,
+      cns: raf.cnsNames,
+      loading: false
     })
-    let modal = document.getElementById("modal-winners");
-    modal.style.display = "block";
+    setModalView(true)
   }
   const closeModal = () => {
-    let modal = document.getElementById("modal-winners");
-    modal.style.display = "none";
+    setModalView(false)
   }
 
   const DAY_IN_SEC = 60 * 60 * 24;
@@ -236,11 +243,11 @@ const Raffle = () => {
       }
     )
   }
-
+  console.log(modalState.cns.length, modalState.winners.length)
 
   return (
     <>
-      <div className="modal" id="modal-winners">
+      <div className={`modal ${ modalView ? `active`: ``}`}>
         <div className="modal-w-content">
           <div className="sk-box">
             <div class="raffle-head sk-flex">
@@ -249,22 +256,18 @@ const Raffle = () => {
                 &times;
               </span>
             </div>
-            <div className="modal-header"> 
-              <h3>Prize</h3>
-              <span>
-                <h3>Address</h3>
-              </span>
-            </div>
-            <div className="winners-list">
+            <div className="winners-list sk-column">
             {
-              modalState.winners.map((winner,i) => {
-                return (
-                  <div className="modal-header">
-                    <h3>{i+1}</h3>
-                    <span className="address">{winner}</span>
-                  </div>
-                )
-              })
+              ! modalState.loading  &&  modalState.winners.length ?
+                modalState.winners.map( (winner,i) => {
+                  return (
+                    <div className="sk-box-content sk-row a-center">
+                      <h3>{i+1}</h3>
+                      <span className="address">{ modalState.cns[winner] || winner }</span>
+                    </div>
+                  )
+                }) :
+                ``
             }
             </div>
           </div>

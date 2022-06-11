@@ -25,7 +25,6 @@ const Notifier = () => {
         let message = data.message || data.errorMsg
         let type = data.type
         let icon;
-        console.log(data)
         if( notifier.message != message && notifier.title != data.title) {
             setNotifier(
                 {

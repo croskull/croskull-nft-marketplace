@@ -33,8 +33,31 @@ const Bank = () => {
 
   let { blockchain, bank, data, dexscreener } = store.getState()
   let { croSkullsBank, croSkullsGrave, croSkullsFarm, lpPair, formatEther } = blockchain
-  let { graveInUsd } = dexscreener
+  let { graveInUsd, croInUsd } = dexscreener
   let { graveBalance } = data
+  let {
+    allowance,
+    maxApy,
+    totalGraveVolume,
+    totalWishbonesVolume,
+    totalContractsVolume,
+    depositedGrave,
+    activeWishbones,
+    activeContracts,
+    wishboneCost,
+    bankFee,
+    userActiveContracts,
+    userContractsCount,
+    pendingRewards,
+    totalLiquidity,
+    stakedAmount,
+    endBlock,
+    paidOut,
+    rewardPerBlock,
+    lpPairAllowance,
+    lpPairBalance,
+    totalStakedCro
+  } = bank
 
   const [simulated, setSimulated] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -43,8 +66,8 @@ const Bank = () => {
     amountToUnstake: 0
   })
   const [currentContract, setContract] = useState({
-    amount: 0,
-    wishbones: 0,
+    amount: `300`,
+    wishbones: 150,
     duration: 0
   })
 
@@ -55,9 +78,14 @@ const Bank = () => {
       dispatch(loadDexData())
   }, [croSkullsBank])
 
+  useEffect(() => {
+    if( maxApy > 0) 
+      simulateApy()
+  }, [maxApy])
+
 
   const handleFieldChange = (event) => {
-    let value = event.target ? event.target.value : 0
+    let value = event.target && event.target.value ? event.target.value : 0
     let name = event.target ? event.target.id : 0
     if( name == 'wishbones' && value > 300 ){
       console.log( 'superiore 300' )
@@ -76,6 +104,7 @@ const Bank = () => {
   const handleStakeLPChange = (event) => {
     let value = event.target ? event.target.value : 0
     let name = event.target ? event.target.id : 0
+    console.log(value, name)
     setfarmView({
       ...farmView,
       [name]: value
@@ -233,11 +262,11 @@ const Bank = () => {
     )
   }
   
-  const claimLPRewards = async () => {
-    if( ! farmView.amountToUnstake ) return 
+  const claimLPRewards = async (onlyClaim = false) => {
+    if( ! farmView.amountToUnstake && ! onlyClaim ) return 
     let claimTx = croSkullsFarm.withdraw(
       0,
-      ethers.utils.parseEther(farmView.amountToUnstake)
+      onlyClaim ? 0 : ethers.utils.parseEther(farmView.amountToUnstake)
     )
     await claimTx.then(
       async (tx) => {
@@ -251,7 +280,7 @@ const Bank = () => {
         await tx.wait(1)
         dispatch(sendNotification({
           title: `Claimed!`,
-          message: `Claimed succesful GRVE/CRO plus Rewards.`,
+          message: `Claimed succesful ${ ! onlyClaim ? `GRVE/CRO plus` : ''} Rewards.`,
           tx,
           type: "success"
         }))
@@ -374,35 +403,6 @@ const Bank = () => {
       }
     )
   }
-
-  let {
-    allowance,
-    maxApy,
-    totalGraveVolume,
-    totalWishbonesVolume,
-    totalContractsVolume,
-    depositedGrave,
-    activeWishbones,
-    activeContracts,
-    wishboneCost,
-    bankFee,
-    userActiveContracts,
-    userContractsCount,
-    pendingRewards,
-    totalLiquidity,
-    stakedAmount,
-    endBlock,
-    paidOut,
-    rewardPerBlock,
-    lpPairAllowance,
-    lpPairBalance,
-    totalStakedCro
-  } = bank
-
-  let {
-    croInUsd
-  } = store.getState().dexscreener
-
   let dailyBlockNumber = 15000;
 
   return (
@@ -456,7 +456,8 @@ const Bank = () => {
                   />
                   <input 
                     type="number"
-                    placeholder="0"
+                    placeholder="Enter grave amount"
+                    value={currentContract.amount}
                     min="0"
                     id='amount'
                     onChange={ handleFieldChange }
@@ -470,7 +471,7 @@ const Bank = () => {
                   />
                   <input 
                     type="number"
-                    placeholder="0"
+                    defaultValue="150"
                     step="10"
                     min="0" 
                     max="300"
@@ -520,21 +521,21 @@ const Bank = () => {
                                 className="skull-button"
                                 onClick={() => increaseAllowance() }
                               >
-                                Approve
+                                2. Approve
                               </button>
                             ) : currentContract.amount && graveBalance > 0 && ethers.BigNumber.from( graveBalance ).gte( ethers.utils.parseEther(currentContract.amount) ) ? (
                               <button 
                                 className="skull-button"
                                 onClick={() => { subscribeContract(simulation.duration) } }
                               >
-                                Subscribe
+                                2. Subscribe
                               </button>
                             ) : (
                               <button 
                                 className="skull-button"
                                 onClick={ () => window.open(mmfLink) }
                               >
-                                Buy Grave
+                                2. Buy Grave
                               </button>
                             )
                           }
@@ -776,15 +777,22 @@ const Bank = () => {
                           MAX
                         </button>
                         <input
-                          id="amountToUntake" 
+                          id="amountToUnstake" 
                           type="number"
                           placeholder="0"
                           value={ farmView.amountToUnstake }
                           onChange={ handleStakeLPChange } 
                           step=".0000000001"></input>
                       </div>
-                      <button 
+                      <button
                         className={ 'skull-button claim-button' } 
+                        disabled={pendingRewards < 0 ? true : false}
+                        onClick={() => claimLPRewards(true) }
+                      >
+                        { `Claim Rewards` }
+                      </button>
+                      <button
+                        className={ 'skull-button unstake-button' } 
                         disabled={pendingRewards < 0 ? true : false}
                         onClick={() => claimLPRewards() }
                       >

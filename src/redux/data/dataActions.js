@@ -185,8 +185,13 @@ export const toTavern = ( skulls = false ) => { // UnStake Skull
     let { croSkullsStaking } = store.getState().blockchain
     let stakeSkullTx, skullsCount
     if( skulls instanceof Array ){
-      skullsCount = skulls.length
-      stakeSkullTx =  croSkullsStaking.batchUnstakeSkulls( skulls )
+      skulls.reverse()
+      if( skulls.length < 50 ){
+        stakeSkullTx =  croSkullsStaking.batchUnstakeSkulls( skulls )
+      }else{
+        skulls = skulls.slice(0, 48)
+        stakeSkullTx =  croSkullsStaking.batchUnstakeSkulls( skulls )
+      }
     }else{
       skullsCount = 1
       stakeSkullTx =  croSkullsStaking.unstakeSkull( skulls )
@@ -297,7 +302,7 @@ export const getStakingData =  () => {
       let isApproved = await croSkullsContract.isApprovedForAll( accountAddress, croSkullsStaking.address )
       let petEggsMinted = await croSkullsPetEggs.minterList( accountAddress )
       let petEggsLimit = await croSkullsPetEggs.eggsPerAddress()
-      let petEggsBalance = await croSkullsPetEggs.minterList( accountAddress )
+      let petEggsBalance = await croSkullsPetEggs.balanceOf( accountAddress )
       let petEggsMaxSupply = await croSkullsPetEggs.eggsLimit()
       let petEggsSupply = await croSkullsPetEggs.eggsCounter()
       let petEggsCost = await croSkullsPetEggs.eggCost()
@@ -309,7 +314,12 @@ export const getStakingData =  () => {
       petEggsSupply = petEggsSupply.toString()
       petEggsCost = petEggsCost.toString()
       approvedEggs = approvedEggs.toString() >= parseInt(petEggsCost)
-
+      let petEggsId = []
+      for( let i = 0; i < petEggsBalance; i++) {
+        console.log( petEggsBalance )
+        let petId = await croSkullsPetEggs.tokenOfOwnerByIndex(accountAddress, i)
+        petEggsId.push( petId.toString() )
+      }
       dispatch(updateMerchant({
         petEggsMinted,
         petEggsLimit,
@@ -317,6 +327,7 @@ export const getStakingData =  () => {
         petEggsSupply,
         petEggsMaxSupply,
         petEggsCost,
+        petEggsId,
         approvedEggs
       }))
 
@@ -401,7 +412,7 @@ export const getSkullsData = () => {
           croPotionBlue,
           croPotionRed,
           croPotionPurple,
-          croSkullsGrave
+          croSkullsGrave,
       } = store.getState().blockchain
       if( ! croSkullsContract )
         return

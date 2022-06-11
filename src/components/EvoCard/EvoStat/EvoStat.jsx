@@ -2,9 +2,9 @@ import React from "react";
 
 const EvoStat = ({icon, value, tooltip}) => {
     return  (
-        <div class="stat">
-            <img class="stat-icon" src={icon} />
-            <span class="stat-tooltip">{tooltip}</span>
+        <div className="stat">
+            <img className="stat-icon" src={icon} />
+            <span className="stat-tooltip">{tooltip}</span>
             <span>{value}</span>
         </div>
     )

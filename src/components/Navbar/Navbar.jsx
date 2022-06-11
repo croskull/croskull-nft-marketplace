@@ -20,6 +20,7 @@ import SkullAdventure from '../images/skull-adventure.png';
 import { Link } from "react-router-dom";
 import menuIcon from "./menu-icon.svg";
 import Soul from "../images/soul.png";
+import MetricContainer from "../MetricContainer/MetricContainer"
 import './navbar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiscord, faTwitter, faMedium } from '@fortawesome/free-brands-svg-icons'
@@ -28,7 +29,7 @@ import { faBook } from '@fortawesome/free-solid-svg-icons'
 const Navbar = () => {
   const dispatch = useDispatch();
   let { blockchain, data } = store.getState();
-  let { rewardPlusMalus, soulsBalance, graveBalance, rudeBalance, croSkulls, rewards, croSkullsStaked, daysLastWithdraw } = data
+  let { rewardPlusMalus, soulsBalance, graveBalance, rudeBalance, croSkulls, rewards, croSkullsStaked, daysLastWithdraw, petEggsMinted, petEggsLimit, redCount, blueCount, purpleCount } = data
   let { accountAddress, formatEther, contractDetected, loading, cnsDomain } = blockchain
   const [isHovered, setIsHovered] = useState(false)
   const [menuState, setMenuState] = useState(false)
@@ -67,6 +68,9 @@ const Navbar = () => {
     }
   }
 
+  let canMintEggs = petEggsMinted < petEggsLimit
+  let canMintPurple = redCount > 0 && blueCount > 0
+  let canMintEvo = croSkulls.length > 0 && purpleCount > 0 || croSkulls.length > 0 && canMintPurple > 0
   let malusAmount = rewards > 0 ? parseFloat(formatEther( rewards , true) - formatEther( rewardPlusMalus, true)).toFixed(2) : 0
   return (
     <nav className="navbar navbar-expand-sm header">
@@ -90,14 +94,6 @@ const Navbar = () => {
         className="sk-flex sk-row balances"
       >
         <div className="main-balance">
-          <span>
-            <img 
-              className="skull-icon"
-              src={Skull}
-            />
-            { `${croSkulls.length ? croSkulls.length : 0}` }
-            <span className="sk-tooltip">Available CroSkulls</span>
-          </span>
           <span>
             <img 
               className="skull-icon"
@@ -130,42 +126,43 @@ const Navbar = () => {
             More
           </button>
           <div className={`sk-box flex-v season`}>
-            <h3>Adventure</h3>
+            <span className="season-heading">
+              <span className="season-title">Adventure</span>
+              <a href="#/adventure" className="season-more">More >></a>
+            </span>
             <div className="sk-box-content flex-v">
-              <span>
-                <img 
-                  className="skull-icon"
-                  src={SkullAdventure}
-                />
-                { `${ croSkullsStaked.length ? croSkullsStaked.length : 0}` }
-                <span className="sk-tooltip">Skulls in adventure</span>
-              </span>
-              <span>
-                <img 
-                  className="skull-icon"
-                  src={GraveMined}
-                />
-                { `${formatEther(rewards, true)}` }
-                <span className="sk-tooltip">Generated Grave</span>
-              </span>
-              <span
-                className="positive"
-              >
-                <img 
-                  className="skull-icon"
-                  src={GraveAvailable}
-                />
-                { `${formatEther(rewardPlusMalus, true)}` }
-                <span className="sk-tooltip">Withdrawable Grave</span>
-              </span>
-              <span className="negative">
-                <img 
-                  className="skull-icon"
-                  src={GraveBurn}
-                />
-                { `${ malusAmount } (-${ malusPercent }%)` }
-                <span className="sk-tooltip">Burned Grave</span>
-              </span>
+              <MetricContainer 
+                label="Free Skulls"
+                value={ `${croSkulls.length ? croSkulls.length : 0}` }
+                icon={Skull}
+                tooltip="Amount of CroSkulls currently in the Tavern."
+              />
+              <MetricContainer 
+                label="Skull in Adventure"
+                value={`${ croSkullsStaked.length ? croSkullsStaked.length : 0}`}
+                icon={SkullAdventure}
+                tooltip="Amount of CroSkulls currently Staked in the Adventure."
+              />
+              <MetricContainer 
+                label="Generated Grave"
+                value={`${formatEther(rewards, true)}`}
+                icon={GraveMined}
+                tooltip="Amount of CroSkulls currently Staked in the Adventure."
+              />
+              <MetricContainer 
+                label="Withdrawable Grave"
+                value={ `${formatEther(rewardPlusMalus, true)}` }
+                icon={GraveAvailable}
+                addClass="positive"
+                tooltip="Amount of Grave currently withdrawable from the Adventure."
+              />
+              <MetricContainer 
+                label="Burned Grave"
+                value={ `${ malusAmount } (${ malusPercent < 81 && malusPercent > 0 ? malusPercent : 0 }%)` }
+                icon={GraveBurn}
+                addClass="negative"
+                tooltip="Amount of Grave that will be Burned if claim occurs now."
+              />
             </div>
           </div>
         </div>
@@ -188,13 +185,14 @@ const Navbar = () => {
             <Link to="/bank" className="nav-link">
               Bank
             </Link>
-            {  }
           </li>
-          <li className="nav-item">
-            <Link to="/marketplace" className="nav-link">
-              Marketplace
-            </Link>
-          </li>
+          {
+            <li className="nav-item">
+              <Link to="/hall-of-fame" className="nav-link">
+                Hall Of Fame
+              </Link>
+            </li>
+          }
           <li className="nav-item">
             <Link to="/tavern" className="nav-link">
               Tavern
@@ -205,23 +203,25 @@ const Navbar = () => {
               Adventure
             </Link>
           </li>
-          <li className="nav-item">
-            <Link to="/merchant" className="nav-link">
+          {
+            /*<li className="nav-item">
+            <Link to="/merchant" className={`nav-link ${ canMintEggs ? `hot` : ``}`}>
               Merchant
             </Link>
-          </li>
+          </li>*/
+          }
           <li className="nav-item">
             <Link to="/analytics" className="nav-link">
               Analytics
             </Link>
           </li>
           <li className="nav-item">
-            <Link to="/raffle" className="nav-link">
+            <Link to="/raffle" className="nav-link hot">
               Raffle
             </Link>
           </li>
-          <li className="nav-item merchant-menu">
-            <Link to="/laboratory-potion" className="nav-link">
+          <li className="nav-item">
+            <Link to="/laboratory" className={`nav-link ${ canMintPurple || canMintEvo ? `hot` : `` }`}>
               Laboratory
             </Link>
           </li>

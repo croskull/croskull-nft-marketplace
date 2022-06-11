@@ -1,0 +1,339 @@
+.mint-egg .sk-box-content {
+    display: block;
+}
+.mint-egg.container-fluid {
+    justify-content: center;
+}
+
+.mint-egg .sk-box-content .sk-row {
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+.mint-egg .sk-box-content .sk-row img {
+    height: 10vh;
+    width: 10vh;
+    border-radius: 50%
+}
+.m-100 {
+    max-width: 100% !important;
+}
+
+.mint-egg .card-container {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
+
+.mint-egg .sk-box-content .sk-box-content {
+    display: flex;
+    padding: 0;
+    padding: 2%;
+    margin-bottom: 1%;
+}
+
+.mint-egg .sk-box-content .sk-box-content .circular-image {
+    height: 100%;
+    width: auto;
+    text-align: center;
+}
+
+.mint-egg .sk-box-content .sk-box-content .circular-image img {
+    height: 4vw;
+    width: 4vw;
+    border-radius: 50%
+}
+
+#skull-choice {
+    visibility: hidden;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+#skull-choice .sk-box-content,
+#potion-choice .sk-box-content {
+    width: 100%;
+    overflow-x: overlay;
+}
+
+#potion-choice {
+    display: none;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.inventory-list {
+    position: absolute;
+    z-index: 999;
+    top: 10%;
+    width: 100%;
+    opacity: 0;
+    left: 0;
+    transform: scale(0);
+    transform-origin: top;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.inventory-list.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.inventory-list .sk-box-content {
+    width: 100%;
+    overflow-x: overlay;
+}
+
+
+.mint-egg .egg-modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    text-align: center;
+    z-index: 9999999;
+    background: rgba(0, 0, 0, 0.562) !important;
+    overflow-y: hidden;
+}
+
+.mint-egg .animation-container {
+    width: 100vw;
+    height: 100vh;
+    transition: 1s;
+    box-shadow: 0 1px 1px hsl(0deg 0% 0% / 8%), 0 2px 2px hsl(0deg 0% 0% / 8%), 0 4px 4px hsl(0deg 0% 0% / 8%), 0 8px 8px hsl(0deg 0% 0% / 8%), 0 16px 16px hsl(0deg 0% 0% / 8%);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: middle;
+    position: relative;
+    vertical-align: middle;
+    overflow-y: hidden;
+}
+
+.mint-egg .egg-container {
+    margin: auto;
+    overflow: hidden;
+    transform: scale(0);
+    animation: eggContainerAnimation 10s;
+}
+
+@keyframes eggContainerAnimation {
+    0% {
+        transform: scale(1, 1);
+    }
+
+    80% {
+        transform: scale(1, 1);
+    }
+}
+
+.mint-egg #egg {
+    margin: auto;
+    transition: 0s;
+    animation: eggAnimation 10s;
+    transform-origin: bottom center;
+
+}
+
+@keyframes eggAnimation {
+    0% {
+        transform: scale(0);
+    }
+
+    10% {
+        transform: scale(1, 1);
+    }
+
+    20% {
+        transform: rotate(-30deg);
+    }
+
+    30% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(30deg);
+    }
+
+    60% {
+        transform: rotate(0deg);
+    }
+}
+
+.mint-egg .egg-container p {
+    width: 22ch;
+    animation: typing 2s steps(22), blink .5s step-end infinite alternate;
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 3px solid;
+    font-family: monospace;
+    font-size: 2em;
+    text-align: center;
+}
+
+@keyframes typing {
+    from {
+        width: 0
+    }
+}
+
+@keyframes blink {
+    50% {
+        border-color: transparent
+    }
+}
+
+.mint-egg #w-box {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    animation: flashAnimation 10s;
+    overflow: hidden;
+    border-radius: 0%;
+    justify-content: center;
+    box-shadow: 0 0 50px #fff,
+        0 0 100px #fff,
+        0 0 150px #fff,
+        0 0 280px #fff,
+        0 0 250px #fff,
+        0 0 300px #fff,
+        0 0 350px #fff;
+}
+
+@keyframes flashAnimation {
+    0% {
+        transform: scale(0);
+        background-color: white;
+    }
+
+    60% {
+        transform: scale(0);
+        border-radius: 50%;
+        background-color: white;
+    }
+
+    70% {
+        transform: scale(1, 1);
+        background-color: white;
+
+    }
+
+    80% {
+        border-radius: 0%;
+        background-color: white;
+    }
+
+    90% {
+        background-color: white;
+    }
+}
+
+.mint-egg .pet-container {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    column-gap: 6px;
+    row-gap: 6px;
+}
+
+.mint-egg #pic-minted {
+    max-width: 128px;
+    border-radius: 15px;
+    animation: mintAnimation 10s;
+}
+
+@keyframes mintAnimation {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    70% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1, 1);
+        opacity: 1;
+
+    }
+}
+
+.mint-egg #text-padd {
+    animation: textMintAnimation 10s;
+}
+
+@keyframes textMintAnimation {
+    0% {
+        transform: scale(0) translateY(10000%);
+    }
+
+    60% {
+        transform: scale(1) translateY(10000%);
+
+    }
+
+    70% {
+        transform: scale(1) translateY(10000%);
+
+    }
+
+    100% {
+        transform: translateY(0%);
+    }
+}
+
+.mint-egg.block {
+    overflow-y: hidden;
+}
+.mint-egg.container-fluid{
+    padding: 20px 0px !important;
+}
+
+@media (min-width:320px) and (max-width:640px) {
+    .mint-egg .wd-50 {
+        max-width: 100%;
+    }
+    .mint-egg .modal-cta.sk-row {
+        flex-direction: row !important;
+    }
+    .mint-egg.container-fluid {
+        justify-content: flex-start;
+    }
+
+    .mint-egg .sk-box-content .sk-row {
+        padding: 0;
+        flex-direction: row;
+    }
+    .mint-egg .animation-container .sk-box {
+        margin: 0px;
+    }
+
+    .mint-egg .sk-box-content .sk-box-content .circular-image img {
+        height: 10vh;
+        width: 10vh;
+        border-radius: 50%
+    }
+
+    .mint-egg .pet-container {
+        width: 100%;
+        height: 85%;
+        overflow-y: auto;
+        flex-wrap: wrap;
+        align-content: flex-start;
+    }
+
+    .mint-egg #pic-minted {
+        margin: auto;
+        width: 120px;
+        border-radius: 15px;
+        animation: mintAnimation 10s;
+    }
+
+}

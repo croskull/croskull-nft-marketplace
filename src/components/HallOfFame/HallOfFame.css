@@ -1,0 +1,67 @@
+.hall-list {
+    width: 100%;
+}
+
+.hall-of-fame.container-fluid {
+    background-image: url(./bg-hof.jpeg) !important;
+}
+.hall-list {
+    width: 100%;
+}
+.hall-item .skull-thumb {
+    max-width: 48px;
+    width: 100%;
+    border-radius: 6px;
+}
+.hall-of-fame .hall-item{
+    position: relative;
+    background-position: center !important;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between !important;
+    column-gap: 12px !important;
+}
+
+.hall-item .rank {
+    font-size: 2em;
+    font-weight: 700;
+    text-align: center;
+}
+.hall-item .tokenId {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 0px 9px;
+    border-radius: 6px;
+    background: var(--warning);
+    margin: 6px;
+    color: var(--purple-bg);
+    font-weight: 900;
+    font-size: 1.2em;
+}
+.second-place {
+    transform: scale(0.80);
+}
+.third-place {
+    transform: scale(0.75);
+}
+.first-place {
+    transform: scale(0.9);
+}
+.hall-of-fame .wd-66 {
+    align-items: flex-start;
+    max-width: 66%;
+    width: 100%;
+}
+.hall-of-fame .wd-33 {
+    max-width: 33%;
+    width: 100%;
+}
+.hall-of-fame .sk-row {
+    flex-direction: row !important;
+}
+.cns {
+    font-weight: 700;
+    color: var(--yellow);
+}

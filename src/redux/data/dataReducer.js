@@ -37,6 +37,7 @@ const initialState = {
     petEggsMinted: 0,
     petEggsLimit: 0,
     petEggsBalance: 0,
+    petEggsId: [],
     petEggsSupply: 0,
     petEggsMaxSupply: 0,
     petEggsCost: 0,
@@ -238,6 +239,7 @@ const dataReducer = (state = initialState, action) => {
                 petEggsMinted: 0,
                 petEggsLimit: 0,
                 petEggsBalance: 0,
+                petEggsId: [],
                 petEggsSupply: 0,
                 petEggsMaxSupply: 0,
                 petEggsCost: 0,
@@ -269,6 +271,7 @@ const dataReducer = (state = initialState, action) => {
                 petEggsSupply: payload.petEggsSupply,
                 petEggsMaxSupply: payload.petEggsMaxSupply, 
                 petEggsCost: payload.petEggsCost,
+                petEggsId: payload.petEggsId,
                 approvedEggs: payload.approvedEggs,
             }
         default:

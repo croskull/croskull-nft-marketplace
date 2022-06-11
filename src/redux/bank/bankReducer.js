@@ -23,9 +23,10 @@ const initialState = {
     endBlock: 0,
     stakedAmount: 0,
     pendingRewards: 0,
+    totalPending: 0,
+    //global farm
     totalLiquidity: 0,
     lpPairBalance: 0,
-    totalPending: 0,
     totalStakedCro: 0
 };
 

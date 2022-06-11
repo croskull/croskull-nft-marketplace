@@ -6,6 +6,7 @@ const initialState = {
     ethProvider: false,
     accountAddress: "",
     cnsDomain: "",
+    cns: false,
     accountBalance: "",
     managerAddress: null,
     croSkullsContract: false,
@@ -20,12 +21,31 @@ const initialState = {
     croSkullsBank: false,
     croSkullsFarm: false,
     croSkullsRude: false,
+    evoSkullsContract: false,
+    petSeasonOne: false,
     croRaffle: false,
     ebisusMarketplace: false,
     providerConnected: false,
     contractDetected: false,
     lpPair: false,
     ethers: ethers,
+    formatDate: (timestamp, formatted = false) => {
+        let tsHours = timestamp / 60 / 60
+        let days = parseInt(timestamp / DAY_IN_SEC)
+        let hoursDiff = tsHours - (days * 24)
+        let hours = parseInt(hoursDiff)
+        let tsMinutes = hoursDiff * 60
+        let minutes = parseInt(tsMinutes - (hours * 60))
+        if( formatted ){
+          return `${days}d ${hours}h ${minutes}m`
+        }else{
+            return {
+              days,
+              hours,
+              minutes
+            }
+        }
+    },
     formatEther: (bn, fixed = false) => fixed ? parseFloat(ethers.utils.formatEther(bn)).toFixed(2) : ethers.utils.formatEther(bn)
 }
 
@@ -44,8 +64,11 @@ const blockchainReducer = (state = initialState, action) => {
                 contractDetected: true,
                 accountAddress: payload.accountAddress,
                 cnsDomain: payload.cnsDomain,
+                cns: payload.cns,
                 accountBalance: payload.accountBalance,
                 ethProvider: payload.ethProvider,
+                evoSkullsContract: payload.evoSkullsContract,
+                petSeasonOne: payload.petSeasonOne,
                 croSkullsContract: payload.croSkullsContract,
                 croSkullsStaking: payload.croSkullsStaking,
                 croSkullsGrave: payload.croSkullsGrave,
@@ -77,6 +100,8 @@ const blockchainReducer = (state = initialState, action) => {
             };
         case "DISCONNECT":
             return {
+                ...initialState
+                /*
                 ...state,
                 loading: false,
                 errorMsg: "",
@@ -86,6 +111,7 @@ const blockchainReducer = (state = initialState, action) => {
                 cnsDomain: "",
                 accountBalance: "",
                 managerAddress: null,
+                evoSkullsContract: false,
                 croSkullsContract: false,
                 croSkullsStaking: false,
                 croSkullsGrave: false,
@@ -100,7 +126,7 @@ const blockchainReducer = (state = initialState, action) => {
                 lpPair: false,
                 ebisusMarketplace: false,
                 providerConnected: false,
-                contractDetected: false,
+                contractDetected: false,*/
             }
         case "CONTRACT_NOT_DETECTED":
             return {
@@ -113,5 +139,7 @@ const blockchainReducer = (state = initialState, action) => {
             return state;
     }
 };
+
+const DAY_IN_SEC = 60 * 60 * 24;
 
 export default blockchainReducer;

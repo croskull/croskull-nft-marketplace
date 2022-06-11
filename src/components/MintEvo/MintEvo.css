@@ -1,22 +1,8 @@
-.mint-evo .sk-row {
-  margin: auto;
-}
-
-.mint-evo .sk-row .sk-box {
-  margin: auto;
-}
-
-.mint-evo .sk-box-content {
-  display: block;
-}
-
-.mint-evo .sk-box-content .sk-row * {
-  margin: auto;
-}
-
-.mint-evo .sk-box-content .sk-row {
-  padding-left: 10%;
-  padding-right: 10%;
+.mint-evo.container-fluid {
+  background: url(evo-mint-bg.jpeg) !important;
+  background-size: cover !important;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .mint-evo .sk-box-content .sk-row img {
@@ -24,10 +10,24 @@
   width: 10vh;
   border-radius: 50%
 }
-
+.mint-evo .wd-50 {
+  max-width: 50%;
+  min-width: auto;
+}
+.center {
+  align-items: center;
+  justify-content: center;
+}
 .mint-evo .card-container {
   display: flex;
   align-content: center;
+  justify-content: center;
+}
+.evo-selector {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 9px;
   justify-content: center;
 }
 
@@ -39,6 +39,8 @@
 }
 
 .mint-evo .sk-box-content .sk-box-content .circular-image {
+  display: flex;
+  flex-direction: column;
   height: 100%;
   width: auto;
   text-align: center;

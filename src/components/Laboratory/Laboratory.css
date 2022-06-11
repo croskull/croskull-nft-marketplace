@@ -1,4 +1,4 @@
-.laboratory.container-fluid, .laboratory-potion{
+.laboratory.container-fluid, .laboratory-potion, .mint-egg.container-fluid{
     background-image: url(bg-lab.jpeg) !important;
     overflow-y: overlay;
 }

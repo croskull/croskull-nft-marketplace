@@ -2,7 +2,8 @@ import {
   ethers
 } from 'ethers';
 import React, { useEffect, useState } from "react";
-import { getSkullsData, toTavern, toMission, sendNotification, getStakingData, approveStories, refreshSkullsStories, playSound } from "../../redux/data/dataActions";
+import { petUpdateState } from "../../redux/pet/petActions";
+import { fetchBalances, getSkullsData, toTavern, toMission, sendNotification, getStakingData, approveStories, refreshSkullsStories, playSound } from "../../redux/data/dataActions";
 import store from "../../redux/store";
 import { useDispatch } from "react-redux";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,29 +12,40 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import IpfsHttpClient from "ipfs-http-client";
 import hexagon from './hexagon.svg';
 import eggImage from '../images/egg.png';
+import Souls from '../images/soul.png';
 import bluePotionImage from '../images/bluePotionImage.png';
 import redPotionImage from '../images/redPotionImage.png';
 import purplePotionImage from "../images/purplePotionImage.png";
 import ReactQuill from "react-quill";
 import AdventureSound from "./skull-in-adventure.mp3";
-import Draggable from "react-draggable"
+import SkullLogo from "../images/skull-logo.png";
+import EvoLogo from "../images/evoskull-icon.png";
+import PetLogo from "../images/pet-icon.png";
+import EvoCard from "../EvoCard/EvoCard";
+import Inventory from "./inventory.svg";
 import "react-quill/dist/quill.snow.css";
 import './Tavern.css';
+import MetricContainer from '../MetricContainer/MetricContainer';
 
 const ipfsUri480 = "https://croskull.mypinata.cloud/ipfs/QmWu9bKunKbv8Kkq8wEWGpCaW47oMBbH6ep4ZWBzAxHtgj/"
 const ipfsUri128 = "https://croskull.mypinata.cloud/ipfs/QmZn1HvYE1o1J8LhNpxFTj5k8LQb2bWT49YvbrhB3r19Xx/"
 const Tavern = () => {
   let dispatch = useDispatch()
-  let { blockchain, data } = store.getState()
+  let { blockchain, data, evo, pet } = store.getState()
+  let { evoSkulls } = evo
+  let { pets, rewards } = pet
+  let { petSeasonOne } = blockchain
 
   const [viewStories, toggleStories] = useState( false )
   const [viewInventory, toggleInventory] = useState( false )
 
-  const [viewState, setViewState] = useState( {
+  const [skullState, setSkullState] = useState( {
     currentView: 'tavern', //tavern or adventure
     selectedSkulls: [],
     selectedStakeSkulls: []
   })
+
+  const [tavernView, setTavernView] = useState('skull') //skull, evoskull, pet, inventory, stories,
 
   const [storyState, setStoryState] = useState( {
     display: false,
@@ -66,15 +78,13 @@ const Tavern = () => {
     x: 0, 
     y: 0 
   })
-  
-
 
   useEffect(() => {
     if( viewStories )
       toggleStories( false )
     if( viewInventory )
       toggleInventory( false )
-  }, [viewState])
+  }, [skullState])
 
   useEffect(() => {
     if( viewInventory && viewStories )
@@ -153,7 +163,7 @@ const Tavern = () => {
             path, // ipfs string hash with prefix
           )
 
-           await skullStoryTx.then(
+          await skullStoryTx.then(
             async (tx) => {
               console.log( tx )
               dispatch(sendNotification({
@@ -162,7 +172,7 @@ const Tavern = () => {
                 tx,
                 type: "info"
               }))
-              await tx.wait(2)
+              await tx.wait(1)
               dispatch(sendNotification({
                 title: `Story Updated!`,
                 message: `Skull #${editorStory.tokenId}'s story updated succesful`,
@@ -180,6 +190,39 @@ const Tavern = () => {
       }
     } catch (error) {
       console.log(error.message);
+    }
+  }
+
+  const claimRewards = async () => {
+    if( rewards > 0 ){
+      let tx = petSeasonOne.claimRewards()
+      await tx.then(async (tx) => {
+        dispatch(
+          sendNotification({
+            title: `Transaction Sent`,
+            message: 'Waiting for confirmation...',
+            tx,
+            type: "default"
+          })
+        )
+        await tx.wait(1)
+        dispatch(sendNotification({
+          title: `Transaction Confirmed`,
+          message: 'Rewards Claimed...',
+          tx,
+          type: "default"
+        }))
+        dispatch(
+          fetchBalances()
+        )
+        let rewards = (await petSeasonOne.hasRewards()).rewards.toString()
+        dispatch(
+          petUpdateState({
+            "key": "rewards",
+            "value": rewards
+          })
+        )
+      })
     }
   }
 
@@ -209,7 +252,7 @@ const Tavern = () => {
   }
 
   const selectSkull = (e) => {
-    let { selectedSkulls } = viewState;
+    let { selectedSkulls } = skullState;
     if ( selectedSkulls && selectedSkulls.includes(e)) {
       for( let i = 0; i < selectedSkulls.length; i++){
         if (selectedSkulls[i] === e) {
@@ -220,14 +263,14 @@ const Tavern = () => {
       selectedSkulls.push(e);
     }
     dispatch(playSound(AdventureSound))
-    setViewState({
-      ...viewState,
+    setSkullState({
+      ...skullState,
       selectedSkulls
     })
   }
 
   const selectStakedSkull = (e) => {
-    let { selectedStakeSkulls } = viewState;
+    let { selectedStakeSkulls } = skullState;
     if ( selectedStakeSkulls && selectedStakeSkulls.includes(e)) {
       for( let i = 0; i < selectedStakeSkulls.length; i++){
         if (selectedStakeSkulls[i] === e) {
@@ -238,8 +281,8 @@ const Tavern = () => {
       selectedStakeSkulls.push(e);
     }
     dispatch(playSound(AdventureSound))
-    setViewState({
-      ...viewState,
+    setSkullState({
+      ...skullState,
       selectedStakeSkulls
     })
   }
@@ -248,7 +291,6 @@ const Tavern = () => {
     let value = event.target ? event.target.value.replace(/</g, "&lt;").replace(/>/g, "&gt;") : event
     let name = event.target ? event.target.id : "description"
     let type = event.target ? event.target.type : "description"
-    console.log( value, name, type )
     if( type === 'date' ){
       value = parseInt( new Date( value ).getTime() / 1000 )
     }
@@ -277,7 +319,66 @@ const Tavern = () => {
     <>
       <div className="sk-flex sk-row mh-100">
         <div className="sk-container">
-          <div className={`sk-box stories ${ viewStories ? 'show' : '' }`}>
+          <div className="sk-box sidebar-list">
+            <span
+              className={`icon-menu inventory ${ tavernView == 'inventory' ? 'active' : ''}`}
+              onClick={ () => {
+                setTavernView('inventory')
+              }}
+            >
+              <img
+                className="btn-toggle-stories"
+                src={Inventory} 
+              />
+            </span>
+            <span className="divider"></span>
+            <span 
+              className={`icon-menu ${ tavernView == 'skull' ? 'active' : ''}`}
+              onClick={ () => {
+                setTavernView('skull')
+              }}
+            >
+              <img 
+                className="btn-toggle-stories"
+                src={SkullLogo} 
+              />
+            </span>
+            <span 
+              className={`icon-menu ${ tavernView == 'evoskull' ? 'active' : ''}`}
+              onClick={ () => {
+                setTavernView('evoskull')
+              }}
+            >
+              <img 
+                className="btn-toggle-stories"
+                src={EvoLogo} 
+              />
+            </span>
+            <span 
+              className={`icon-menu ${ tavernView == 'pet' ? 'active' : ''}`}
+              onClick={ () => {
+                setTavernView('pet')
+              }}
+            >
+              <img 
+                className="btn-toggle-stories"
+                src={PetLogo} 
+              />
+            </span>
+            <span className="divider"></span>
+            <span 
+              className={`icon-menu ${ tavernView == 'stories' ? 'active' : ''}`}
+              onClick={ () => {
+                setTavernView('stories')
+              }}
+            >
+              <FontAwesomeIcon 
+                className="btn-toggle-stories"
+                icon={faSkullCrossbones}
+              />
+            </span>
+          </div>
+          <div className={`sk-box stories ${ tavernView == 'stories' ? 'active' : 'hide' }`}>
             <span className="stories-heading">Recent Community Stories</span>
             <div className="sk-box-content sk-row of-y-over">
             { skullsStories.length > 0 ?
@@ -338,24 +439,13 @@ const Tavern = () => {
             }
             </div>
           </div>
-          <div className="sk-box skulls">
+          <div className={`sk-box skulls ${ tavernView == 'skull' ? 'active' : 'hide'}`}>
             <div className="tab-head">
               <ul className="sk-row view-list">
-                <li 
-                  className={`icon-menu ${ viewStories ? 'active' : ''}`}
-                  onClick={ () => {
-                    toggleStories( ! viewStories )
-                  }}
-                >
-                  <FontAwesomeIcon 
-                    className="btn-toggle-stories"
-                    icon={faSkullCrossbones}
-                  />
-                </li>
-                <li className={`skull-button view-button ${ viewState.currentView === 'tavern' ? 'active' : ''}`}
+                <li className={`skull-button view-button ${ skullState.currentView === 'tavern' ? 'active' : ''}`}
                     onClick={ () => {
-                    setViewState( {
-                      ...viewState,
+                    setSkullState( {
+                      ...skullState,
                       currentView: 'tavern'
                     } )
                   }}
@@ -371,10 +461,10 @@ const Tavern = () => {
                 {
                   approval ? (
                     <li
-                      className={`skull-button view-button ${ viewState.currentView === 'adventure' ? 'active' : ''}`}
+                      className={`skull-button view-button ${ skullState.currentView === 'adventure' ? 'active' : ''}`}
                       onClick={ () => {
-                        setViewState( {
-                          ...viewState,
+                        setSkullState( {
+                          ...skullState,
                           currentView: 'adventure'
                         } )
                         
@@ -404,7 +494,7 @@ const Tavern = () => {
               </ul>
             </div>
             <div className="sk-box-content sk-column">
-              <div className={`skulls-list in-tavern ${ viewState.currentView === 'tavern' ? `active` : `` }`}>
+              <div className={`skulls-list in-tavern ${ skullState.currentView === 'tavern' ? `active` : `` }`}>
                 <div className="list-head">
                   <div className="div-button">
                     {
@@ -419,11 +509,11 @@ const Tavern = () => {
                         </button>
                         <button
                           className="skull-button btn-success" 
-                          hidden={(viewState.selectedSkulls.length > 0 ? false : true)} 
-                          onClick={() => dispatch(toMission(viewState.selectedSkulls))}
+                          hidden={(skullState.selectedSkulls.length > 0 ? false : true)} 
+                          onClick={() => dispatch(toMission(skullState.selectedSkulls))}
                           disabled={ approval ? false : true}
                         >
-                          Send Selected on Adventure { viewState.selectedSkulls.length }
+                          Send Selected on Adventure { skullState.selectedSkulls.length }
                         </button>
                       </>
                     ) : ('') 
@@ -438,7 +528,7 @@ const Tavern = () => {
                       return (
                       <div key={cr} className="skull-item" >
                         <div 
-                          className={viewState.selectedSkulls.includes(cr) ? 'selected card' : 'card'} 
+                          className={skullState.selectedSkulls.includes(cr) ? 'selected card' : 'card'} 
                           onClick={() => selectSkull(cr)}
                         >
                         <LazyLoadImage
@@ -498,7 +588,7 @@ const Tavern = () => {
                   }
                 </div>
               </div>
-              <div className={`skulls-list in-adventure ${ viewState.currentView === 'adventure' ? `active` : `` }`}>
+              <div className={`skulls-list in-adventure ${ skullState.currentView === 'adventure' ? `active` : `` }`}>
                 <div className="list-head">
                   <div className="div-button">
                     {
@@ -513,10 +603,10 @@ const Tavern = () => {
                     }
                     <button 
                       className="skull-button retire-button" 
-                      hidden={(viewState.selectedStakeSkulls.length > 0 ? false : true)} 
-                      onClick={() => dispatch(toTavern(viewState.selectedStakeSkulls))}
+                      hidden={(skullState.selectedStakeSkulls.length > 0 ? false : true)} 
+                      onClick={() => dispatch(toTavern(skullState.selectedStakeSkulls))}
                     >
-                      Retire Selected { viewState.selectedStakeSkulls.length }
+                      Retire Selected { skullState.selectedStakeSkulls.length }
                     </button>
                   </div>
                 </div>
@@ -528,7 +618,7 @@ const Tavern = () => {
                       return (
                         <div key={cr} className="skull-item" >
                           <div 
-                            className={viewState.selectedStakeSkulls.includes(cr) ? 'selected card' : 'card'} 
+                            className={skullState.selectedStakeSkulls.includes(cr) ? 'selected card' : 'card'} 
                             onClick={() => selectStakedSkull(cr)}
                           >
                             <LazyLoadImage
@@ -536,7 +626,6 @@ const Tavern = () => {
                             />
                             <div className="floating-badges-container">
                               <span className="badge id">{cr}</span>
-                              <span className="badge rank">Rank {data ? data.rank : ''}</span>
                             </div>
                             <div className="bottom-actions">
                               <button 
@@ -564,7 +653,63 @@ const Tavern = () => {
               </div>
             </div>
           </div>
-            <div className={`sk-box inventory`} draggable="true">
+          <div className={`sk-box evoskull ${ tavernView == 'evoskull' ? 'active' : 'hide'}`}>
+            <div className="sk-box-content sk-column">
+              <div className={`skulls-list in-tavern active`}>
+                <div className="sk-row skull-grid">
+                  {
+                    evoSkulls ? (
+                      evoSkulls.map(evo => (
+                        <EvoCard
+                          evo={evo}
+                        />
+                      ))
+                    ) : (
+                      ''
+                    )
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className={`sk-box pet ${ tavernView == 'pet' ? 'active' : 'hide'}`}>
+            <div className="pet-rewards sk-flex sk-row a-center">
+              <MetricContainer 
+                label="Rewards"
+                value={rewards}
+                icon={Souls}
+                tooltip={`Max Souls: ${pets.length * 7} = ${pets.length} pets * 7 days`}
+                vertical={true}
+              />
+              <button
+                className="skull-button claim"
+                disabled={ rewards == 0 }
+                onClick={() => claimRewards() }
+              >
+                Claim
+              </button>
+            </div>
+            <div className="sk-box-content sk-column">
+              <div className={`skulls-list in-tavern active`}>
+                <div className="sk-row skull-grid">
+                  {
+                    pets ? (
+                      pets.map( (pet, i ) => (
+                        <EvoCard
+                          evo={pet}
+                          key={i}
+                          type="pet"
+                        />
+                      ))
+                    ) : (
+                      ''
+                    )
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className={`sk-box inventory ${ tavernView == 'inventory' ? 'active' : 'hide'}`} >
               <span className="stories-heading">
                 Inventory
               </span>

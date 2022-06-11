@@ -3,9 +3,9 @@ import { useDispatch } from "react-redux";
 import store from "../../redux/store";
 import './Laboratory.css';
 import HomeCard from "../HomeCard/HomeCard";
-import LabPot from './bg-lab.jpeg'
-import undercostruction from './undercostruction.png'
-
+import LabCard from '../images/laboratory-card.jpg'
+import EvoCard from '../images/evo-mint-card.jpg'
+import PetCard from "../images/pet-card.jpeg"
 
 
 const Laboratory = () => {
@@ -20,16 +20,22 @@ const Laboratory = () => {
                 </div>
                 <div className="card-container sk-row sk-flex">
                     <HomeCard 
-                        image={LabPot}
-                        title="Potion Laboratory"
-                        description="Create the Purple Potion"
-                        location="laboratory-potion"
+                        image={EvoCard}
+                        title="EvoSkull Laboratory"
+                        description="Mint your EvoSkull in few Clicks!"
+                        location="mint-evo"
                     />
                     <HomeCard 
-                        image={undercostruction}
-                        title="Evo Laboratory"
-                        description="Manage EvoSkull"
-                        location=""
+                        image={PetCard}
+                        title="Pets Laboratory"
+                        description="Hatch the unique Pet Season I"
+                        location="mint-egg"
+                    />
+                    <HomeCard 
+                        image={LabCard}
+                        title="Potion Laboratory"
+                        description="Mint the super-rare Purple Potion"
+                        location="laboratory-potion"
                     />
                 </div>
             </div>
